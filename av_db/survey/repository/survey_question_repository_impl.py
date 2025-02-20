@@ -28,7 +28,7 @@ class SurveyQuestionRepositoryImpl(SurveyQuestionRepository):
             # if len(images) !=0:
             #     for image in images:
             #         SurveyImage.objects.create(question_id=questionId, image=image.name)
-            #         uploadDirectory = '..\\..\\AIM-Sniper-frontend\\src\\assets\\images\\uploadimages'
+            #         uploadDirectory = '..\\..\\aview-nuxt-frontend\\src\\assets\\images\\uploadimages'
             #         imagePath = os.path.join(uploadDirectory, image.name)
             #         with open(imagePath, 'wb+') as destination:
             #             for chunk in image.chunks():

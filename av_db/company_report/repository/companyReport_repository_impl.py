@@ -9,7 +9,7 @@ from company_report.entity.company_data_finance import FinancialData
 from company_report.entity.company_data_total import CompanyDataTotal
 from company_report.entity.models import CompanyReport
 from company_report.repository.companyReport_repository import CompanyReportRepository
-from AIM_Sniper_backend import settings
+from av_db import settings
 from marketing.entity.models import Marketing
 
 
@@ -144,7 +144,7 @@ class CompanyReportRepositoryImpl(CompanyReportRepository):
 
 
     def create(self, companyReportName, companyReportPrice, companyReportCategory, content, companyReportTitleImage):
-        uploadDirectory='../../AIM-Sniper-frontend/src/assets/images/uploadimages'
+        uploadDirectory='../../aview-nuxt-frontend/src/assets/images/uploadimages'
         print('업로드된 디렉토리 : ', uploadDirectory)
         os.makedirs(uploadDirectory, exist_ok=True)
 

@@ -1,4 +1,4 @@
-from AIM_Sniper_backend import settings
+from av_db import settings
 from kakao_oauth.service.kakao_oauth_service import KakaoOauthService
 
 import requests

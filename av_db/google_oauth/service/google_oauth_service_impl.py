@@ -1,5 +1,5 @@
 from google_oauth.service.google_oauth_service import GoogleOauthService
-from AIM_Sniper_backend import settings
+from av_db import settings
 
 
 import requests
