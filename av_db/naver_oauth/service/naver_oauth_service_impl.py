@@ -1,4 +1,4 @@
-from AIM_Sniper_backend import settings
+from av_db import settings
 import requests
 from naver_oauth.service.naver_oauth_service import NaverOauthService
 

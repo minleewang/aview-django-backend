@@ -3,7 +3,7 @@ import os
 from company_report.entity.company_data_total import CompanyDataTotal
 from company_report.entity.models import CompanyReport
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AIM_Sniper_backend.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "av_db.settings")
 
 import random
 
