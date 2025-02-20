@@ -36,15 +36,24 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django_extensions",
-    "corsheaders",
-    "rest_framework",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'django_extensions',
+    'kakao_oauth',
+    'account',
+    'survey',
+    'company_report',
+    'cart',
+    'orders',
+    'marketing',
+    'interview',
+    'interview_result'
 ]
 
 MIDDLEWARE = [
@@ -60,9 +69,16 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8080",
+#     "http://127.0.0.1:8080",
+# ]
+print('CORS_ALLOWED_ORIGINS:', CORS_ALLOWED_ORIGINS)
 
+# CORS 설정 옵션
 CORS_ALLOW_CREDENTIALS = True
 
+# CORS 헤더와 메서드 추가 설정 (필요 시)
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
@@ -84,6 +100,32 @@ CORS_ALLOW_HEADERS = [
     'x-request-with',
 ]
 
+KAKAO = {
+    'LOGIN_URL': os.getenv('KAKAO_LOGIN_URL'),
+    'CLIENT_ID': os.getenv('KAKAO_CLIENT_ID'),
+    'REDIRECT_URI': os.getenv('KAKAO_REDIRECT_URI'),
+    'TOKEN_REQUEST_URI': os.getenv('KAKAO_TOKEN_REQUEST_URI'),
+    'USERINFO_REQUEST_URI': os.getenv('KAKAO_USERINFO_REQUEST_URI'),
+}
+
+GOOGLE = {
+    'LOGIN_URL': os.getenv('GOOGLE_LOGIN_URL'),
+    'CLIENT_ID': os.getenv('GOOGLE_CLIENT_ID'),
+    'CLIENT_SECRET': os.getenv('GOOGLE_CLIENT_SECRET'),
+    'REDIRECT_URI': os.getenv('GOOGLE_REDIRECT_URI'),
+    'TOKEN_REQUEST_URI': os.getenv('GOOGLE_TOKEN_REQUEST_URI'),
+    'USERINFO_REQUEST_URI': os.getenv('GOOGLE_USERINFO_REQUEST_URI')
+}
+
+NAVER ={
+    'LOGIN_URL': os.getenv('NAVER_LOGIN_URL'),
+    'CLIENT_ID': os.getenv('NAVER_CLIENT_ID'),
+    'CLIENT_SECRET': os.getenv("NAVER_CLIENT_SECRET"),
+    'REDIRECT_URI': os.getenv('NAVER_REDIRECT_URI'),
+    'TOKEN_REQUEST_URI': os.getenv('NAVER_TOKEN_REQUEST_URI'),
+    'USERINFO_REQUEST_URI': os.getenv('NAVER_USERINFO_REQUEST_URI'),
+}
+
 ROOT_URLCONF = "av_db.urls"
 
 TEMPLATES = [
@@ -102,12 +144,46 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
 WSGI_APPLICATION = "av_db.wsgi.application"
+
+# redis 사용시 주석 해제
+# REDIS_HOST = os.getenv('REDIS_HOST')
+# REDIS_PORT = os.getenv('REDIS_PORT')
+# REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+#
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/0',  # Redis의 0번 DB를 사용합니다. 필요에 따라 DB 번호를 수정할 수 있습니다.
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#             'PASSWORD': REDIS_PASSWORD,  # Redis 비밀번호를 설정합니다.
+#             'SOCKET_CONNECT_TIMEOUT': 5,  # Redis 서버와의 연결 시도 제한 시간을 설정합니다.
+#         }
+#     }
+# }
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# MySQL Settings
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -120,6 +196,21 @@ DATABASES = {
     }
 }
 
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': REDIS_PASSWORD,
+            'SOCKET_CONNECT_TIMEOUT': 5,
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -145,7 +236,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
