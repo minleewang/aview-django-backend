@@ -1,17 +1,20 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from kakao_oauth.controller.views import OauthView
+from kakao_oauth.controller.kakao_oauth_controller import KakaoOauthController
 
 router = DefaultRouter()
-router.register(r'kakao_oauth', OauthView, basename='kakao_oauth')
+router.register(r"kakao-oauth", KakaoOauthController, basename='kakao-oauth')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('kakao', OauthView.as_view({'get': 'kakaoOauthURI'}), name='get-kakao-oauth-uri'),
-    path('kakao/access-token', OauthView.as_view({'post': 'kakaoAccessTokenURI'}), name='get-kakao-access-token-uri'),
-    path('kakao/user-info', OauthView.as_view({'post': 'kakaoUserInfoURI'}),
-                                name='get-kakao-user-info-uri'),
-    path('redis-access-token/', OauthView.as_view({'post': 'redisAccessToken'}), name='redis_service-access-token'),
-    path('logout', OauthView.as_view({'post': 'dropRedisTokenForLogout'}), name='drop-redis_service-token-for-logout')
+    path('request-login-url',
+         KakaoOauthController.as_view({ 'get': 'requestKakaoOauthLink' }),
+         name='Kakao Oauth 링크 요청'),
+    path('redirect-access-token',
+         KakaoOauthController.as_view({ 'post': 'requestAccessToken' }),
+         name='Kakao Access Token 요청'),
+    path('request-user-token',
+         KakaoOauthController.as_view({ 'post': 'requestUserToken' }),
+         name='User Token 요청'),
 ]
