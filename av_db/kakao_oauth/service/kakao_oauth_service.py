@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 
+
 class KakaoOauthService(ABC):
 
     @abstractmethod
-    def kakaoLoginAddress(self):
+    def requestKakaoOauthLink(self):
         pass
 
     @abstractmethod
-    def requestAccessToken(self, kakaoAuthCode):
+    def requestAccessToken(self, code):
         pass
 
     @abstractmethod

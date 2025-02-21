@@ -47,13 +47,15 @@ INSTALLED_APPS = [
     'django_extensions',
     'kakao_oauth',
     'account',
+    'account_profile',
     'survey',
     'company_report',
     'cart',
     'orders',
     'marketing',
     'interview',
-    'interview_result'
+    'interview_result',
+    'authentication',
 ]
 
 MIDDLEWARE = [

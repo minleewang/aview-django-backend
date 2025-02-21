@@ -59,6 +59,7 @@ class ProfileRepositoryImpl(ProfileRepository):
             account=account
         )
         return profile
+
     def findByPassword(self, email,password):
         try:
             email = Profile.objects.get(email=email)
