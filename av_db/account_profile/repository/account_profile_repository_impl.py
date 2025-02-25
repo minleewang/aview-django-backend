@@ -1,6 +1,9 @@
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
+
+from django.utils import timezone
+
 from account_profile.entity.account_profile import AccountProfile
 from account_profile.repository.account_profile_repository import AccountProfileRepository
 from account_profile.entity.account_profile_gender_type import AccountProfileGenderType
@@ -104,4 +107,21 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
             return None
         except Exception as e:
             print(f"genderId로 genderType 찾는 중 에러 발생: {e}")
+            return None
+
+    # 접속시간 기록을 위한 추가
+    def updateLastLogin(self, profile):
+        try:
+            profile.last_login = timezone.now() + timezone.timedelta(hours=9)
+            profile.save()
+        except Exception as e:
+            print(f"최근 접속시간 업데이트 중 에러 발생: {e}")
+            return None
+
+    def update_login_history(self, profile):
+        try:
+            login_history = LoginHistory.objects.create(account_id=profile.account.id)
+            return login_history
+        except Exception as e:
+            print(f"로그인 기록 생성 중 에러 발생: {e}")
             return None
