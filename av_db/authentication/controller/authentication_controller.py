@@ -2,11 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
 
-from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
+from redis_service.service.redis_service_impl import RedisServiceImpl
 
 
 class AuthenticationController(viewsets.ViewSet):
-    redisCacheService = RedisCacheServiceImpl.getInstance()
+    RedisService = RedisServiceImpl.getInstance()
 
     def requestLogout(self, request):
         postRequest = request.data
@@ -14,9 +14,9 @@ class AuthenticationController(viewsets.ViewSet):
 
         if userToken:
             try:
-                accountId = self.redisCacheService.getValueByKey(userToken)
-                self.redisCacheService.deleteKey(userToken)
-                self.redisCacheService.deleteKey(accountId)
+                accountId = self.RedisService.getValueByKey(userToken)
+                self.RedisService.deleteKey(userToken)
+                self.RedisService.deleteKey(accountId)
                 return JsonResponse({"message": "로그 아웃 성공"}, status=status.HTTP_200_OK)
 
             except Exception as e:
@@ -34,7 +34,7 @@ class AuthenticationController(viewsets.ViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            accountId = self.redisCacheService.getValueByKey(userToken)
+            accountId = self.RedisService.getValueByKey(userToken)
             if not accountId:
                 return JsonResponse({"valid": False}, status=status.HTTP_200_OK)
 

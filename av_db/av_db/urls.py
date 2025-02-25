@@ -16,9 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +31,6 @@ urlpatterns = [
     path('marketing/',include('marketing.urls')),
     path('management/',include('management.urls')),
     path('interview/', include('interview.urls')),
-    path('interview_result/', include('interview_result.urls'))
+    path('interview_result/', include('interview_result.urls')),
+    path('authentication/', include('authentication.urls')),
 ]
