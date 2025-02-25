@@ -3,7 +3,7 @@ from tkinter.font import names
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from account.controller.views import AccountView
+from account.controller.account_controller import AccountView
 
 router = DefaultRouter()
 router.register(r'account', AccountView, basename='account')

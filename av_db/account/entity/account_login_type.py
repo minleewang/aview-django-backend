@@ -1,14 +1,9 @@
 from django.db import models
+from account.entity.login_type import LoginType
 
 
 class AccountLoginType(models.Model):
-    class LoginType(models.TextChoices):
-        KAKAO = 'KAKAO', 'Kakao'
-        GENERAL = 'NORMAL', 'normal'
-        GOOGLE = 'GOOGLE', 'google'
-        NAVER = 'NAVER','naver'
-
-    loginType = models.CharField(max_length=10, choices=LoginType.choices, unique=True)
+    loginType = models.CharField(max_length=10, choices=LoginType.choices, default=LoginType.GENERAL)
 
     def __str__(self):
         return self.loginType
