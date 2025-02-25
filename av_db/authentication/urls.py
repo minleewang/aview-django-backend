@@ -15,3 +15,4 @@ urlpatterns = [
          AuthenticationController.as_view({ 'post': 'requestUserTokenValidation' }),
          name='유저 토큰 유효성 검증 요청'),
 ]
+

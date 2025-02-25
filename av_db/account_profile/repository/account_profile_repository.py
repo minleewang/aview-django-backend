@@ -29,3 +29,11 @@ class AccountProfileRepository(ABC):
     @abstractmethod
     def findGenderTypeByGenderId(self, genderId):
         pass
+
+    @abstractmethod
+    def updateLastLogin(self, profile):
+        pass
+
+    @abstractmethod
+    def update_login_history(self, profile):
+        pass

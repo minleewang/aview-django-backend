@@ -43,3 +43,4 @@ class AuthenticationController(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({"valid": False, "error": "코드 내부 에러"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
