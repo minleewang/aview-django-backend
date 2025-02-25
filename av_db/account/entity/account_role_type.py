@@ -1,11 +1,8 @@
 from django.db import models
+from account.entity.role_type import RoleType
 
 
 class AccountRoleType(models.Model):
-    class RoleType(models.TextChoices):
-        ADMIN = 'ADMIN'
-        NORMAL = 'NORMAL'
-        BLACKLIST = 'BLACKLIST'
 
     roleType = models.CharField(max_length=64, choices=RoleType.choices, default=RoleType.NORMAL, unique=True)
 
