@@ -4,7 +4,7 @@ from av_db import settings
 from google_oauth.repository.google_oauth_repository import GoogleOauthRepository
 
 
-class GoogleOauthRepository(GoogleOauthRepository):
+class GoogleOauthRepositoryImpl(GoogleOauthRepository):
     __instance = None
 
     def __new__(cls):
