@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from account.entity.profile import Profile
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.repository.profile_repository_impl import ProfileRepositoryImpl
 from account.serializer.account_serializer import AccountSerializer

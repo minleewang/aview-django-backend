@@ -1,21 +1,21 @@
 import requests
 
 from av_db import settings
-from kakao_oauth.repository.kakao_oauth_repository import KakaoOauthRepository
+from naver_oauth.repository.naver_oauth_repository import NaverOauthRepository
 
 
-class KakaoOauthRepositoryImpl(KakaoOauthRepository):
+class NaverOauthRepositoryImpl(NaverOauthRepository):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.loginUrl = settings.KAKAO['LOGIN_URL']
-            cls.__instance.clientId = settings.KAKAO['CLIENT_ID']
-            cls.__instance.redirectUri = settings.KAKAO['REDIRECT_URI']
-            cls.__instance.tokenRequestUri = settings.KAKAO['TOKEN_REQUEST_URI']
-            cls.__instance.userInfoRequestUri = settings.KAKAO['USER_INFO_REQUEST_URI']
-
+            cls.__instance.loginUrl = settings.NAVER['LOGIN_URL']
+            cls.__instance.clientId = settings.NAVER['CLIENT_ID']
+            cls.__instance.clientSecret = settings.NAVER['CLIENT_SECRET']
+            cls.__instance.redirectUri = settings.NAVER['REDIRECT_URI']
+            cls.__instance.tokenRequestUri = settings.NAVER['TOKEN_REQUEST_URI']
+            cls.__instance.userInfoRequestUri = settings.NAVER['USERINFO_REQUEST_URI']
         return cls.__instance
 
     @classmethod
