@@ -7,37 +7,38 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.status import HTTP_200_OK
 
+
 from account.service.account_service_impl import AccountServiceImpl
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
-from kakao_oauth.serializer.kakao_oauth_access_token_serializer import KakaoOauthAccessTokenSerializer
-from kakao_oauth.service.kakao_oauth_service_impl import KakaoOauthServiceImpl
+from naver_oauth.serializer.naver_oauth_access_token_serializer import NaverOauthAccessTokenSerializer
+from naver_oauth.service.naver_oauth_service_impl import NaverOauthServiceImpl
 from redis_service.service.redis_service_impl import RedisServiceImpl
 
 
-class KakaoOauthController(viewsets.ViewSet):
-    kakaoOauthService = KakaoOauthServiceImpl.getInstance()
+class NaverOauthController(viewsets.ViewSet):
+    naverOauthService = NaverOauthServiceImpl.getInstance()
+    redisService = RedisServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     accountProfileService = AccountProfileServiceImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
 
     def requestKakaoOauthLink(self, request):
-        url = self.kakaoOauthService.requestKakaoOauthLink()
+        url = self.naverOauthService.requestKakaoOauthLink()
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
     def requestAccessToken(self, request):
-        serializer = KakaoOauthAccessTokenSerializer(data=request.data)
+        serializer = NaverOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
         print(f"code: {code}")
 
         try:
-            tokenResponse = self.kakaoOauthService.requestAccessToken(code)
+            tokenResponse = self.naverOauthService.requestAccessToken(code)
             accessToken = tokenResponse['access_token']
             print(f"accessToken: {accessToken}")
 
             with transaction.atomic():
-                userInfo = self.kakaoOauthService.requestUserInfo(accessToken)
+                userInfo = self.naverOauthService.requestUserInfo(accessToken)
                 nickname = userInfo.get('properties', {}).get('nickname', '')
                 email = userInfo.get('kakao_account', {}).get('email', '')
                 print(f"email: {email}, nickname: {nickname}")
@@ -61,6 +62,7 @@ class KakaoOauthController(viewsets.ViewSet):
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+
 
     def requestUserToken(self, request):
         access_token = request.data.get('access_token')  # 클라이언트에서 받은 access_token
@@ -102,6 +104,7 @@ class KakaoOauthController(viewsets.ViewSet):
             print('Redis에 토큰 저장 중 에러:', e)
             raise RuntimeError('Redis에 토큰 저장 중 에러')
 
+
     def dropRedisTokenForLogout(self, request):
         try:
             userToken = request.data.get('userToken')
@@ -109,5 +112,5 @@ class KakaoOauthController(viewsets.ViewSet):
 
             return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(f'레디스 토큰 해제 중 에러 발생:', e)
+            print('레디스 토큰 해제 중 에러 발생:', e)
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

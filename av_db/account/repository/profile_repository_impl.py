@@ -1,9 +1,7 @@
 from requests import Response
 from rest_framework import status
 from account.entity.login_history import LoginHistory
-from account.entity.profile import Profile
 from account.repository.profile_repository import ProfileRepository
-from account.entity.profile_gender_type import ProfileGenderType
 from account.entity.account_role_type import AccountRoleType
 
 from django.utils import timezone

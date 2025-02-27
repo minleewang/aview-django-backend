@@ -1,20 +1,20 @@
 import requests
 
 from av_db import settings
-from kakao_oauth.repository.kakao_oauth_repository import KakaoOauthRepository
+from google_oauth.repository.google_oauth_repository import GoogleOauthRepository
 
 
-class KakaoOauthRepositoryImpl(KakaoOauthRepository):
+class GoogleOauthRepository(GoogleOauthRepository):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.loginUrl = settings.KAKAO['LOGIN_URL']
-            cls.__instance.clientId = settings.KAKAO['CLIENT_ID']
-            cls.__instance.redirectUri = settings.KAKAO['REDIRECT_URI']
-            cls.__instance.tokenRequestUri = settings.KAKAO['TOKEN_REQUEST_URI']
-            cls.__instance.userInfoRequestUri = settings.KAKAO['USER_INFO_REQUEST_URI']
+            cls.__instance.loginUrl = settings.GOOGLE['LOGIN_URL']
+            cls.__instance.clientId = settings.GOOGLE['CLIENT_ID']
+            cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
+            cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
+            cls.__instance.userInfoRequestUri = settings.GOOGLE['USER_INFO_REQUEST_URI']
 
         return cls.__instance
 
