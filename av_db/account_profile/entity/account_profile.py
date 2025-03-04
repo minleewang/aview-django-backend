@@ -1,5 +1,4 @@
 from django.db import models
-from account.entity.account import Account
 from account_profile.entity.account_login_type import AccountLoginType
 
 
@@ -10,7 +9,7 @@ class AccountProfile(models.Model):
     gender = models.CharField(max_length=32, unique=True)
     age_range = models.IntegerField()
     birthyear = models.IntegerField()
-    loginType = models.ForignKey(AccountLoginType, on_delete=models.CASCADE) #, related_name ="profile")
+    loginType = models.ForeignKey(AccountLoginType, on_delete=models.CASCADE) #, related_name ="profile")
 
     #account = models.OneToOneField(
     #    Account,
@@ -22,7 +21,8 @@ class AccountProfile(models.Model):
 
 
     def __str__(self):
-        return f"Profile -> email: {self.email}, nickname: {self.nickname}"
+        return (f"Profile -> email: {self.account_email}, nickname: {self.profile_nickname}, gender: {self.gender}, "
+                f"age_range: {self.age_range}, birthyear: {self.birthyear}, loginType: {self.loginType}")
 
     class Meta:
         db_table = 'account_profile'

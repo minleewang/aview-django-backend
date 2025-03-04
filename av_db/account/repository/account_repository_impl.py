@@ -1,5 +1,4 @@
 from account.entity.account import Account
-from account.entity.account_login_type import AccountLoginType
 from account.entity.account_role_type import AccountRoleType
 from account.entity.role_type import RoleType
 from account.repository.account_repository import AccountRepository

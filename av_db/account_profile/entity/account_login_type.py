@@ -1,5 +1,5 @@
 from django.db import models
-from account.entity.login_type import LoginType
+from account_profile.entity.login_type import LoginType
 
 
 class AccountLoginType(models.Model):
@@ -10,4 +10,4 @@ class AccountLoginType(models.Model):
 
     class Meta:
         db_table = 'account_login_type'
-        app_label = 'account'
+        app_label = 'account_profile'

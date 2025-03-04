@@ -4,27 +4,24 @@ from rest_framework import viewsets, status
 from django.shortcuts import render
 
 from account.entity.account import Account
+from account_profile.entity.account_profile import AccountProfile
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
 from redis_service.service.redis_service_impl import RedisServiceImpl
 
-
+# DB에 저장
 class AccountProfileController(viewsets.ViewSet):
     __accountProfileService = AccountProfileServiceImpl.getInstance()
     redisCacheService = RedisServiceImpl.getInstance()
 
-    def requestAccountProfileInfo(self, request):
+
+    def createAccountProfile(self, request):
         postRequest = request.data
         userToken = postRequest.get("userToken")
-        #data = request.data
-        #nickname = data.get("nickname")
-        #email = data.get("email")
-        #loginType = data.get("loginType")
 
-        # Token이 없으면 400_BAD_REQUEST 반환
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다.", "success": False}, status=status.HTTP_400_BAD_REQUEST)
+            # Token이 없으면 400_BAD_REQUEST 반환
 
-        # Token이 있다면,
         try:
             # redis에서 userToken에 해당하는 accountId를 가져옴
             accountId = self.redisCacheService.getValueByKey(userToken)
@@ -33,23 +30,33 @@ class AccountProfileController(viewsets.ViewSet):
                 # redis에서 accountId를 찾지 못한 경우
                 return JsonResponse({"error": "이메일을 찾을 수 없습니다.", "success": True}, status=status.HTTP_404_NOT_FOUND)
 
-            # profile
-            profileById = self.__accountProfileService.findProfileById(accountId)
-            if profileById is None:  # 이메일 못찾은 경우
-                return JsonResponse({"error": "회원 정보를 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
-            return JsonResponse({"Profile": profileById, "success": True}, status=status.HTTP_200_OK)
+            # 카카오에서 사용자 정보 받기
+            nickname = postRequest.get("nickname")
+            email = postRequest.get("email")
+            gender = postRequest.get("gender")
+            age_range = postRequest.get("age_range")
+            birthyear = postRequest.get("birthyear")
+            loginType = postRequest.get("loginType")  # 밑에서 if문으로 구현 if ..@kakao
 
+            if not accountId or not email:
+                return JsonResponse({"error": "카카오 ID와 이메일은 필수 값입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # redis에서 찾은 accountId를 사용하여 이메일 찾기
-            #foundEmail = self.__accountProfileService.findByEmail()
-            foundEmail = self.redisCacheService.getValueByKey(userTocken)
-            profileByEmail = self.accountProfileService.findProfileByEmail(foundEmail)
+            user, created = AccountProfile.objects.get_or_create(
+                id=accountId,
+                defaults={
+                    "profile_nickname": nickname,
+                    "account_email": email,
+                    "gender": gender,
+                    "age_range": age_range,
+                    "birthyear": birthyear,
+                    "loginType": loginType
+                }
+            )
 
-            if foundEmail is None:  # 이메일 못찾은 경우
-                return JsonResponse({"error":"이메일을 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
-
-            return JsonResponse({"email":"foundEmail", "success": True}, status=status.HTTP_200_OK)
-
+            if created:
+                return JsonResponse({"message": "새 사용자 정보가 DB에 저장됨!", "user_id": user.id}, status=status.HTTP_201_CREATED)
+            else:
+                return JsonResponse({"message": "기존 사용자가 로그인함.", "user_id": user.id}, status=status.HTTP_200_OK)
 
         except Exception as e:
             # 예외 처리
@@ -59,8 +66,28 @@ class AccountProfileController(viewsets.ViewSet):
 
 
 
+    """""
+    def requestEmail(self): 
 
-"""""
+            # 사용자 전체 profile 반환
+        profileById = self.__accountProfileService.findProfileById(accountId)
+        if profileById is None:  # 이메일 못찾은 경우
+            return JsonResponse({"error": "회원 정보를 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({"Profile": profileById, "success": True}, status=status.HTTP_200_OK)
+
+
+            # redis에서 찾은 accountId를 사용하여 이메일 찾기
+            #foundEmail = self.__accountProfileService.findByEmail()
+            #foundEmail = __accountProfileService.findProfileByEmail(accountId)
+            profileByEmail = self.accountProfileService.findProfileByEmail
+
+        if foundEmail is None:  # 이메일 못찾은 경우
+            return JsonResponse({"error":"이메일을 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
+
+        return JsonResponse({"email":"foundEmail", "success": True}, status=status.HTTP_200_OK)
+
+
+
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
