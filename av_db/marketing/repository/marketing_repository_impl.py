@@ -1,5 +1,4 @@
-from account.entity.profile import Profile
-from account.repository.profile_repository_impl import ProfileRepositoryImpl
+from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from marketing.entity.models import Marketing
 from marketing.repository.marketing_repository import MarketingRepository
 from company_report.repository.companyReport_repository_impl import CompanyReportRepositoryImpl
@@ -11,7 +10,7 @@ class MarketingRepositoryImpl(MarketingRepository):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.__profileRepository = ProfileRepositoryImpl.getInstance()
+            cls.__instance.__accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
             cls.__instance.__companyReportRepository = CompanyReportRepositoryImpl.getInstance()
         return cls.__instance
 

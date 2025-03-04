@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from account.repository.profile_repository_impl import ProfileRepositoryImpl
+from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from account.service.account_service_impl import AccountServiceImpl
 from cart.entity.cart_item import CartItem
 from cart.repository.cart_item_repository_impl import CartItemRepositoryImpl
@@ -14,7 +14,7 @@ class CartView(viewsets.ViewSet):
     cartService = CartServiceImpl.getInstance()
     cartRepository = CartRepositoryImpl.getInstance()
     cartItemRepository = CartItemRepositoryImpl.getInstance()
-    profileRepository = ProfileRepositoryImpl.getInstance()
+    accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
 
     def cartItemList(self, request):

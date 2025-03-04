@@ -1,10 +1,10 @@
 from django.db.models import Count
 from account.entity.account import Account
 from account.entity.account_role_type import AccountRoleType
-from account.entity.login_history import LoginHistory
-from account.repository.profile_repository_impl import ProfileRepositoryImpl
+#from account.entity.login_history import LoginHistory
+from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from management.repository.mangement_repository import ManagementRepository
-from account.entity.profile import Profile
+from account_profile.entity.account_profile import AccountProfile
 from marketing.entity.models import Marketing
 from datetime import datetime, date, timedelta
 
@@ -17,7 +17,7 @@ class ManagementRepositoryImpl(ManagementRepository):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.__profileRepository = ProfileRepositoryImpl.getInstance()
+            cls.__instance.__accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -28,11 +28,11 @@ class ManagementRepositoryImpl(ManagementRepository):
 
     def userList(self):
         # Profile과 Account 정보를 가져오기 위한 쿼리
-        profiles = Profile.objects.select_related('account', 'gender').all()
+        accountProfiles = AccountProfile.objects.select_related('account', 'gender').all()
 
         # 결과를 프론트엔드가 원하는 형식으로 변환
         userList = []
-        for profile in profiles:
+        for profile in accountProfiles:
             user_data = {
                 "userId": profile.account.id,  # Account의 id
                 "email": profile.email,
@@ -47,7 +47,7 @@ class ManagementRepositoryImpl(ManagementRepository):
         return userList
 
     def grantRoleType(self, email):
-        profile = self.__profileRepository.findByEmail(email)
+        profile = self.__accountProfileRepository.findByEmail(email)
         admin_role = AccountRoleType.objects.get(roleType='ADMIN')
         profile.account.roleType = admin_role
         profile.account.save()
@@ -55,7 +55,7 @@ class ManagementRepositoryImpl(ManagementRepository):
 
 
     def revokeRoleType(self, email):
-        profile = self.__profileRepository.findByEmail(email)
+        profile = self.__accountProfileRepository.findByEmail(email)
         NORMAL = AccountRoleType.objects.get(roleType='NORMAL')
         profile.account.roleType = NORMAL
         profile.account.save()
@@ -87,8 +87,8 @@ class ManagementRepositoryImpl(ManagementRepository):
         end_date = datetime.combine(today + timedelta(days=7), datetime.min.time())  # 종료 시간을 오늘에서 1주일 후의 자정으로 설정
 
         # 로그인 기록에서 계정 수 필터링
-        filtered_history = LoginHistory.objects.filter(login_at__range=(start_date, end_date)).values(
-            'account_id').distinct().count()
+        #filtered_history = LoginHistory.objects.filter(login_at__range=(start_date, end_date)).values(
+        #    'account_id').distinct().count()
 
         # 주문 수 필터링
         orders = Orders.objects.filter(createdDate__range=(start_date, end_date)).values(
@@ -101,7 +101,7 @@ class ManagementRepositoryImpl(ManagementRepository):
 
         # 각 통계 값 계산
         userCount = len(account)
-        accountCount = filtered_history
+        #accountCount = filtered_history
         purchaseCount = orders
         revenueCount = two_or_more_orders
 
