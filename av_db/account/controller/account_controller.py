@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from account.entity.profile import Profile
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.service.account_service_impl import AccountServiceImpl
 from redis_service.service.redis_service_impl import RedisServiceImpl
