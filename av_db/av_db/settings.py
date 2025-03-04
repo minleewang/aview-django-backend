@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "django_extensions",
     'corsheaders',
     'rest_framework',
-    'django_extensions',
     'kakao_oauth',
     'account',
     'account_profile',
