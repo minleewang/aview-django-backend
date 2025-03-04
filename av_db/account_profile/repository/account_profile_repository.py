@@ -2,19 +2,14 @@ from abc import ABC, abstractmethod
 
 
 class AccountProfileRepository(ABC):
-    @abstractmethod
-    def save(self, account, nickname):
-        pass
 
     @abstractmethod
-    def findByAccount(self, account):
+    def save(self, nickname, email, gender, age_range, birthyear, loginType):
         pass
+
 
     @abstractmethod
     def findById(self, accountId):
-        pass
-
-    def findByPassword(self, email,password):
         pass
 
     @abstractmethod
@@ -26,14 +21,11 @@ class AccountProfileRepository(ABC):
         pass
 
 
-    @abstractmethod
-    def findGenderTypeByGenderId(self, genderId):
-        pass
 
-    @abstractmethod
-    def updateLastLogin(self, profile):
-        pass
+    #@abstractmethod
+    #def updateLastLogin(self, profile):
+    #    pass
 
-    @abstractmethod
-    def update_login_history(self, profile):
-        pass
+    #@abstractmethod
+    #def update_login_history(self, profile):
+    #    pass

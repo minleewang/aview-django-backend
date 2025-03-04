@@ -1,6 +1,5 @@
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account_profile.entity.account_profile import AccountProfile
-from account_profile.entity.account_profile_gender_type import AccountProfileGenderType
 from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from account_profile.service.account_profile_service import AccountProfileService
 
@@ -23,20 +22,15 @@ class AccountProfileServiceImpl(AccountProfileService):
 
         return cls.__instance
 
-    def createAccountProfile(self, nickname, email, password, salt, gender, birthyear, account):
-        genderType = AccountProfileGenderType.objects.get_or_create(gender_type=gender)
-        gender = genderType[0]
-        account_profile = AccountProfile.objects.create(
-            nickname=nickname,
-            email=email,
-            password=password,
-            salt=salt,
-            gender=gender,
-            birthyear=birthyear,
-            account=account
-        )
-        return account_profile
 
+    # AccountProfile DB 생성하고 카카오에서 받은 정보 저장
+    def createAccountProfile(self, nickname, email, gender, age_range, birthyear, loginType):
+        return self.__accountProfileRepository.save(nickname, email, gender, age_range, birthyear, loginType)
+        # .save() VS .create()
+
+
+
+    # 겹치면 안되는게 또 뭐가 있을까 (어떤 값이 고유해야할까) - email, nickname 이 고유값이면 될것같다. (회원 구분 가능)
     def checkEmailDuplication(self, email):
         account_profile = self.__accountProfileRepository.findByEmail(email)
         return account_profile is not None
@@ -45,14 +39,14 @@ class AccountProfileServiceImpl(AccountProfileService):
         account_profile = self.__accountProfileRepository.findByNickname(nickname)
         return account_profile is not None
 
-    def checkPasswordDuplication(self, email,password):
-        account_profile = self.__accountProfileRepository.findByPassword(email,password)
+
+
+    # Id, 이메일로 전체 정보 조회
+    def findProfileById(self, accountId):
+        account_profile = self.__accountProfileRepository.findById(accountId)
         return account_profile
 
     def findProfileByEmail(self, email):
         account_profile = self.__accountProfileRepository.findByEmail(email)
         return account_profile
 
-    def registerAccount(self, loginType, roleType, nickname, email, password, salt, gender, birthyear):
-        account = self.__accountRepository.create(loginType, roleType)
-        return self.__profileRepository.create(nickname, email, password, salt, gender, birthyear, account)

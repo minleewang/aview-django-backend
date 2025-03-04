@@ -3,7 +3,6 @@ from account.entity.role_type import RoleType
 
 
 class AccountRoleType(models.Model):
-
     roleType = models.CharField(max_length=64, choices=RoleType.choices, default=RoleType.NORMAL, unique=True)
 
     def __str__(self):

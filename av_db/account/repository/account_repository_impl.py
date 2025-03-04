@@ -1,6 +1,7 @@
 from account.entity.account import Account
 from account.entity.account_login_type import AccountLoginType
 from account.entity.account_role_type import AccountRoleType
+from account.entity.role_type import RoleType
 from account.repository.account_repository import AccountRepository
 
 from django.utils import timezone
@@ -21,39 +22,69 @@ class AccountRepositoryImpl(AccountRepository):
 
         return cls.__instance
 
-    def create(self, loginType, roleType):
-        loginTypeEntity = AccountLoginType.objects.get_or_create(loginType=loginType)
-        roleTypeEntity = AccountRoleType.objects.get_or_create(roleType=roleType)
-        loginType = loginTypeEntity[0]
-        roleType = roleTypeEntity[0]
 
-        account = Account.objects.create(loginType=loginType, roleType=roleType)
+    # 계정(객체) 생성
+    def create(self, account_profile):
+        print(f"account_profile: {account_profile}")
+        defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.NORMAL).first()
+
+        if not defaultRoleType:
+            defaultRoleType = AccountRoleType(roleType=RoleType.NORMAL)
+            defaultRoleType.save()
+            print(f"Created new defaultRoleType: {defaultRoleType}")
+        else:
+            print(f"Found existing defaultRoleType : {defaultRoleType}")
+        print(f"defaultRoleType: {defaultRoleType}")
+
+        account = Account.objects.create(roleType=defaultRoleType, accountProfile=account_profile)
+        print(f"account : {account}")
+
+        account.save()
         return account
 
+
+
+    # 계정 찾기
     def findById(self, accountId):
         account = Account.objects.get(id=accountId)
+        print(f"findById result: {account}")
         return account
 
-    # 접속시간 기록을 위한 추가
-    def updateLastLogin(self, profile):
-        try:
-            profile.last_login = timezone.now() + timezone.timedelta(hours=9)
-            profile.save()
-        except Exception as e:
-            print(f"최근 접속시간 업데이트 중 에러 발생: {e}")
-            return None
+    def findByEmail(self, email):
+        account = Account.objects.get(account_email=email)
+        print(f"findByEmail result: {account}")
+        return account
 
-    def withdrawAccount(self, account, withdrawReason):
-        role_type = AccountRoleType.objects.get(id=account.roleType_id)
+    def findByNickname(self, nickname):
+        account = Account.objects.get(profile_nickname=nickname)
+        print(f"findByNickname result: {account}")
+        return account
 
-        if role_type.roleType == "NORMAL":
-            role_type.roleType = "BLACKLIST"
-            role_type.save()
+    def findByRoleType(self, roleType):
+        account = Account.objects.filter(roleType=roleType)  # 결과가 여러개여서 .filter() 사용
+        print(f"findByNickname result: {account}")
+        return account
 
-            account.roleType = role_type
-            account.withdraw_reason = withdrawReason
-            account.withdraw_at = timezone.now()
-            account.save()
-            print('계정 탈퇴 완료')
-        else:
-            raise ValueError('이미 탈퇴된 계정입니다')
+
+
+
+
+
+
+
+
+    # 계정 탈퇴
+    #def withdrawAccount(self, account, withdrawReason):
+    #    role_type = AccountRoleType.objects.get(id=account.roleType_id)
+
+    #    if role_type.roleType == "NORMAL":
+    #        role_type.roleType = "BLACKLIST"
+    #        role_type.save()
+
+    #        account.roleType = role_type
+    #        account.withdraw_reason = withdrawReason
+    #        account.withdraw_at = timezone.now()
+    #        account.save()
+    #        print('계정 탈퇴 완료')
+    #    else:
+    #        raise ValueError('이미 탈퇴된 계정입니다')

@@ -7,13 +7,11 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 from account.repository.account_repository_impl import AccountRepositoryImpl
-from account.repository.profile_repository_impl import ProfileRepositoryImpl
-from account.serializer.account_serializer import AccountSerializer
 from account.service.account_service_impl import AccountServiceImpl
 from redis_service.service.redis_service_impl import RedisServiceImpl
 
 
-class AccountView(viewsets.ViewSet):
+class AccountController(viewsets.ViewSet):
     accountService = AccountServiceImpl.getInstance()
     profileRepository = ProfileRepositoryImpl.getInstance()
     accountRepository = AccountRepositoryImpl.getInstance()

@@ -2,16 +2,16 @@ from abc import ABC, abstractmethod
 
 
 class AccountService(ABC):
-    @abstractmethod
-    def checkEmailDuplication(self, email):
-        pass
+
 
     @abstractmethod
-    def checkNicknameDuplication(self, nickname):
+    def createAccount(self, nickname, email, loginType):
         pass
 
+
+
     @abstractmethod
-    def registerAccount(self, loginType, roleType, nickname, email, password, salt, gender, birthyear):
+    def findAccountById(self, accountId):
         pass
 
     @abstractmethod
@@ -19,21 +19,20 @@ class AccountService(ABC):
         pass
 
     @abstractmethod
-    def findAccountById(self, accountId):
+    def findAccountByRoleType(self, roleType):
         pass
 
     @abstractmethod
-    def checkPasswordDuplication(self, email, password):
+    def findAccountByNickname(self, nickname):
         pass
 
-    @abstractmethod
-    def withdrawAccount(self, accountId, withdrawReason):
-        pass
 
-    @abstractmethod
-    def findRoleTypeByEmail(self,email):
-        pass
+
 
     @abstractmethod
     def findProfileByEmail(self,email):
         pass
+
+    #@abstractmethod
+    #def withdrawAccount(self, accountId):
+    #    pass
