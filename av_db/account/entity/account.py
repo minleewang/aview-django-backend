@@ -12,7 +12,7 @@ class Account(models.Model):
 
 
     def __str__(self):
-        return f"Account -> id: {self.id}, loginType: {self.loginType}, roleType: {self.roleType}"
+        return f"Account -> id: {self.id}, roleType: {self.roleType}"
 
     class Meta:
         db_table = 'account'
