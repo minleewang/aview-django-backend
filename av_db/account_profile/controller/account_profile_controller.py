@@ -1,172 +1,88 @@
 from django.http import JsonResponse
-from django.views.i18n import JavaScriptCatalog
-from rest_framework import viewsets, status
-from django.shortcuts import render
+from rest_framework import viewsets
 
-from account.entity.account import Account
-from account_profile.entity.account_profile import AccountProfile
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
 
-# DB에 저장
+import requests
+
+
 class AccountProfileController(viewsets.ViewSet):
-    __accountProfileService = AccountProfileServiceImpl.getInstance()
-    redisCacheService = RedisServiceImpl.getInstance()
+    account_profile_service = AccountProfileServiceImpl.getInstance()
 
+    def social_login(self, request):
+        """
+        OAuth 토큰을 받아 사용자 정보를 조회 후 AccountProfile을 생성
+        """
+        token = request.GET.get("token")
+        login_type = request.GET.get("loginType")  # 'KAKAO', 'GOOGLE', 'NAVER'
 
-    def createAccountProfile(self, request):
-        postRequest = request.data
-        userToken = postRequest.get("userToken")
+        if not token or not login_type:
+            return JsonResponse({"error": "토큰 또는 로그인 타입이 누락되었습니다."}, status=400)
 
-        if not userToken:
-            return JsonResponse({"error": "userToken이 필요합니다.", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-            # Token이 없으면 400_BAD_REQUEST 반환
+        user_info = self.get_user_info_from_oauth(token, login_type)
 
-        try:
-            # redis에서 userToken에 해당하는 accountId를 가져옴
-            accountId = self.redisCacheService.getValueByKey(userToken)
+        if not user_info:
+            return JsonResponse({"error": "OAuth 인증 실패"}, status=400)
 
-            if not accountId:
-                # redis에서 accountId를 찾지 못한 경우
-                return JsonResponse({"error": "이메일을 찾을 수 없습니다.", "success": True}, status=status.HTTP_404_NOT_FOUND)
+        nickname = user_info.get("nickname")
+        email = user_info.get("email")
+        gender = user_info.get("gender")
+        age_range = user_info.get("age_range")
+        birthyear = user_info.get("birthyear")
 
-            # 카카오에서 사용자 정보 받기
-            nickname = postRequest.get("nickname")
-            email = postRequest.get("email")
-            gender = postRequest.get("gender")
-            age_range = postRequest.get("age_range")
-            birthyear = postRequest.get("birthyear")
-            loginType = postRequest.get("loginType")  # 밑에서 if문으로 구현 if ..@kakao
+        # AccountProfile 저장
+        account_profile = self.account_profile_service.createAccountProfile(
+            nickname, email, gender, age_range, birthyear, login_type
+        )
 
-            if not accountId or not email:
-                return JsonResponse({"error": "카카오 ID와 이메일은 필수 값입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "프로필 저장 성공", "accountProfileId": account_profile.id})
 
-            user, created = AccountProfile.objects.get_or_create(
-                id=accountId,
-                defaults={
-                    "profile_nickname": nickname,
-                    "account_email": email,
-                    "gender": gender,
-                    "age_range": age_range,
-                    "birthyear": birthyear,
-                    "loginType": loginType
-                }
-            )
+    def get_user_info_from_oauth(self, token, login_type):
+        """
+        외부 OAuth API를 호출하여 사용자 정보를 가져옴
+        """
+        url_map = {
+            "KAKAO": "https://kapi.kakao.com/v2/user/me",
+            "GOOGLE": "https://www.googleapis.com/oauth2/v2/userinfo",
+            "NAVER": "https://openapi.naver.com/v1/nid/me",
+        }
 
-            if created:
-                return JsonResponse({"message": "새 사용자 정보가 DB에 저장됨!", "user_id": user.id}, status=status.HTTP_201_CREATED)
-            else:
-                return JsonResponse({"message": "기존 사용자가 로그인함.", "user_id": user.id}, status=status.HTTP_200_OK)
+        headers = {"Authorization": f"Bearer {token}"}
+        url = url_map.get(login_type)
 
-        except Exception as e:
-            # 예외 처리
-            print(f"서버 오류 발생: {e}")
-            return JsonResponse({"error": "서버 내부 오류", "success": True}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if not url:
+            return None
 
+        response = requests.get(url, headers=headers)
 
+        if response.status_code != 200:
+            return None
 
-    def checkEmailDuplication(self, request):
-        postRequest = request.data
+        data = response.json()
 
-        email = postRequest.get("email") # 이메일 가져오기
-        if not email:  # 이메일이 없으면 오류 반환
-            return JsonResponse({"error": "이메일이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            # 서비스 레이어에서 이메일 중복 검사
-            is_duplicate = self.__accountProfileService.checkEmailDuplication(email)
-            # 응답 반환
-            if is_duplicate:
-                return JsonResponse({"message": "이메일이 이미 존재합니다.", "duplicate": True}, status=200)
-            else:
-                return JsonResponse({"message": "사용 가능한 이메일입니다.", "duplicate": False}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            return JsonResponse({"error": "잘못된 JSON 형식입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def checkNicknameDuplication(self, request):
-        postRequest = request.data
-
-        nickname = postRequest.get("nickname")
-        if not nickname:
-            return JsonResponse({"error": "닉네임이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            is_duplicate = self.__accountProfileService.checkNicknameDuplication(nickname)
-            # 응답 반환
-            if is_duplicate:
-                return JsonResponse({"message": "닉네임이 이미 존재합니다.", "duplicate": True}, status=200)
-            else:
-                return JsonResponse({"message": "사용 가능한 닉네임입니다.", "duplicate": False}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            return JsonResponse({"error": "잘못된 JSON 형식입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-    """""
-    def requestEmail(self): 
-
-            # 사용자 전체 profile 반환
-        profileById = self.__accountProfileService.findProfileById(accountId)
-        if profileById is None:  # 이메일 못찾은 경우
-            return JsonResponse({"error": "회원 정보를 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
-        return JsonResponse({"Profile": profileById, "success": True}, status=status.HTTP_200_OK)
-
-
-            # redis에서 찾은 accountId를 사용하여 이메일 찾기
-            #foundEmail = self.__accountProfileService.findByEmail()
-            #foundEmail = __accountProfileService.findProfileByEmail(accountId)
-            profileByEmail = self.accountProfileService.findProfileByEmail
-
-        if foundEmail is None:  # 이메일 못찾은 경우
-            return JsonResponse({"error":"이메일을 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
-
-        return JsonResponse({"email":"foundEmail", "success": True}, status=status.HTTP_200_OK) 
-
-
-
-        except ValueError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-            # ✅ ID로 계정 조회 (GET 요청)
-
-    def get(self, request, accountId=None):
-        if accountId:
-            try:
-                account = self.accountService.findAccountById(accountId)
-                return Response({"id": account.id, "nickname": account.accountProfile.profile_nickname},
-                                status=status.HTTP_200_OK)
-            except ValueError as e:
-                return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"error": "Account ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-            # ✅ 이메일로 계정 조회
-
-    def get_by_email(self, request, email):
-        try:
-            account = self.accountService.findAccountByEmail(email)
-            return Response({"id": account.id, "nickname": account.accountProfile.profile_nickname},
-                                status=status.HTTP_200_OK)
-        except ValueError as e:
-            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-            # ✅ 닉네임으로 계정 조회
-
-    def get_by_nickname(self, request, nickname):
-        try:
-            account = self.accountService.findAccountByNickname(nickname)
-            return Response({"id": account.id, "email": account.accountProfile.account_email},
-                            status=status.HTTP_200_OK)
-        except ValueError as e:
-            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-            # ✅ RoleType으로 계정 조회 (여러 개 가능)
-
-    def get_by_role_type(self, request, roleType):
-        try:
-            accounts = self.accountService.findAccountByRoleType(roleType)
-            account_list = [{"id": acc.id, "nickname": acc.accountProfile.profile_nickname} for acc in accounts]
-            return Response({"accounts": account_list}, status=status.HTTP_200_OK)
-        except ValueError as e:
-            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-"""""
+        # 각 플랫폼에 맞게 사용자 정보 변환
+        if login_type == "KAKAO":
+            return {
+                "nickname": data["kakao_account"]["profile"]["nickname"],
+                "email": data["kakao_account"]["email"],
+                "gender": data["kakao_account"].get("gender"),
+                "age_range": data["kakao_account"].get("age_range"),
+                "birthyear": data["kakao_account"].get("birthyear"),
+            }
+        elif login_type == "GOOGLE":
+            return {
+                "nickname": data["name"],
+                "email": data["email"],
+                "gender": None,
+                "age_range": None,
+                "birthyear": None,
+            }
+        elif login_type == "NAVER":
+            return {
+                "nickname": data["response"]["nickname"],
+                "email": data["response"]["email"],
+                "gender": data["response"].get("gender"),
+                "age_range": None,
+                "birthyear": data["response"].get("birthyear"),
+            }
+        return None
