@@ -10,6 +10,7 @@ router.register(r'account', AccountController, basename='account')
 
 urlpatterns = [
     path('', include(router.urls)),
+    # 예시: path('create', AccountProfileController.as_view({'post':'createAccountProfile'}), name='카카오 사용자 정보 DB에 저장'),
     path('get-account-id', AccountController.as_view({'post': 'getAccountId'}), name='get-account-id'),
     path('email-duplication-check',
          AccountController.as_view({'post': 'checkEmailDuplication'}), name='account-email-duplication-check'),

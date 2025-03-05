@@ -65,6 +65,43 @@ class AccountProfileController(viewsets.ViewSet):
 
 
 
+    def checkEmailDuplication(self, request):
+        postRequest = request.data
+
+        email = postRequest.get("email") # 이메일 가져오기
+        if not email:  # 이메일이 없으면 오류 반환
+            return JsonResponse({"error": "이메일이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 서비스 레이어에서 이메일 중복 검사
+            is_duplicate = self.__accountProfileService.checkEmailDuplication(email)
+            # 응답 반환
+            if is_duplicate:
+                return JsonResponse({"message": "이메일이 이미 존재합니다.", "duplicate": True}, status=200)
+            else:
+                return JsonResponse({"message": "사용 가능한 이메일입니다.", "duplicate": False}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return JsonResponse({"error": "잘못된 JSON 형식입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def checkNicknameDuplication(self, request):
+        postRequest = request.data
+
+        nickname = postRequest.get("nickname")
+        if not nickname:
+            return JsonResponse({"error": "닉네임이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            is_duplicate = self.__accountProfileService.checkNicknameDuplication(nickname)
+            # 응답 반환
+            if is_duplicate:
+                return JsonResponse({"message": "닉네임이 이미 존재합니다.", "duplicate": True}, status=200)
+            else:
+                return JsonResponse({"message": "사용 가능한 닉네임입니다.", "duplicate": False}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return JsonResponse({"error": "잘못된 JSON 형식입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     """""
     def requestEmail(self): 
@@ -84,7 +121,7 @@ class AccountProfileController(viewsets.ViewSet):
         if foundEmail is None:  # 이메일 못찾은 경우
             return JsonResponse({"error":"이메일을 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
 
-        return JsonResponse({"email":"foundEmail", "success": True}, status=status.HTTP_200_OK)
+        return JsonResponse({"email":"foundEmail", "success": True}, status=status.HTTP_200_OK) 
 
 
 
