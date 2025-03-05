@@ -1,7 +1,7 @@
 from django.db import models
 
 from cart.entity.cart import Cart
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 
 
 class CartItem(models.Model):

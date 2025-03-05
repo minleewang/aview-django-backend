@@ -1,7 +1,7 @@
 import os
 
 from company_report.entity.company_data_total import CompanyDataTotal
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "av_db.settings")
 

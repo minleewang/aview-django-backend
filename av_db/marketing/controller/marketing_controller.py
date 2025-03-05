@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from marketing.service.marketing_service_impl import MarketingServiceImpl
 
-class MarketingView(viewsets.ViewSet):
+class MarketingController(viewsets.ViewSet):
     marketingService = MarketingServiceImpl.getInstance()
 
     def clickCount(self, request):

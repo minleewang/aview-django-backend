@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from interview_result.service.interview_result_service_impl import InterviewResultServiceImpl
 
-class InterviewResultView(viewsets.ViewSet):
+class InterviewResultController(viewsets.ViewSet):
     interviewResultService = InterviewResultServiceImpl.getInstance()
 
     def saveInterviewResult(self, request):

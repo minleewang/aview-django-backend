@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from survey.service.survey_service_impl import SurveyServiceImpl
 
 
-class SurveyView(viewsets.ViewSet):
+class SurveyController(viewsets.ViewSet):
     surveyService = SurveyServiceImpl.getInstance()
 
     def createSurveyForm(self, request):

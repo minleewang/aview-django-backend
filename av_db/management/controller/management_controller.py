@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from management.service.management_service_impl import ManagementServiceImpl
 
 
-class ManagementView(viewsets.ViewSet):
+class ManagementController(viewsets.ViewSet):
     managementService = ManagementServiceImpl.getInstance()
 
     def userList(self, request):

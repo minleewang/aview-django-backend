@@ -20,7 +20,7 @@ class KakaoOauthController(viewsets.ViewSet):
     accountProfileService = AccountProfileServiceImpl.getInstance()
     redisService = RedisServiceImpl.getInstance()
 
-    def get_account():
+    def get_account(self):
         from account_profile.entity.account_profile import AccountProfile
         return AccountProfile
 

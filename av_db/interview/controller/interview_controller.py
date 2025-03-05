@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from interview.service.interview_service_impl import InterviewServiceImpl
 
 
-class InterviewView(viewsets.ViewSet):
+class InterviewController(viewsets.ViewSet):
     interviewService = InterviewServiceImpl.getInstance()
 
     def insertSession(self, request):

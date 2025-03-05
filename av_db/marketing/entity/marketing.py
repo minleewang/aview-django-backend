@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from account.entity.account import Account
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 
 
 class Marketing(models.Model):

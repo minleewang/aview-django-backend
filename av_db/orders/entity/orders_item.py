@@ -1,7 +1,7 @@
 from django.db import models
 
 from orders.entity.orders import Orders
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 
 
 class OrdersItem(models.Model):

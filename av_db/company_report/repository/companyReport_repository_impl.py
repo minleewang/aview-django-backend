@@ -7,10 +7,10 @@ from django.db.models import Sum
 
 from company_report.entity.company_data_finance import FinancialData
 from company_report.entity.company_data_total import CompanyDataTotal
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 from company_report.repository.companyReport_repository import CompanyReportRepository
 from av_db import settings
-from marketing.entity.models import Marketing
+from marketing.entity.marketing import Marketing
 
 
 class CompanyReportRepositoryImpl(CompanyReportRepository):
@@ -199,8 +199,9 @@ class CompanyReportRepositoryImpl(CompanyReportRepository):
         FinanceData2021 = FinancialData.objects.filter(company=id, year=2021).values('revenue', 'profit_trend','owners_capital')
         FinanceData2022 = FinancialData.objects.filter(company=id, year=2022).values('revenue', 'profit_trend', 'owners_capital')
         FinanceData2023 = FinancialData.objects.filter(company=id, year=2023).values('revenue', 'profit_trend', 'owners_capital')
+        FinanceData2024 = FinancialData.objects.filter(company=id, year=2024).values('revenue', 'profit_trend', 'owners_capital')
         # 결과 반환
-        return list(FinanceData2021),list(FinanceData2022),list(FinanceData2023)
+        return list(FinanceData2021),list(FinanceData2022),list(FinanceData2023),list(FinanceData2024)
 
     def readCompanyReportInfo(self, companyReportName):
         companyReportInfo = CompanyDataTotal.objects.filter(company_name=companyReportName)

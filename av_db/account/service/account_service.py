@@ -8,8 +8,6 @@ class AccountService(ABC):
     def createAccount(self, nickname, email, loginType):
         pass
 
-
-
     @abstractmethod
     def findAccountById(self, accountId):
         pass
