@@ -29,9 +29,9 @@ class AccountService(ABC):
 
 
 
-    @abstractmethod
-    def findProfileByEmail(self,email):
-        pass
+    #@abstractmethod
+    #def findProfileByEmail(self,email):
+    #    pass
 
     #@abstractmethod
     #def withdrawAccount(self, accountId):

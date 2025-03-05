@@ -8,12 +8,13 @@ from rest_framework.response import Response
 
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.service.account_service_impl import AccountServiceImpl
+from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from redis_service.service.redis_service_impl import RedisServiceImpl
 
 
 class AccountController(viewsets.ViewSet):
     accountService = AccountServiceImpl.getInstance()
-    profileRepository = ProfileRepositoryImpl.getInstance()
+    accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
     accountRepository = AccountRepositoryImpl.getInstance()
     redisService = RedisServiceImpl.getInstance()
 

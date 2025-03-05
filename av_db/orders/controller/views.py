@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from account.repository.profile_repository_impl import ProfileRepositoryImpl
+from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from account.service.account_service_impl import AccountServiceImpl
 from orders.repository.orders_item_repository_impl import OrdersItemRepositoryImpl
 from orders.service.orders_service_impl import OrdersServiceImpl
@@ -16,7 +16,7 @@ class OrdersView(viewsets.ViewSet):
     redisService = RedisServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     productRepository = CompanyReportRepositoryImpl.getInstance()
-    profileRepository = ProfileRepositoryImpl.getInstance()
+    accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
     ordersItemRepository = OrdersItemRepositoryImpl.getInstance()
 
     def createCartOrders(self, request):
