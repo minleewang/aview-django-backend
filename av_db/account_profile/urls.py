@@ -10,4 +10,6 @@ router.register(r'account-profile', AccountProfileController, basename='account-
 urlpatterns = [
     path('', include(router.urls)),
     path('create', AccountProfileController.as_view({'post':'createAccountProfile'}), name='카카오 사용자 정보 DB에 저장'),
+    path('check-email', AccountProfileController.as_view({'get': 'check_email_duplication'}),
+         name="Account Profile 이메일 중복 확인"),  # ✅ 이메일 중복 확인 추가
 ]

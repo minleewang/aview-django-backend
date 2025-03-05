@@ -1,5 +1,5 @@
 from account.repository.account_repository_impl import AccountRepositoryImpl
-from account_profile.entity.account_profile import AccountProfile
+# from account_profile.entity.account_profile import AccountProfile
 from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from account_profile.service.account_profile_service import AccountProfileService
 
@@ -49,4 +49,6 @@ class AccountProfileServiceImpl(AccountProfileService):
     def findProfileByEmail(self, email):
         account_profile = self.__accountProfileRepository.findByEmail(email)
         return account_profile
+
+
 

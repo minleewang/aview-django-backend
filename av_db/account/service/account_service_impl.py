@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.service.account_service import AccountService
 from account_profile.entity.account_profile import AccountProfile
-from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
+#from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 
 
 class AccountServiceImpl(AccountService):

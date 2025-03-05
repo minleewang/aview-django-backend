@@ -1,288 +1,75 @@
-import hashlib
-import random
-import string
+from django.http import JsonResponse
+from rest_framework import viewsets
 
-from dotenv import load_dotenv
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-
-from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.service.account_service_impl import AccountServiceImpl
-from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
-
+from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
+import jwt
+import datetime
+from django.conf import settings
 
 class AccountController(viewsets.ViewSet):
-    accountService = AccountServiceImpl.getInstance()
-    accountProfileRepository = AccountProfileRepositoryImpl.getInstance()
-    accountRepository = AccountRepositoryImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
+    account_service = AccountServiceImpl.getInstance()
+    account_profile_service = AccountProfileServiceImpl.getInstance()
 
-    load_dotenv()
+    def login(self, request):
+        """
+        AccountProfile 정보를 기반으로 Account 생성 및 로그인 처리
+        """
+        email = request.GET.get("email")
+        nickname = request.GET.get("nickname")
+        login_type = request.GET.get("loginType")
 
-    def checkEmailDuplication(self, request):
-        print("checkEmailDuplication()")
+        if not email or not nickname or not login_type:
+            return JsonResponse({"error": "필수 정보가 누락되었습니다."}, status=400)
 
+        # AccountProfile 조회
+        account_profile = self.account_profile_service.findProfileByEmail(email)
+
+        if not account_profile:
+            return JsonResponse({"error": "AccountProfile이 존재하지 않습니다."}, status=400)
+
+        # Account 존재 여부 확인
         try:
-            print(f"request.data: {request.data}")
-            email = request.data.get("email")
-            print(f"email: {email}")
-            isDuplicate = self.accountService.checkEmailDuplication(email)
-            print(f"isDuplicate: {isDuplicate}")
-
-            return Response(
-                {
-                    "isDuplicate": isDuplicate,
-                    "message": (
-                        "Email이 이미 존재" if isDuplicate else "Email 사용 가능"
-                    ),
-                },
-                status=status.HTTP_200_OK,
+            account = self.account_service.findAccountByEmail(email)
+        except:
+            # 존재하지 않으면 Account 생성
+            account = self.account_service.createAccount(
+                nickname=nickname,
+                email=email,
+                loginType=login_type
             )
-        except Exception as e:
-            print("이메일 중복 체크 중 에러 발생:", e)
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def checkNicknameDuplication(self, request):
-        print("checkNicknameDuplication()")
+        # JWT 토큰 발급
+        token = self.generate_jwt(account.id)
 
+        return JsonResponse({"message": "로그인 성공", "token": token})
+
+    def generate_jwt(self, account_id):
+        """
+        JWT 토큰 생성 (예외 처리 포함)
+        """
         try:
-            nickname = request.data.get("newNickname")
-            print(f"nickname: {nickname}")
-            isDuplicate = self.accountService.checkNicknameDuplication(nickname)
+            # ✅ 만료 시간 설정 (1일 후 만료)
+            exp_time = datetime.datetime.now() + datetime.timedelta(days=1)
 
-            return Response(
-                {
-                    "isDuplicate": isDuplicate,
-                    "message": (
-                        "Nickname이 이미 존재" if isDuplicate else "Nickname 사용 가능"
-                    ),
-                },
-                status=status.HTTP_200_OK,
-            )
+            payload = {
+                "account_id": account_id,
+                "exp": exp_time,  # 만료 시간
+                "iat": datetime.datetime.now()  # 발급 시간
+            }
+
+            # ✅ settings.SECRET_KEY 확인 후 JWT 생성
+            if not hasattr(settings, "SECRET_KEY") or not settings.SECRET_KEY:
+                raise ValueError("Django settings에 SECRET_KEY가 설정되지 않았습니다.")
+
+            token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+
+            # ✅ JWT가 bytes로 반환될 경우 str로 변환
+            if isinstance(token, bytes):
+                token = token.decode("utf-8")
+
+            return token
+
         except Exception as e:
-            print("닉네임 중복 체크 중 에러 발생:", e)
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    def registerAccount(self, request):
-        try:
-            nickname = request.data.get("nickname")
-            email = request.data.get("email")
-            password = request.data.get("password")
-            gender = request.data.get("gender")  # 성별 추가
-            birthyear = request.data.get("birthyear")  # 생년월일 추가
-            loginType = request.data.get("loginType")
-
-            randomString = string.ascii_letters + string.digits + string.punctuation
-            salt = ''.join(random.choice(randomString) for _ in range(16))
-
-            encodedPassword = salt.encode("utf-8") + password.encode("utf-8")
-            hashedPassword = hashlib.sha256(encodedPassword)
-            password = hashedPassword.hexdigest()
-
-            if loginType == "NORMAL":
-                account = self.accountService.registerAccount(
-                    loginType=loginType,
-                    roleType="NORMAL",
-                    nickname=nickname,
-                    email=email,
-                    password=password,
-                    salt=salt,
-                    gender=gender,
-                    birthyear=birthyear,
-                )
-            elif email == "Ai-View@kakao.com":
-                account = self.accountService.registerAccount(
-                    loginType=loginType,
-                    roleType="ADMIN",
-                    nickname=nickname,
-                    email=email,
-                    password=None,
-                    salt=None,
-                    gender=gender,
-                    birthyear=birthyear,
-                )
-            else:
-                account = self.accountService.registerAccount(
-                    loginType=loginType,
-                    roleType="NORMAL",
-                    nickname=nickname,
-                    email=email,
-                    password=None,
-                    salt=None,
-                    gender=gender,
-                    birthyear=birthyear,
-                )
-
-            serializer = AccountSerializer(account)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            print("계정 생성 중 에러 발생:", e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def getNickname(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-        if profile is None:
-            return Response(
-                {"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )  # 에러 처리 추가
-        nickname = profile.nickname
-        return Response(nickname, status=status.HTTP_200_OK)
-
-    # def getEmail(self, request):
-    #     userToken = request.data.get("userToken")
-    #     if not userToken:
-    #         return Response(None, status=status.HTTP_200_OK)
-    #     accountId = self.redisService.getValueByKey(userToken)
-    #     profile = self.profileRepository.findById(accountId)
-    #     if profile is None:
-    #         return Response(
-    #             {"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-    #         )  # 에러 처리 추가
-    #     email = profile.email
-    #     return Response(email, status=status.HTTP_200_OK)
-
-    def withdrawAccount(self, request):
-        try:
-            withdrawReason = request.data.get("reason")
-            print(f"reason: {withdrawReason}")
-
-            userToken = request.data.get("userToken")
-            if not userToken:
-                return Response(None, status=status.HTTP_200_OK)
-
-            accountId = self.redisService.getValueByKey(userToken)
-            account = self.accountRepository.findById(accountId)
-            if account is None:
-                return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
-
-            res = self.accountService.withdrawAccount(accountId, withdrawReason)
-            print(f"account: {account}")
-            return Response(res, status=status.HTTP_200_OK)
-        except Exception as e:
-            print("회원 탈퇴 중 에러 발생:", e)
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    def getGender(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-        if profile is None:
-            return Response(
-                {"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )  # 에러 처리 추가
-        genderId = profile.gender_id
-        profileGenderType = self.profileRepository.findGenderTypeByGenderId(genderId)
-        genderType = profileGenderType.gender_type
-        return Response(genderType, status=status.HTTP_200_OK)
-
-    def getBirthyear(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-        if profile is None:
-            return Response(
-                {"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )  # 에러 처리 추가
-        birthyear = profile.birthyear
-        return Response(birthyear, status=status.HTTP_200_OK)
-
-    def checkPassword(self, request):
-        try:
-            email = request.data.get('email')
-            password = request.data.get('password')
-            profile = Profile.objects.get(email=email)
-            salt = profile.salt
-            hashed = salt.encode('utf-8') + password.encode("utf-8")
-            hash_obj = hashlib.sha256(hashed)
-            password = hash_obj.hexdigest()
-
-            isDuplicate = self.accountService.checkPasswordDuplication(email, password)
-
-            return Response({'isDuplicate': isDuplicate, 'message': 'password가 이미 존재' \
-                if isDuplicate else 'password 사용 가능'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print("password 중복 체크 중 에러 발생:", e)
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def modifyNickname(self,request):
-        email = request.data.get('email')
-        newNickname = request.data.get('newNickname')
-
-        if not email:
-            return Response(None,status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-
-        if profile is None:
-            return Response(
-                {"error":"Profile not found"},status=status.HTTP_400_BAD_REQUEST
-            )
-        profile.nickname = newNickname
-        profile.save()
-        print(f"nickname: {profile.nickname}")
-        return Response(profile.nickname,status=status.HTTP_200_OK)
-
-    def modifyPassword(self,request):
-        email = request.data.get('email')
-        newPassword = request.data.get('newPassword')
-        profile = Profile.objects.get(email=email)
-        salt = profile.salt
-        print(salt)
-        hashed = salt.encode('utf-8') + newPassword.encode("utf-8")
-        hash_obj = hashlib.sha256(hashed)
-        newpassword1 = hash_obj.hexdigest()
-
-        if not email:
-            return Response(None,status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-
-        if profile is None:
-            return Response(
-                {"error":"Profile not found"},status=status.HTTP_400_BAD_REQUEST
-            )
-        profile.password = newpassword1
-        profile.save()
-        print(f"newPassword: {profile.password}")
-        return Response(profile.password, status=status.HTTP_200_OK)
-
-    def getAccountId(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_200_OK)
-        profile = self.profileRepository.findByEmail(email)
-        if profile is None:
-            return Response(
-                {"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )  # 에러 처리 추가
-        accountId = profile.account_id
-        return Response({"accountId" : accountId}, status=status.HTTP_200_OK)
-
-    def getRoleType(self,request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_400_BAD_REQUEST)
-        roleType = self.accountService.findRoleTypeByEmail(email)
-        return Response({'roleType':str(roleType)},status=status.HTTP_200_OK)
-
-    def getProfile(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response(None, status=status.HTTP_400_BAD_REQUEST)
-
-        profile = self.accountService.findProfileByEmail(email)
-        if profile is None:
-            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        # 필요한 필드만 반환, gender 필드를 문자열로 변환
-        profile_data = {
-            'email': profile.email,
-            'nickname': profile.nickname,
-            'gender': str(profile.gender),  # 문자열로 변환
-            'birthyear': profile.birthyear
-        }
-        return Response(profile_data, status=status.HTTP_200_OK)
-
+            print(f"JWT 생성 중 오류 발생: {str(e)}")
+            return None  # 오류 발생 시 None 반환

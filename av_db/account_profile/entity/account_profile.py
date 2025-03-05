@@ -4,8 +4,8 @@ from account_profile.entity.account_login_type import AccountLoginType
 
 class AccountProfile(models.Model):
     id = models.AutoField(primary_key=True)
-    profile_nickname = models.CharField(max_length=32, unique=True)
-    account_email = models.CharField(max_length=32, unique=True)
+    nickname = models.CharField(max_length=32, unique=True)
+    email = models.CharField(max_length=32, unique=True)
     gender = models.CharField(max_length=32, unique=True)
     age_range = models.IntegerField()
     birthyear = models.IntegerField()
@@ -21,7 +21,7 @@ class AccountProfile(models.Model):
 
 
     def __str__(self):
-        return (f"Profile -> email: {self.account_email}, nickname: {self.profile_nickname}, gender: {self.gender}, "
+        return (f"Profile -> email: {self.email}, nickname: {self.nickname}, gender: {self.gender}, "
                 f"age_range: {self.age_range}, birthyear: {self.birthyear}, loginType: {self.loginType}")
 
     class Meta:
