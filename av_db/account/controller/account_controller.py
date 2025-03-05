@@ -225,6 +225,7 @@ class AccountController(viewsets.ViewSet):
         profile.save()
         print(f"nickname: {profile.nickname}")
         return Response(profile.nickname,status=status.HTTP_200_OK)
+
     def modifyPassword(self,request):
         email = request.data.get('email')
         newPassword = request.data.get('newPassword')

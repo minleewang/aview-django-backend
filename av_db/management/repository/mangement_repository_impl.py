@@ -5,7 +5,7 @@ from account.entity.account_role_type import AccountRoleType
 from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
 from management.repository.mangement_repository import ManagementRepository
 from account_profile.entity.account_profile import AccountProfile
-from marketing.entity.models import Marketing
+from marketing.entity.marketing import Marketing
 from datetime import datetime, date, timedelta
 
 from orders.entity.orders import Orders
@@ -108,7 +108,7 @@ class ManagementRepositoryImpl(ManagementRepository):
         # userData를 딕셔너리 형태로 구성
         userData = {
             'userCount': int(userCount),  # 사용자 수
-            'accountCount': int(accountCount),  # 유일한 계정 수
+#            'accountCount': int(accountCount),  # 유일한 계정 수
             'purchaseCount': int(purchaseCount),  # 총 주문 수
             'revenueCount': int(revenueCount)  # 두 번 이상 구매한 계정 수
         }

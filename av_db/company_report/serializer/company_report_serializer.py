@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from company_report.entity.models import CompanyReport
+from company_report.entity.company_report import CompanyReport
 
 
 class CompanyReportSerializer(serializers.ModelSerializer):

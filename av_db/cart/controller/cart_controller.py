@@ -10,7 +10,7 @@ from cart.repository.cart_repository_impl import CartRepositoryImpl
 from cart.service.cart_service_impl import CartServiceImpl
 
 
-class CartView(viewsets.ViewSet):
+class CartController(viewsets.ViewSet):
     cartService = CartServiceImpl.getInstance()
     cartRepository = CartRepositoryImpl.getInstance()
     cartItemRepository = CartItemRepositoryImpl.getInstance()
@@ -24,7 +24,7 @@ class CartView(viewsets.ViewSet):
         if not email:
             return Response({'error': 'User token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        accountId = self.profileRepository.findByEmail(email)
+        accountId = self.accountProfileRepository.findByEmail(email)
         print(accountId.account_id)
         if not accountId:
             return Response({'error': 'Invalid user token'}, status=status.HTTP_400_BAD_REQUEST)
@@ -38,7 +38,7 @@ class CartView(viewsets.ViewSet):
             print('data:', data)
 
             email = data.get('email')
-            accountId = self.profileRepository.findByEmail(email)
+            accountId = self.accountProfileRepository.findByEmail(email)
 
             self.cartService.cartRegister(data, accountId.account_id)
             return Response(status=status.HTTP_200_OK)
@@ -65,7 +65,7 @@ class CartView(viewsets.ViewSet):
         email = request.data['payload']['email']
         companyReportId = request.data['payload']['companyReportId']
 
-        accountId = self.profileRepository.findByEmail(email)
+        accountId = self.accountProfileRepository.findByEmail(email)
         account = self.accountService.findAccountById(accountId.account_id)
         cart = self.cartRepository.findByAccount(account)
         cartItemList = self.cartItemRepository.findByCart(cart)

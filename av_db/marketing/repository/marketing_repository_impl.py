@@ -1,5 +1,5 @@
 from account_profile.repository.account_profile_repository_impl import AccountProfileRepositoryImpl
-from marketing.entity.models import Marketing
+from marketing.entity.marketing import Marketing
 from marketing.repository.marketing_repository import MarketingRepository
 from company_report.repository.companyReport_repository_impl import CompanyReportRepositoryImpl
 
@@ -21,7 +21,7 @@ class MarketingRepositoryImpl(MarketingRepository):
         return cls.__instance
 
     def makeCount(self, email, product_id, purchase):
-        profile = self.__profileRepository.findByEmail(email)
+        profile = self.__accountProfileRepository.findByEmail(email)
         product = self.__companyReportRepository.findByCompanyReportId(product_id)
         marketing, created = Marketing.objects.get_or_create(
             account=profile.account,

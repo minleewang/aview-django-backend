@@ -11,7 +11,7 @@ from company_report.repository.companyReport_repository_impl import CompanyRepor
 
 from datetime import datetime
 
-class OrdersView(viewsets.ViewSet):
+class OrdersController(viewsets.ViewSet):
     ordersService = OrdersServiceImpl.getInstance()
     redisService = RedisServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
@@ -26,7 +26,7 @@ class OrdersView(viewsets.ViewSet):
 
             email = data.get('email')
 
-            accountId = self.profileRepository.findByEmail(email)
+            accountId = self.accountProfileRepository.findByEmail(email)
             if not accountId:
                 raise ValueError('Invalid email')
 
@@ -48,7 +48,7 @@ class OrdersView(viewsets.ViewSet):
             print('data:', data)
 
             email = data.get('email')
-            accountId = self.profileRepository.findByEmail(email)
+            accountId = self.accountProfileRepository.findByEmail(email)
 
             if not accountId:
                 raise ValueError('Invalid email')
@@ -73,7 +73,7 @@ class OrdersView(viewsets.ViewSet):
     def myOrderList(self, request):
         email = request.data.get('email')
         print('email:', email)
-        accountId = self.profileRepository.findByEmail(email)
+        accountId = self.accountProfileRepository.findByEmail(email)
         ordersList = self.ordersService.findAllByAccountId(accountId.account_id)
         serializedOrdersList = []
 
@@ -106,7 +106,7 @@ class OrdersView(viewsets.ViewSet):
         email = request.data['payload']['email']
         companyReportId = int(request.data['payload']['companyReportId'])
 
-        accountId = self.profileRepository.findByEmail(email)
+        accountId = self.accountProfileRepository.findByEmail(email)
         ordersList = self.ordersService.findAllByAccountId(accountId.account_id)
         ordersIdList = [orders.id for orders in ordersList]
         allOrdersItemList = [self.ordersItemRepository.findAllByOrdersId(ordersId) for ordersId in ordersIdList]

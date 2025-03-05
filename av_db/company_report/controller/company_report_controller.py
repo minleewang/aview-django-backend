@@ -4,12 +4,12 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from company_report.entity.models import CompanyReport
-from company_report.serializers import CompanyReportSerializer
+from company_report.entity.company_report import CompanyReport
+from company_report.serializer.company_report_serializer import CompanyReportSerializer
 from company_report.service.companyReport_service_impl import CompanyReportServiceImpl
 
 
-class CompanyReportView(viewsets.ViewSet):
+class CompanyReportController(viewsets.ViewSet):
     queryset = CompanyReport.objects.all()
     companyReportService = CompanyReportServiceImpl.getInstance()
 
@@ -72,6 +72,7 @@ class CompanyReportView(viewsets.ViewSet):
             '2021': companyReportFinance[0],
             '2022': companyReportFinance[1],
             '2023': companyReportFinance[2],
+            '2024': companyReportFinance[3],
         }
 
         return Response(combinedFinanceData)  # JsonResponse가 자동으로 처리해줍니다.
