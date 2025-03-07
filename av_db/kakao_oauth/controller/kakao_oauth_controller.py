@@ -42,23 +42,30 @@ class KakaoOauthController(viewsets.ViewSet):
 
             with transaction.atomic():
                 userInfo = self.kakaoOauthService.requestUserInfo(accessToken)
-                nickname = userInfo.get('properties', {}).get('nickname', '')
-                email = userInfo.get('kakao_account', {}).get('email', '')
-                print(f"email: {email}, nickname: {nickname}")
+                user_id = userInfo.get('id', '')  # 사용자 ID
+                nickname = userInfo.get('properties', {}).get('nickname', '')  # 닉네임
+                email = userInfo.get('kakao_account', {}).get('email', '')  # 이메일
+                gender = userInfo.get('kakao_account', {}).get('gender', '')  # 성별
+                age_range = userInfo.get('kakao_account', {}).get('age_range', '')  # 연령대
+                birthyear = userInfo.get('kakao_account', {}).get('birthyear', '')  # 출생연도
+                # 정보 출력 (디버깅용)
+                print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")
+                print(f"gender: {gender}, age_range: {age_range}, birthyear: {birthyear}")
 
-                account = self.accountService.checkEmailDuplication(email)
-                print(f"account: {account}")
+                # 이메일 중복 확인
+                accountProfile = self.accountProfileService.checkEmailDuplication(email)
+                print(f"accountProfile: {accountProfile}")
 
-                if account is None:
-                    account = self.accountService.createAccount(email)
-                    print(f"account: {account}")
+                if accountProfile is None:
+                    accountProfile = self.accountProfileService.createAccountProfile(email)
+                    print(f"accountProfile: {accountProfile}")
 
                     accountProfile = self.accountProfileService.createAccountProfile(
-                        account.getId(), nickname
+                        accountProfile.getId()
                     )
                     print(f"accountProfile: {accountProfile}")
 
-                userToken = self.__createUserTokenWithAccessToken(account, accessToken)
+                userToken = self.__createUserTokenWithAccessToken(accountProfile, accessToken)
                 print(f"userToken: {userToken}")
 
             return JsonResponse({'userToken': userToken})
@@ -67,20 +74,29 @@ class KakaoOauthController(viewsets.ViewSet):
             return JsonResponse({'error': str(e)}, status=500)
 
     def requestUserToken(self, request):
+        global accountProfile
+
+        print(f'requestUserToken: {request.data}')
         access_token = request.data.get('access_token')  # 클라이언트에서 받은 access_token
+        user_id = request.data.get('id')# 클라이언트에서 받은 id
         email = request.data.get('email')  # 클라이언트에서 받은 email
         nickname = request.data.get('nickname')  # 클라이언트에서 받은 nickname
+        gender = request.data.get('kakao_account', {}).get('gender', '')  # 클라이언트에서 받은 성별
+        age_range = request.data.get('kakao_account', {}).get('age_range', '')  # 클라이언트에서 받은 연령대
+        birthyear = request.data.get('kakao_account', {}).get('birthyear', '')  # 클라이언트에서 받은 출생연도
+
+        print(f'is operate?')
 
         if not access_token:
             return JsonResponse({'error': 'Access token is required'}, status=400)
 
-        if not email or not nickname:
-            return JsonResponse({'error': 'Email and nickname are required'}, status=400)
+        if not user_id or not email or not nickname or not gender or not age_range or not birthyear:
+            return JsonResponse({'error': 'All user information (ID, email, nickname, gender, age_range, birthyear) is required'}, status=400)
 
         try:
             # 이메일을 기반으로 계정을 찾거나 새로 생성합니다.
-            account = self.accountService.checkEmailDuplication(email)
-            if account is None:
+            accountProfile = self.accountProfileService.checkEmailDuplication(email)
+            if accountProfile is None:
                 account = self.accountService.createAccount(email)
                 accountProfile = self.accountProfileService.createAccountProfile(
                     account.getId(), nickname
@@ -94,11 +110,11 @@ class KakaoOauthController(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    def __createUserTokenWithAccessToken(self, account, accessToken):
+    def __createUserTokenWithAccessToken(self, accountProfile, accessToken):
         try:
             userToken = str(uuid.uuid4())
-            self.redisService.storeKeyValue(account.getId(), accessToken)
-            self.redisService.storeKeyValue(userToken, account.getId())
+            self.redisService.storeKeyValue(accountProfile.getId(), accessToken)
+            self.redisService.storeKeyValue(userToken, accountProfile.getId())
 
             return userToken
 

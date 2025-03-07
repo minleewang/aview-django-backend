@@ -33,7 +33,8 @@ class AccountProfileServiceImpl(AccountProfileService):
     # 겹치면 안되는게 또 뭐가 있을까 (어떤 값이 고유해야할까) - email, nickname 이 고유값이면 될것같다. (회원 구분 가능)
     def checkEmailDuplication(self, email):
         account_profile = self.__accountProfileRepository.findByEmail(email)
-        return account_profile is not None
+        print(f"account_profile: {account_profile}")
+        return account_profile
 
     def checkNicknameDuplication(self, nickname):
         account_profile = self.__accountProfileRepository.findByNickname(nickname)

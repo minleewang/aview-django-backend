@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('kakao_oauth/', include('kakao_oauth.urls')),
+    path('kakao-oauth/', include('kakao_oauth.urls')),
     path('account/', include('account.urls')),
     path('account_profile/', include('account_profile.urls')),
     path('survey/', include('survey.urls')),

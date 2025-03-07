@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from rest_framework import viewsets
 
+from av_db import settings
+
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
 
 import requests
@@ -8,6 +10,39 @@ import requests
 
 class AccountProfileController(viewsets.ViewSet):
     account_profile_service = AccountProfileServiceImpl.getInstance()
+
+    def requestAccountProfile(self, email):
+        """
+        이메일을 기반으로 AccountProfile을 조회하고, 없으면 새로 생성
+        """
+        # 이메일을 통해 기존 프로필 조회
+        account_profile = self.account_profile_service.findProfileByEmail(email)
+
+        if account_profile is None:
+            print(f"❌ {email}에 대한 프로필이 존재하지 않음. 새로 생성합니다.")
+
+            # 가상의 기본값 설정
+            default_nickname = email.split("@")[0]  # 이메일 아이디를 기본 닉네임으로 사용
+            default_gender = None
+            default_age_range = None
+            default_birthyear = None
+            default_login_type = "UNKNOWN"
+
+            # 새 프로필 생성
+            account_profile = self.account_profile_service.createAccountProfile(
+                nickname=default_nickname,
+                email=email,
+                gender=default_gender,
+                age_range=default_age_range,
+                birthyear=default_birthyear,
+                loginType=default_login_type
+            )
+            print(f"✅ 새 AccountProfile 생성 완료: ID={account_profile.id}")
+
+        else:
+            print(f"✅ 기존 AccountProfile 찾음: ID={account_profile.id}")
+
+        return account_profile
 
     def social_login(self, request):
         """
@@ -42,9 +77,9 @@ class AccountProfileController(viewsets.ViewSet):
         외부 OAuth API를 호출하여 사용자 정보를 가져옴
         """
         url_map = {
-            "KAKAO": "https://kapi.kakao.com/v2/user/me",
-            "GOOGLE": "https://www.googleapis.com/oauth2/v2/userinfo",
-            "NAVER": "https://openapi.naver.com/v1/nid/me",
+            "KAKAO": settings.KAKAO['USER_INFO_REQUEST_URI'],
+            "GOOGLE": settings.GOOGLE['USER_INFO_REQUEST_URI'],
+            "NAVER": settings.NAVER['USER_INFO_REQUEST_URI'],
         }
 
         headers = {"Authorization": f"Bearer {token}"}
