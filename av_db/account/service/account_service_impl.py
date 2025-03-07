@@ -28,12 +28,13 @@ class AccountServiceImpl(AccountService):
 
     # Account 생성
     def createAccount(self, nickname, email, loginType):
+        print(f"createAccount()")
         # nickname, email, loginType은 account_profile의 db에서 오는 정보
         # 1) account_profile에서 사용자 정보 가져오기
         try:
             account_profile = AccountProfile.objects.get(
-                profile_nickname=nickname,
-                account_email=email,
+                nickname=nickname,
+                email=email,
                 loginType=loginType
             )
             # 2) Account 객체 생성하기 (객체생성은 .create()로 repositoryimpl에서 구현)

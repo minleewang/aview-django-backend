@@ -55,7 +55,7 @@ class AccountRepositoryImpl(AccountRepository):
         return account
 
     def findByNickname(self, nickname):
-        account = Account.objects.get(profile_nickname=nickname)
+        account = Account.objects.get(nickname=nickname)
         print(f"findByNickname result: {account}")
         return account
 

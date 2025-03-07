@@ -29,8 +29,8 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
         try:
             accountProfile = AccountProfile.objects.create(
 
-                profile_nickname=nickname,
-                account_email=email,
+                nickname=nickname,
+                email=email,
                 gender=gender,
                 age_range=age_range,
                 birthyear=birthyear,
@@ -39,7 +39,7 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
             return accountProfile
 
         except IntegrityError:
-            print(f"profile_nickname={nickname},account_email={email}, gender={gender}, age_range=age_range, birthyear={birthyear}, loginType={loginType}")
+            print(f"profile_nickname={nickname},account_email={email}, gender={gender}, age_range={age_range}, birthyear={birthyear}, loginType={loginType}")
             raise IntegrityError(f"account_profile에 정보를 저장할 수 없음")
             #raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
 
@@ -59,7 +59,8 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
 
     def findByEmail(self, email):
         try:
-            accountProfile = AccountProfile.objects.get(account_email=email)
+            accountProfile = AccountProfile.objects.get(email=email)
+            print(f"찾은 AccountProfile: {accountProfile}")  # 디버깅용 로그 추가
             return accountProfile
         except AccountProfile.DoesNotExist:
             print(f"email로 profile 찾을 수 없음: {email}")
@@ -70,7 +71,7 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
 
     def findByNickname(self, nickname):
         try:
-            accountProfile = AccountProfile.objects.get(profile_nickname=nickname)
+            accountProfile = AccountProfile.objects.get(nickname=nickname)
             return accountProfile
         except AccountProfile.DoesNotExist:
             print(f"nickname으로 profile 찾을 수 없음: {nickname}")
