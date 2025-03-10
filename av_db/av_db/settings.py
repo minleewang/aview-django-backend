@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'kakao_oauth',
 #    'naver_oauth',
-#    'google_oauth',
+   'google_oauth',
     'account',
     'account_profile',
     'survey',
