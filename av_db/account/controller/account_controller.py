@@ -1,75 +1,42 @@
 from django.http import JsonResponse
-from rest_framework import viewsets
+from django.shortcuts import render
+from rest_framework import viewsets, status
 
 from account.service.account_service_impl import AccountServiceImpl
-from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
-import jwt
-import datetime
-from django.conf import settings
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
+
 
 class AccountController(viewsets.ViewSet):
-    account_service = AccountServiceImpl.getInstance()
-    account_profile_service = AccountProfileServiceImpl.getInstance()
+    __accountService = AccountServiceImpl.getInstance()
+    redisCacheService = RedisCacheServiceImpl.getInstance()
 
-    def login(self, request):
-        """
-        AccountProfile 정보를 기반으로 Account 생성 및 로그인 처리
-        """
-        email = request.GET.get("email")
-        nickname = request.GET.get("nickname")
-        login_type = request.GET.get("loginType")
+    def requestEmail(self, request):
+        postRequest = request.data
+        userToken = postRequest.get("userToken")
 
-        if not email or not nickname or not login_type:
-            return JsonResponse({"error": "필수 정보가 누락되었습니다."}, status=400)
+        # userToken이 없으면 400 오류 반환
+        if not userToken:
+            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
 
-        # AccountProfile 조회
-        account_profile = self.account_profile_service.findProfileByEmail(email)
-
-        if not account_profile:
-            return JsonResponse({"error": "AccountProfile이 존재하지 않습니다."}, status=400)
-
-        # Account 존재 여부 확인
         try:
-            account = self.account_service.findAccountByEmail(email)
-        except:
-            # 존재하지 않으면 Account 생성
-            account = self.account_service.createAccount(
-                nickname=nickname,
-                email=email,
-                loginType=login_type
-            )
+            # Redis에서 userToken에 해당하는 accountId를 가져옴
+            accountId = self.redisCacheService.getValueByKey(userToken)
 
-        # JWT 토큰 발급
-        token = self.generate_jwt(account.id)
+            if not accountId:
+                # Redis에서 accountId를 찾지 못한 경우
+                return JsonResponse({"error": "유효한 userToken이 아닙니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
 
-        return JsonResponse({"message": "로그인 성공", "token": token})
+            # accountId를 사용하여 이메일을 찾음
+            foundEmail = self.__accountService.findEmail(accountId)
 
-    def generate_jwt(self, account_id):
-        """
-        JWT 토큰 생성 (예외 처리 포함)
-        """
-        try:
-            # ✅ 만료 시간 설정 (1일 후 만료)
-            exp_time = datetime.datetime.now() + datetime.timedelta(days=1)
+            if foundEmail is None:
+                # 이메일을 찾지 못한 경우
+                return JsonResponse({"error": "이메일을 찾을 수 없습니다", "success": False}, status=status.HTTP_404_NOT_FOUND)
 
-            payload = {
-                "account_id": account_id,
-                "exp": exp_time,  # 만료 시간
-                "iat": datetime.datetime.now()  # 발급 시간
-            }
-
-            # ✅ settings.SECRET_KEY 확인 후 JWT 생성
-            if not hasattr(settings, "SECRET_KEY") or not settings.SECRET_KEY:
-                raise ValueError("Django settings에 SECRET_KEY가 설정되지 않았습니다.")
-
-            token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-
-            # ✅ JWT가 bytes로 반환될 경우 str로 변환
-            if isinstance(token, bytes):
-                token = token.decode("utf-8")
-
-            return token
+            # 이메일을 찾았으면 200 OK 응답
+            return JsonResponse({"email": foundEmail, "success": True}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(f"JWT 생성 중 오류 발생: {str(e)}")
-            return None  # 오류 발생 시 None 반환
+            # 예외 처리
+            print(f"서버 오류 발생: {e}")
+            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

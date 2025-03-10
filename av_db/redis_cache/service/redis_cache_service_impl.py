@@ -1,16 +1,16 @@
 import redis
 from django.conf import settings
 
-from redis_service.service.redis_service import RedisService
+from redis_cache.service.redis_cache_service import RedisCacheService
 
 
-class RedisServiceImpl(RedisService):
+class RedisCacheServiceImpl(RedisCacheService):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.redis_client = redis.StrictRedis(
+            cls.__instance.redisClient = redis.StrictRedis(
                 host=settings.REDIS_HOST,
                 port=settings.REDIS_PORT,
                 password=settings.REDIS_PASSWORD,
@@ -27,21 +27,21 @@ class RedisServiceImpl(RedisService):
 
     def storeKeyValue(self, key, value):
         try:
-            self.redis_client.set(key, value)
+            self.redisClient.set(key, value)
         except Exception as e:
             print('Error storing access token in Redis:', e)
             raise e
 
     def getValueByKey(self, key):
         try:
-            return self.redis_client.get(key)
+            return self.redisClient.get(key)
         except Exception as e:
             print("redis key로 value 찾는 중 에러 발생:", e)
             raise e
 
     def deleteKey(self, key):
         try:
-            result = self.redis_client.delete(key)
+            result = self.redisClient.delete(key)
             if result == 1:
                 print(f"유저 토큰 삭제 성공: {key}")
                 return True
@@ -50,3 +50,5 @@ class RedisServiceImpl(RedisService):
         except Exception as e:
             print("redis key 삭제 중 에러 발생:", e)
             raise e
+
+
