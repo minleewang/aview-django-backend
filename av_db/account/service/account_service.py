@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class AccountService(ABC):
     @abstractmethod
-    def createAccount(self, email):
+    def createAccount(self, email, gender, birthyear, loginType):
         pass
 
     @abstractmethod
