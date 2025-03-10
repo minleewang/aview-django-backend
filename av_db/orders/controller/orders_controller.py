@@ -6,14 +6,16 @@ from account_profile.repository.account_profile_repository_impl import AccountPr
 from account.service.account_service_impl import AccountServiceImpl
 from orders.repository.orders_item_repository_impl import OrdersItemRepositoryImpl
 from orders.service.orders_service_impl import OrdersServiceImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
+
 from company_report.repository.companyReport_repository_impl import CompanyReportRepositoryImpl
 
 from datetime import datetime
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
+
 
 class OrdersController(viewsets.ViewSet):
     ordersService = OrdersServiceImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
+    redisService = RedisCacheServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     productRepository = CompanyReportRepositoryImpl.getInstance()
     accountProfileRepository = AccountProfileRepositoryImpl.getInstance()

@@ -11,14 +11,14 @@ from account.service.account_service_impl import AccountServiceImpl
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
 from kakao_oauth.serializer.kakao_oauth_access_token_serializer import KakaoOauthAccessTokenSerializer
 from kakao_oauth.service.kakao_oauth_service_impl import KakaoOauthServiceImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
 
 
 class KakaoOauthController(viewsets.ViewSet):
     kakaoOauthService = KakaoOauthServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     accountProfileService = AccountProfileServiceImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
+    redisService = RedisCacheServiceImpl.getInstance()
 
     def get_account(self):
         from account_profile.entity.account_profile import AccountProfile

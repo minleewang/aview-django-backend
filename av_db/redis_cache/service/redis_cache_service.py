@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class RedisService(ABC):
+class RedisCacheService(ABC):
     @abstractmethod
     def storeKeyValue(self, key, value):
         pass

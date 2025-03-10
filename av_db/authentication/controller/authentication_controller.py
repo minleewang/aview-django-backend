@@ -2,11 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
 
-from redis_service.service.redis_service_impl import RedisServiceImpl
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
 
 
 class AuthenticationController(viewsets.ViewSet):
-    RedisService = RedisServiceImpl.getInstance()
+    RedisService = RedisCacheServiceImpl.getInstance()
 
     def requestLogout(self, request):
         postRequest = request.data

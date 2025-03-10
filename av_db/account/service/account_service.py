@@ -2,35 +2,14 @@ from abc import ABC, abstractmethod
 
 
 class AccountService(ABC):
-
-
     @abstractmethod
-    def createAccount(self, nickname, email, loginType):
+    def createAccount(self, email):
         pass
 
     @abstractmethod
-    def findAccountById(self, accountId):
+    def checkEmailDuplication(self, email):
         pass
 
     @abstractmethod
-    def findAccountByEmail(self, email):
+    def findEmail(self, accountId):
         pass
-
-    @abstractmethod
-    def findAccountByRoleType(self, roleType):
-        pass
-
-    @abstractmethod
-    def findAccountByNickname(self, nickname):
-        pass
-
-
-
-
-    #@abstractmethod
-    #def findProfileByEmail(self,email):
-    #    pass
-
-    #@abstractmethod
-    #def withdrawAccount(self, accountId):
-    #    pass

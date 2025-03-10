@@ -1,9 +1,10 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from account.entity.account import Account
 from account.entity.account_role_type import AccountRoleType
 from account.entity.role_type import RoleType
 from account.repository.account_repository import AccountRepository
 
-from django.utils import timezone
 
 class AccountRepositoryImpl(AccountRepository):
     __instance = None
@@ -21,69 +22,34 @@ class AccountRepositoryImpl(AccountRepository):
 
         return cls.__instance
 
+    def save(self, email):
+        print(f"email: {email}")
+        defaultRoleType = AccountRoleType.objects.filter(role_type=RoleType.NORMAL).first()
 
-    # 계정(객체) 생성
-    def create(self, account_profile):
-        print(f"account_profile: {account_profile}")
-        defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.NORMAL).first()
-
+        # 만약 기본 역할이 없다면, 새로 생성
         if not defaultRoleType:
-            defaultRoleType = AccountRoleType(roleType=RoleType.NORMAL)
+            defaultRoleType = AccountRoleType(role_type=RoleType.NORMAL)
             defaultRoleType.save()
             print(f"Created new defaultRoleType: {defaultRoleType}")
         else:
-            print(f"Found existing defaultRoleType : {defaultRoleType}")
+            print(f"Found existing defaultRoleType: {defaultRoleType}")
+
         print(f"defaultRoleType: {defaultRoleType}")
 
-        account = Account.objects.create(roleType=defaultRoleType, accountProfile=account_profile)
-        print(f"account : {account}")
+        account = Account(email=email, role_type=defaultRoleType)
+        print(f"account: {account}")
 
         account.save()
         return account
 
-
-
-    # 계정 찾기
     def findById(self, accountId):
-        account = Account.objects.get(id=accountId)
-        print(f"findById result: {account}")
-        return account
+        try:
+            return Account.objects.get(id=accountId)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(f"Account ID {accountId} 존재하지 않음.")
 
     def findByEmail(self, email):
-        account = Account.objects.get(account_email=email)
-        print(f"findByEmail result: {account}")
-        return account
-
-    def findByNickname(self, nickname):
-        account = Account.objects.get(nickname=nickname)
-        print(f"findByNickname result: {account}")
-        return account
-
-    def findByRoleType(self, roleType):
-        account = Account.objects.filter(roleType=roleType)  # 결과가 여러개여서 .filter() 사용
-        print(f"findByNickname result: {account}")
-        return account
-
-
-
-
-
-
-
-
-
-    # 계정 탈퇴
-    #def withdrawAccount(self, account, withdrawReason):
-    #    role_type = AccountRoleType.objects.get(id=account.roleType_id)
-
-    #    if role_type.roleType == "NORMAL":
-    #        role_type.roleType = "BLACKLIST"
-    #        role_type.save()
-
-    #        account.roleType = role_type
-    #        account.withdraw_reason = withdrawReason
-    #        account.withdraw_at = timezone.now()
-    #        account.save()
-    #        print('계정 탈퇴 완료')
-    #    else:
-    #        raise ValueError('이미 탈퇴된 계정입니다')
+        try:
+            return Account.objects.get(email=email)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(f"Account {email} 존재하지 않음.")

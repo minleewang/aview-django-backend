@@ -11,12 +11,12 @@ from account.service.account_service_impl import AccountServiceImpl
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
 from google_oauth.serializers.google_oauth_access_token_serializer import GoogleOauthAccessTokenSerializer
 from google_oauth.service.google_oauth_service_impl import GoogleOauthServiceImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
 
 
 class GoogleOauthController(viewsets.ViewSet):
     googleOauthService = GoogleOauthServiceImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
+    redisService = RedisCacheServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     accountProfileService = AccountProfileServiceImpl.getInstance()
 
