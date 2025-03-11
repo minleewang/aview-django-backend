@@ -22,8 +22,8 @@ class AccountServiceImpl(AccountService):
 
         return cls.__instance
 
-    def createAccount(self, email, gender, birthyear, loginType):
-        return self.__accountRepository.save(email, gender, birthyear, loginType)
+    def createAccount(self, email, gender, age_range, birthyear, loginType):
+        return self.__accountRepository.save(email, gender, age_range, birthyear, loginType)
 
 
 

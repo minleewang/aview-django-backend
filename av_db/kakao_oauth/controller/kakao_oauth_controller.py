@@ -48,24 +48,28 @@ class KakaoOauthController(viewsets.ViewSet):
                 gender = userInfo.get('kakao_account', {}).get('gender', '')  # 성별
                 age_range = userInfo.get('kakao_account', {}).get('age_range', '')  # 연령대
                 birthyear = userInfo.get('kakao_account', {}).get('birthyear', '')  # 출생연도
+                loginType='KAKAO'
                 # 정보 출력 (디버깅용)
                 print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")
                 print(f"gender: {gender}, age_range: {age_range}, birthyear: {birthyear}")
 
                 # 이메일 중복 확인
-                accountProfile = self.accountProfileService.checkEmailDuplication(email)
-                print(f"accountProfile: {accountProfile}")
+                #accountProfile = self.accountProfileService.checkEmailDuplication(email)
+                account = self.accountService.checkEmailDuplication(email)
+                print(f"account: {account}")
 
-                if accountProfile is None:
-                    accountProfile = self.accountProfileService.createAccountProfile(email)
-                    print(f"accountProfile: {accountProfile}")
+                if account is None:
+                    print("다음")
+
+                    account = self.accountService.createAccount(email, gender, age_range, birthyear, loginType)
+                    print(f"accountProfile: {account}")
 
                     accountProfile = self.accountProfileService.createAccountProfile(
-                        accountProfile.getId()
+                        account.getId(), nickname
                     )
                     print(f"accountProfile: {accountProfile}")
 
-                userToken = self.__createUserTokenWithAccessToken(accountProfile, accessToken)
+                userToken = self.__createUserTokenWithAccessToken(account, accessToken)
                 print(f"userToken: {userToken}")
 
             return JsonResponse({'userToken': userToken})

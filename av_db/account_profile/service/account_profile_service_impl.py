@@ -23,6 +23,7 @@ class AccountProfileServiceImpl(AccountProfileService):
         return cls.__instance
 
     def createAccountProfile(self, accountId, nickname):
+        print("profile 진입")
         if not nickname:
             nickname = "temporary"
 
