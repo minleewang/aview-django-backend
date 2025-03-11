@@ -1,25 +1,25 @@
 from account.repository.account_repository_impl import AccountRepositoryImpl
-from review.repository.review_answer_repository_impl import reviewAnswerRepositoryImpl
-from review.repository.review_description_repository_impl import reviewDescriptionRepositoryImpl
-from review.repository.review_question_repository_impl import reviewQuestionRepositoryImpl
-from review.repository.review_repository_impl import reviewRepositoryImpl
-from review.repository.review_selection_repository_impl import reviewSelectionRepositoryImpl
-from review.repository.review_title_repository_impl import reviewTitleRepositoryImpl
-from review.service.review_service import reviewService
+from review.repository.review_answer_repository_impl import ReviewAnswerRepositoryImpl
+from review.repository.review_description_repository_impl import ReviewDescriptionRepositoryImpl
+from review.repository.review_question_repository_impl import ReviewQuestionRepositoryImpl
+from review.repository.review_repository_impl import ReviewRepositoryImpl
+from review.repository.review_selection_repository_impl import ReviewSelectionRepositoryImpl
+from review.repository.review_title_repository_impl import ReviewTitleRepositoryImpl
+from review.service.review_service import ReviewService
 
 
-class ReviewServiceImpl(reviewService):
+class ReviewServiceImpl(ReviewService):
     __instance = None
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             # cls.__instance.__reviewDocumentRepository = reviewDocumentRepositoryImpl.getInstance()
-            cls.__instance.__reviewRepository = reviewRepositoryImpl.getInstance()
-            cls.__instance.__reviewTitleRepository = reviewTitleRepositoryImpl.getInstance()
-            cls.__instance.__reviewDescriptionRepository = reviewDescriptionRepositoryImpl.getInstance()
-            cls.__instance.__reviewQuestionRepository = reviewQuestionRepositoryImpl.getInstance()
-            cls.__instance.__reviewSelectionRepository = reviewSelectionRepositoryImpl.getInstance()
-            cls.__instance.__reviewAnswerRepository = reviewAnswerRepositoryImpl.getInstance()
+            cls.__instance.__reviewRepository = ReviewRepositoryImpl.getInstance()
+            cls.__instance.__reviewTitleRepository = ReviewTitleRepositoryImpl.getInstance()
+            cls.__instance.__reviewDescriptionRepository = ReviewDescriptionRepositoryImpl.getInstance()
+            cls.__instance.__reviewQuestionRepository = ReviewQuestionRepositoryImpl.getInstance()
+            cls.__instance.__reviewSelectionRepository = ReviewSelectionRepositoryImpl.getInstance()
+            cls.__instance.__reviewAnswerRepository = ReviewAnswerRepositoryImpl.getInstance()
             cls.__instance.__accountRepository = AccountRepositoryImpl().getInstance()
 
 
@@ -36,12 +36,12 @@ class ReviewServiceImpl(reviewService):
         recentId = self.__reviewRepository.getMaxId()
         return recentId
 
-    def createreviewForm(self, randomString):
+    def createReviewForm(self, randomString):
         maxId = self.__reviewRepository.getMaxId()
         self.__reviewRepository.registerreview(randomString)
         return maxId + 1
 
-    def getreviewByreviewId(self, reviewId):
+    def getReviewByReviewId(self, reviewId):
         review = self.__reviewRepository.findreview(reviewId)
         return review
 
@@ -77,7 +77,7 @@ class ReviewServiceImpl(reviewService):
             print('설문 선택 항목 저장 중 오류 발생 : ', e)
             return False
 
-    def getreviewList(self):
+    def getReviewList(self):
         return self.__reviewTitleRepository.getAllTitles()
 
     def getRandomStringList(self):
@@ -125,7 +125,7 @@ class ReviewServiceImpl(reviewService):
         except Exception as e:
             print('답변 저장중 오류 발생: ', {e})
 
-    def getreviewIdByRandomString(self, randomString):
+    def getReviewIdByRandomString(self, randomString):
         return self.__reviewRepository.findreviewIdByRandomString(randomString)
 
     def getRandomstringByreviewId(self,reviewId):

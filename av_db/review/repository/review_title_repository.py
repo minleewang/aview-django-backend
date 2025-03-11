@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
 
-class SurveyTitleRepository(ABC):
+class ReviewTitleRepository(ABC):
     @abstractmethod
-    def registerTitle(self, survey, surveyTitle):
+    def registerTitle(self, review, reviewTitle):
         pass
 
     @abstractmethod
@@ -11,6 +11,6 @@ class SurveyTitleRepository(ABC):
         pass
 
     @abstractmethod
-    def getTitleBySurveyId(self, surveyId):
+    def getTitleByReviewId(self, reviewId):
         pass
 

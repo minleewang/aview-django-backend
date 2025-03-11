@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
 
-class SurveyDescriptionRepository(ABC):
+class ReviewDescriptionRepository(ABC):
     @abstractmethod
-    def registerDescription(self, survey, surveyDescription):
+    def registerDescription(self, review, reviewDescription):
         pass
 
     @abstractmethod
-    def getDescriptionBySurveyId(self, surveyId):
+    def getDescriptionByReviewId(self, reviewId):
         pass
 

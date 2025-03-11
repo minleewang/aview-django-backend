@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 
 class ReviewService(ABC):
     @abstractmethod
-    def createSurveyForm(self, randomString):
+    def createReviewForm(self, randomString):
         pass
 
     @abstractmethod
-    def getSurveyBySurveyId(self, surveyId):
+    def getReviewByReviewId(self, reviewId):
         pass
 
     @abstractmethod
@@ -15,11 +15,11 @@ class ReviewService(ABC):
         pass
 
     @abstractmethod
-    def registerTitleDescription(self, survey, surveyTitle, surveyDescription):
+    def registerTitleDescription(self, review, reviewTitle, reviewDescription):
         pass
 
     @abstractmethod
-    def registerQuestion(self, survey, questionTitle, questionType, essential, images):
+    def registerQuestion(self, review, questionTitle, questionType, essential, images):
         pass
 
     @abstractmethod
@@ -27,7 +27,7 @@ class ReviewService(ABC):
         pass
 
     @abstractmethod
-    def getSurveyList(self):
+    def getReviewList(self):
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class ReviewService(ABC):
         pass
 
     @abstractmethod
-    def getServeyById(self, surveyId):
+    def getServeyById(self, reviewId):
         pass
 
     @abstractmethod
@@ -43,11 +43,11 @@ class ReviewService(ABC):
         pass
 
     @abstractmethod
-    def getSurveyIdByRandomString(self, randomString):
+    def getReviewIdByRandomString(self, randomString):
         pass
 
     @abstractmethod
-    def getResultById(self, surveyId):
+    def getResultById(self, reviewId):
         pass
 
     @abstractmethod

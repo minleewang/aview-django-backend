@@ -4,7 +4,7 @@ from account.entity.account import Account
 from review.entity.review_question import ReviewQuestion
 from review.entity.review_selection import ReviewSelection
 
-class SurveyAnswer(models.Model):
+class ReviewAnswer(models.Model):
     id = models.AutoField(primary_key=True)
     answer = models.CharField(max_length=128, null=True, unique=False)
     survey_selection_id = models.ForeignKey(ReviewSelection, on_delete=models.CASCADE, db_column='survey_selection_id', null=True)

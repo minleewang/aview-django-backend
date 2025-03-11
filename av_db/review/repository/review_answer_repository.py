@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class SurveyAnswerRepository(ABC):
+class ReviewAnswerRepository(ABC):
 
     @abstractmethod
     def saveTextAnswer(self, question, answer, account):
