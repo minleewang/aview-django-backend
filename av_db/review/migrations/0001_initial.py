@@ -17,10 +17,10 @@ class Migration(migrations.Migration):
             name="Survey",
             fields=[
                 ("id", models.AutoField(primary_key=True, serialize=False)),
-                ("survey", models.CharField(max_length=128)),
+                ("review", models.CharField(max_length=128)),
             ],
             options={
-                "db_table": "survey",
+                "db_table": "review",
             },
         ),
         migrations.CreateModel(
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                     models.OneToOneField(
                         db_column="survey_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.survey",
+                        to="review.review",
                     ),
                 ),
             ],
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="survey_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.survey",
+                        to="review.review",
                     ),
                 ),
             ],
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="question_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.surveyquestion",
+                        to="review.surveyquestion",
                     ),
                 ),
             ],
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="survey_question_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.surveyquestion",
+                        to="review.surveyquestion",
                     ),
                 ),
             ],
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="survey_question_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.surveyquestion",
+                        to="review.surveyquestion",
                     ),
                 ),
                 (
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                         db_column="survey_selection_id",
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.surveyselection",
+                        to="review.surveyselection",
                     ),
                 ),
             ],
@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="survey_id",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="survey.survey",
+                        to="review.review",
                     ),
                 ),
             ],

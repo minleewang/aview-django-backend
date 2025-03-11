@@ -22,7 +22,7 @@ urlpatterns = [
     path('kakao-oauth/', include('kakao_oauth.urls')),
     path('account/', include('account.urls')),
     path('account_profile/', include('account_profile.urls')),
-    path('survey/', include('survey.urls')),
+    path('review/', include('review.urls')),
    path('google_oauth/', include('google_oauth.urls')),
 #    path('naver_oauth/', include('naver_oauth.urls')),
     path('company_report/',include('company_report.urls')),

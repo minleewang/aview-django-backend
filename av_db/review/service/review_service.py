@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class SurveyService(ABC):
+class ReviewService(ABC):
     @abstractmethod
     def createSurveyForm(self, randomString):
         pass

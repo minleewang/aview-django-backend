@@ -1,5 +1,5 @@
-from survey.entity.survey import Survey
-from survey.repository.survey_repository import SurveyRepository
+from review.entity.review import Survey
+from review.repository.review_repository import SurveyRepository
 
 
 class SurveyRepositoryImpl(SurveyRepository):
