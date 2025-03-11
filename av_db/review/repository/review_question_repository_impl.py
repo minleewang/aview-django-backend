@@ -1,10 +1,10 @@
 import os
 
-from review.entity.review_image import SurveyImage
-from review.entity.review_question import SurveyQuestion
-from review.repository.review_question_repository import SurveyQuestionRepository
+from review.entity.review_image import ReviewImage
+from review.entity.review_question import ReviewQuestion
+from review.repository.review_question_repository import ReviewQuestionRepository
 
-class SurveyQuestionRepositoryImpl(SurveyQuestionRepository):
+class ReviewQuestionRepositoryImpl(ReviewQuestionRepository):
     __instance = None
 
     def __new__(cls):
@@ -20,14 +20,14 @@ class SurveyQuestionRepositoryImpl(SurveyQuestionRepository):
 
         return cls.__instance
 
-    def registerQuestion(self, survey, questionTitle, questionType, essential, images):
+    def registerQuestion(self, review, questionTitle, questionType, essential, images):
         try:
-            SurveyQuestion.objects.create(survey_id=survey, question=questionTitle,
+            ReviewQuestion.objects.create(review_id=review, question=questionTitle,
                                           question_type=questionType, essential=essential)
-            questionId = SurveyQuestion.objects.get(survey_id=survey, question=questionTitle, question_type=questionType, essential=essential)
+            questionId = ReviewQuestion.objects.get(review_id=review, question=questionTitle, question_type=questionType, essential=essential)
             # if len(images) !=0:
             #     for image in images:
-            #         SurveyImage.objects.create(question_id=questionId, image=image.name)
+            #         ReviewImage.objects.create(question_id=questionId, image=image.name)
             #         uploadDirectory = '..\\..\\aview-nuxt-frontend\\src\\assets\\images\\uploadimages'
             #         imagePath = os.path.join(uploadDirectory, image.name)
             #         with open(imagePath, 'wb+') as destination:
@@ -42,15 +42,15 @@ class SurveyQuestionRepositoryImpl(SurveyQuestionRepository):
             return False
 
     def findQuestion(self, questionId):
-        question = SurveyQuestion.objects.get(id=questionId)
+        question = ReviewQuestion.objects.get(id=questionId)
         return question
 
-    def getQuestionsBySurveyId(self, surveyId):
-        questions = SurveyQuestion.objects.filter(survey_id=surveyId)
+    def getQuestionsByReviewId(self, reviewId):
+        questions = ReviewQuestion.objects.filter(review_id=reviewId)
         questionList = questions.order_by('id').values_list('id', 'question', 'question_type', 'essential')
         images = []
         for question in questions:
-            questionImage = SurveyImage.objects.filter(question_id=question).order_by('id').values_list('question_id', 'image')
+            questionImage = ReviewImage.objects.filter(question_id=question).order_by('id').values_list('question_id', 'image')
             images.append(questionImage)
 
         questionImageList = [item for queryset in images for item in queryset]

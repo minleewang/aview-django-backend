@@ -1,8 +1,8 @@
-from review.entity.review import Survey
-from review.repository.review_repository import SurveyRepository
+from review.entity.review import Review
+from review.repository.review_repository import ReviewRepository
 
 
-class SurveyRepositoryImpl(SurveyRepository):
+class ReviewRepositoryImpl(ReviewRepository):
     __instance = None
 
     def __new__(cls):
@@ -19,28 +19,28 @@ class SurveyRepositoryImpl(SurveyRepository):
         return cls.__instance
 
     def getMaxId(self):
-        survey = Survey.objects.all()
-        surveyMaxId = len(survey)
-        return surveyMaxId
+        review = Review.objects.all()
+        reviewMaxId = len(review)
+        return reviewMaxId
 
-    def registerSurvey(self, randomString):
-        Survey.objects.create(survey=randomString)
+    def registerReview(self, randomString):
+        Review.objects.create(review=randomString)
 
-    def findSurvey(self, surveyId):
-        survey = Survey.objects.get(id=surveyId)
-        return survey
+    def findReview(self, reviewId):
+        review = Review.objects.get(id=reviewId)
+        return review
 
     def getAllRandomString(self):
-        allSurvey = Survey.objects.all()
-        randomStringList = [{'randomString': survey.survey } for survey in allSurvey]
+        allReview = Review.objects.all()
+        randomStringList = [{'randomString': review.review } for review in allReview]
         return randomStringList
 
-    def findSurveyIdByRandomString(self, randomString):
-        survey = Survey.objects.get(survey=randomString)
-        return survey.id
-    def findRandomStringBySurveyId(self, surveyId):
-        survey = Survey.objects.get(id=surveyId)
-        return survey.survey
+    def findReviewIdByRandomString(self, randomString):
+        review = Review.objects.get(review=randomString)
+        return review.id
+    def findRandomStringByReviewId(self, reviewId):
+        review = Review.objects.get(id=reviewId)
+        return review.review
 
 
 

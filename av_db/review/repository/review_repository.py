@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 
 
-class SurveyRepository(ABC):
+class ReviewRepository(ABC):
     @abstractmethod
     def getMaxId(self):
         pass
 
     @abstractmethod
-    def registerSurvey(self, surveyId):
+    def registerReview(self, reviewId):
         pass
 
     @abstractmethod
-    def findSurvey(self, surveyId):
+    def findReview(self, reviewId):
         pass
 
     @abstractmethod
@@ -19,9 +19,9 @@ class SurveyRepository(ABC):
         pass
 
     @abstractmethod
-    def findSurveyIdByRandomString(self, randomString):
+    def findReviewIdByRandomString(self, randomString):
         pass
 
     @abstractmethod
-    def findRandomStringBySurveyId(self, surveyId):
+    def findRandomStringByReviewId(self, reviewId):
         pass

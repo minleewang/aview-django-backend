@@ -1,7 +1,7 @@
-from review.entity.review_title import SurveyTitle
-from review.repository.review_title_repository import SurveyTitleRepository
+from review.entity.review_title import ReviewTitle
+from review.repository.review_title_repository import ReviewTitleRepository
 
-class SurveyTitleRepositoryImpl(SurveyTitleRepository):
+class ReviewTitleRepositoryImpl(ReviewTitleRepository):
     __instance = None
 
     def __new__(cls):
@@ -17,9 +17,9 @@ class SurveyTitleRepositoryImpl(SurveyTitleRepository):
 
         return cls.__instance
 
-    def registerTitle(self, survey, surveyTitle):
+    def registerTitle(self, review, reviewTitle):
         try:
-            SurveyTitle.objects.create(survey_id=survey, title=surveyTitle)
+            ReviewTitle.objects.create(review_id=review, title=reviewTitle)
             return True
 
         except Exception as e:
@@ -27,14 +27,14 @@ class SurveyTitleRepositoryImpl(SurveyTitleRepository):
             return False
 
     def getAllTitles(self):
-        surveyTitleAll = SurveyTitle.objects.all().order_by('survey_id')
-        surveyTitleList = [{'surveyId': survey.survey_id.id, 'surveyTitle': survey.title} for survey in surveyTitleAll]
-        return surveyTitleList
+        reviewTitleAll = ReviewTitle.objects.all().order_by('review_id')
+        reviewTitleList = [{'reviewId': review.review_id.id, 'reviewTitle': review.title} for review in reviewTitleAll]
+        return reviewTitleList
 
-    def getTitleBySurveyId(self, surveyId):
-        surveyTitle = SurveyTitle.objects.get(survey_id=surveyId)
+    def getTitleByReviewId(self, reviewId):
+        reviewTitle = ReviewTitle.objects.get(review_id=reviewId)
 
-        return surveyTitle.title
+        return reviewTitle.title
 
 
 

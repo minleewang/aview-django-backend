@@ -1,8 +1,8 @@
-from review.entity.review_description import SurveyDescription
-from review.repository.review_description_repository import SurveyDescriptionRepository
+from review.entity.review_description import ReviewDescription
+from review.repository.review_description_repository import ReviewDescriptionRepository
 
 
-class SurveyDescriptionRepositoryImpl(SurveyDescriptionRepository):
+class ReviewDescriptionRepositoryImpl(ReviewDescriptionRepository):
     __instance = None
 
     def __new__(cls):
@@ -18,17 +18,17 @@ class SurveyDescriptionRepositoryImpl(SurveyDescriptionRepository):
 
         return cls.__instance
 
-    def registerDescription(self, survey, surveyDescription):
+    def registerDescription(self, review, reviewDescription):
         try:
-            SurveyDescription.objects.create(survey_id=survey, description=surveyDescription)
+            ReviewDescription.objects.create(review_id=review, description=reviewDescription)
             return True
 
         except Exception as e:
             print('Description 저장 중 오류 발생 : ', e)
             return False
 
-    def getDescriptionBySurveyId(self, surveyId):
-        description = SurveyDescription.objects.get(survey_id=surveyId)
+    def getDescriptionByReviewId(self, reviewId):
+        description = ReviewDescription.objects.get(review_id=reviewId)
         return description.description
 
 
