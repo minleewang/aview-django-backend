@@ -89,7 +89,7 @@ class KakaoOauthController(viewsets.ViewSet):
         age_range = request.data.get('kakao_account', {}).get('age_range', '')  # 클라이언트에서 받은 연령대
         birthyear = request.data.get('kakao_account', {}).get('birthyear', '')  # 클라이언트에서 받은 출생연도
 
-        print(f'is operate?')
+        print('is operate?')
 
         if not access_token:
             return JsonResponse({'error': 'Access token is required'}, status=400)
@@ -114,11 +114,11 @@ class KakaoOauthController(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    def __createUserTokenWithAccessToken(self, accountProfile, accessToken):
+    def __createUserTokenWithAccessToken(self, account, accessToken):
         try:
             userToken = str(uuid.uuid4())
-            self.redisService.storeKeyValue(accountProfile.getId(), accessToken)
-            self.redisService.storeKeyValue(userToken, accountProfile.getId())
+            self.redisService.storeKeyValue(account.getId(), accessToken)
+            self.redisService.storeKeyValue(userToken, account.getId())
 
             return userToken
 
@@ -126,12 +126,12 @@ class KakaoOauthController(viewsets.ViewSet):
             print('Redis에 토큰 저장 중 에러:', e)
             raise RuntimeError('Redis에 토큰 저장 중 에러')
 
-    def dropRedisTokenForLogout(self, request):
-        try:
-            userToken = request.data.get('userToken')
-            isSuccess = self.redisService.deleteKey(userToken)
+    #def dropRedisTokenForLogout(self, request):
+     #   try:
+      #      userToken = request.data.get('userToken')
+       #     isSuccess = self.redisService.deleteKey(userToken)
 
-            return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(f'레디스 토큰 해제 중 에러 발생:', e)
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#            return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
+ #       except Exception as e:
+  #          print(f'레디스 토큰 해제 중 에러 발생:', e)
+   #         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

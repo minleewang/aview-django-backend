@@ -51,7 +51,7 @@ INSTALLED_APPS = [
    'google_oauth',
     'account',
     'account_profile',
-    'survey',
+    'review',
     'company_report',
     'cart',
     'orders',

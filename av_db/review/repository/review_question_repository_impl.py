@@ -1,8 +1,8 @@
 import os
 
-from survey.entity.survey_image import SurveyImage
-from survey.entity.survey_question import SurveyQuestion
-from survey.repository.survey_question_repository import SurveyQuestionRepository
+from review.entity.review_image import SurveyImage
+from review.entity.review_question import SurveyQuestion
+from review.repository.review_question_repository import SurveyQuestionRepository
 
 class SurveyQuestionRepositoryImpl(SurveyQuestionRepository):
     __instance = None

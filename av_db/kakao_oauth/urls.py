@@ -17,6 +17,6 @@ urlpatterns = [
     path('request-user-token',
          KakaoOauthController.as_view({ 'post': 'requestUserToken' }),
          name='User Token 요청'),
-    path('logout', KakaoOauthController.as_view({'post': 'dropRedisTokenForLogout'}),
-        name='drop-redis_service-token-for-logout'),
+    #path('logout', KakaoOauthController.as_view({'post': 'dropRedisTokenForLogout'}),
+     #   name='drop-redis_service-token-for-logout'),
 ]

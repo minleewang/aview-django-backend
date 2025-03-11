@@ -1,7 +1,7 @@
 from collections import Counter
 
-from survey.entity.survey_answer import SurveyAnswer
-from survey.repository.survey_answer_repository import SurveyAnswerRepository
+from review.entity.review_answer import SurveyAnswer
+from review.repository.review_answer_repository import SurveyAnswerRepository
 
 class SurveyAnswerRepositoryImpl(SurveyAnswerRepository):
     __instance = None

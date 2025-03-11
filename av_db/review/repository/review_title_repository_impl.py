@@ -1,5 +1,5 @@
-from survey.entity.survey_title import SurveyTitle
-from survey.repository.survey_title_repository import SurveyTitleRepository
+from review.entity.review_title import SurveyTitle
+from review.repository.review_title_repository import SurveyTitleRepository
 
 class SurveyTitleRepositoryImpl(SurveyTitleRepository):
     __instance = None
