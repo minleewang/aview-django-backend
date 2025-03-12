@@ -18,8 +18,8 @@ jobs:
 
     - name: Download wait-for-it.sh
       run: |
-        curl -o db_mp/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-        chmod +x db_mp/wait-for-it.sh
+        curl -o av_db/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+        chmod +x av_db/wait-for-it.sh
 
     - name: Setup Python
       uses: actions/setup-python@v2
@@ -40,8 +40,8 @@ jobs:
         fi
     - name: Grant execute permission for scripts
       run: |
-        chmod +x db_mp/wait-for-it.sh
-        chmod +x db_mp/manage.py
+        chmod +x av_db/wait-for-it.sh
+        chmod +x av_db/manage.py
     
     - name: Configure Docker
       uses: docker/setup-buildx-action@v1
@@ -59,7 +59,7 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        cd db_mp
+        cd av_db
         docker buildx build --no-cache --platform linux/arm64 -f Dockerfile -t ${{ env.DOCKER_IMAGE }} --push .
 
   deploy:
@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "ready for deploy"
 
-          cd /home/ec2-user/mashed_potato/django/backend
+          cd /home/ec2-user/jobstick/django/backend
           docker-compose down
 
           echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
