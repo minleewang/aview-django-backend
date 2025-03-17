@@ -22,10 +22,11 @@ class AccountServiceImpl(AccountService):
 
         return cls.__instance
 
-    def createAccount(self, email, gender, age_range, birthyear, loginType):
-        return self.__accountRepository.save(email, gender, age_range, birthyear, loginType)
+    def createAccount(self, email, roleType, loginType):
+        return self.__accountRepository.save(email, roleType, loginType)
 
-
+    def createAdminAccount(self, email):
+        return self.__accountRepository.saveAdmin(email)
 
     def checkEmailDuplication(self, email):
         try:
@@ -33,7 +34,6 @@ class AccountServiceImpl(AccountService):
 
         except ObjectDoesNotExist:
             return None
-
 
     def findEmail(self, accountId):
         try:
@@ -44,3 +44,6 @@ class AccountServiceImpl(AccountService):
 
         except ObjectDoesNotExist:
             return None
+
+    def withdraw(self, accountId: int) -> bool:
+        return self.__accountRepository.deleteAccount(accountId)

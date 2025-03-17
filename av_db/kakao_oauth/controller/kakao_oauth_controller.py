@@ -2,7 +2,6 @@ import uuid
 
 from django.db import transaction
 from django.http import JsonResponse
-from rest_framework.response import Response
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.status import HTTP_200_OK
@@ -18,7 +17,7 @@ class KakaoOauthController(viewsets.ViewSet):
     kakaoOauthService = KakaoOauthServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     accountProfileService = AccountProfileServiceImpl.getInstance()
-    redisService = RedisCacheServiceImpl.getInstance()
+    redisCacheService = RedisCacheServiceImpl.getInstance()
 
     def get_account(self):
         from account_profile.entity.account_profile import AccountProfile
@@ -29,7 +28,7 @@ class KakaoOauthController(viewsets.ViewSet):
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
-    def requestAccessToken(self, request):
+    def requestAccessToken(self, request, roleType=None):
         serializer = KakaoOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
@@ -54,18 +53,15 @@ class KakaoOauthController(viewsets.ViewSet):
                 print(f"gender: {gender}, age_range: {age_range}, birthyear: {birthyear}")
 
                 # 이메일 중복 확인
-                #accountProfile = self.accountProfileService.checkEmailDuplication(email)
                 account = self.accountService.checkEmailDuplication(email)
                 print(f"account: {account}")
 
                 if account is None:
-                    print("다음")
-
-                    account = self.accountService.createAccount(email, gender, age_range, birthyear, loginType)
+                    account = self.accountService.createAccount(email, roleType, loginType)
                     print(f"accountProfile: {account}")
 
                     accountProfile = self.accountProfileService.createAccountProfile(
-                        account.getId(), nickname
+                        account.getId(), nickname, gender, birthyear, age_range
                     )
                     print(f"accountProfile: {accountProfile}")
 
@@ -77,10 +73,7 @@ class KakaoOauthController(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    def requestUserToken(self, request):
-        global accountProfile
-
-        print(f'requestUserToken: {request.data}')
+    def requestUserToken(self, request, roleType=None, loginType=None):
         access_token = request.data.get('access_token')  # 클라이언트에서 받은 access_token
         user_id = request.data.get('id')# 클라이언트에서 받은 id
         email = request.data.get('email')  # 클라이언트에서 받은 email
@@ -99,13 +92,17 @@ class KakaoOauthController(viewsets.ViewSet):
 
         try:
             # 이메일을 기반으로 계정을 찾거나 새로 생성합니다.
-            accountProfile = self.accountProfileService.checkEmailDuplication(email)
-            if accountProfile is None:
-                account = self.accountService.createAccount(email)
+            print('acquire data!')
+            account = self.accountService.checkEmailDuplication(email)
+            print(f'account: {account}')
+            if account is None:
+                print("There are no account!")
+                account = self.accountService.createAccount(self, email, roleType, loginType)
                 accountProfile = self.accountProfileService.createAccountProfile(
-                    account.getId(), nickname
+                    account.getId(), nickname, gender, birthyear, age_range
                 )
 
+            print("ready to create userToken")
             # 사용자 토큰 생성 및 Redis에 저장
             userToken = self.__createUserTokenWithAccessToken(account, access_token)
 
@@ -117,8 +114,11 @@ class KakaoOauthController(viewsets.ViewSet):
     def __createUserTokenWithAccessToken(self, account, accessToken):
         try:
             userToken = str(uuid.uuid4())
-            self.redisService.storeKeyValue(account.getId(), accessToken)
-            self.redisService.storeKeyValue(userToken, account.getId())
+            self.redisCacheService.storeKeyValue(account.getId(), accessToken)
+            self.redisCacheService.storeKeyValue(userToken, account.getId())
+
+            if not account or not account.getId():
+                raise ValueError("Invalid account ID")
 
             return userToken
 

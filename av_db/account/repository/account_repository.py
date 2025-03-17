@@ -4,7 +4,11 @@ from abc import ABC, abstractmethod
 class AccountRepository(ABC):
 
     @abstractmethod
-    def save(self, email, gender, age_range, birthyear, loginType):
+    def save(self, email, roleType, loginType):
+        pass
+
+    @abstractmethod
+    def saveAdmin(self, email):
         pass
 
     @abstractmethod
@@ -13,4 +17,8 @@ class AccountRepository(ABC):
 
     @abstractmethod
     def findByEmail(self, email):
+        pass
+
+    @abstractmethod
+    def deleteAccount(self, accountId: int) -> bool:
         pass

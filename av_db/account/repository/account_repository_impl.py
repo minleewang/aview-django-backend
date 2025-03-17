@@ -24,12 +24,10 @@ class AccountRepositoryImpl(AccountRepository):
 
         return cls.__instance
 
-    def save(self, email, gender, age_range, birthyear, loginType):
-        print("진입")
+    def save(self, email, roleType, loginType):
         print(f"email: {email}")
         defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.NORMAL).first()
         loginTypeInstance, created = AccountLoginType.objects.get_or_create(loginType=loginType)
-
 
         # 만약 기본 역할이 없다면, 새로 생성
         if not defaultRoleType:
@@ -45,9 +43,6 @@ class AccountRepositoryImpl(AccountRepository):
             account = Account.objects.create(
 
                 email=email,
-                gender=gender,
-                age_range=age_range,
-                birthyear=birthyear,
                 loginType=loginTypeInstance,
                 roleType=defaultRoleType,
             )
@@ -57,12 +52,32 @@ class AccountRepositoryImpl(AccountRepository):
         except IntegrityError as e:
 
             print(
-                f"email={email}, gender={gender}, age_range={age_range}, birthyear={birthyear}, loginType={loginType}")
+                f"email={email}, roleType={roleType}, loginType={loginType}")
 
             print(f"에러 내용: {e}")
 
             return None
             # raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
+
+    def saveAdmin(self, email):
+        print(f"email: {email}")
+        defaultRoleType = AccountRoleType.objects.filter(role_type=RoleType.ADMIN).first()
+
+        # 만약 기본 역할이 없다면, 새로 생성
+        if not defaultRoleType:
+            defaultRoleType = AccountRoleType(role_type=RoleType.ADMIN)
+            defaultRoleType.save()
+            print(f"Created new defaultRoleType: {defaultRoleType}")
+        else:
+            print(f"Found existing defaultRoleType: {defaultRoleType}")
+
+        print(f"defaultRoleType: {defaultRoleType}")
+
+        account = Account(email=email, role_type=defaultRoleType)
+        print(f"account: {account}")
+
+        account.save()
+        return account
 
     def findById(self, accountId):
         try:
@@ -76,3 +91,11 @@ class AccountRepositoryImpl(AccountRepository):
             return Account.objects.get(email=email)
         except ObjectDoesNotExist:
             return None
+
+    def deleteAccount(self, accountId: int) -> bool:
+        try:
+            account = Account.objects.get(id=accountId)
+            account.delete()
+            return True
+        except Account.DoesNotExist:
+            return False
