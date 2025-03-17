@@ -3,13 +3,21 @@ from abc import ABC, abstractmethod
 
 class AccountService(ABC):
     @abstractmethod
-    def createAccount(self, email, gender, birthyear, loginType):
+    def createAccount(self, email, roleType, loginType):
         pass
 
     @abstractmethod
-    def checkEmailDuplication(self, email):
+    def createAdminAccount(self, email):
+        pass
+
+    @abstractmethod
+    def checkEmailDuplication(self, email, roleType, loginType):
         pass
 
     @abstractmethod
     def findEmail(self, accountId):
+        pass
+
+    @abstractmethod
+    def withdraw(self, accountId: int) -> bool:
         pass
