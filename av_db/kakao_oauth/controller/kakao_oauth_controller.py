@@ -28,7 +28,7 @@ class KakaoOauthController(viewsets.ViewSet):
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
-    def requestAccessToken(self, request, roleType=None):
+    def requestAccessToken(self, request):
         serializer = KakaoOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
@@ -57,12 +57,13 @@ class KakaoOauthController(viewsets.ViewSet):
                 print(f"account: {account}")
 
                 if account is None:
-                    account = self.accountService.createAccount(email, roleType, loginType)
+                    account = self.accountService.createAccount(email, loginType)
                     print(f"accountProfile: {account}")
-
                     accountProfile = self.accountProfileService.createAccountProfile(
                         account.getId(), nickname, gender, birthyear, age_range
                     )
+
+
                     print(f"accountProfile: {accountProfile}")
 
                 userToken = self.__createUserTokenWithAccessToken(account, accessToken)
@@ -73,21 +74,25 @@ class KakaoOauthController(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    def requestUserToken(self, request, roleType=None, loginType=None):
+    def requestUserToken(self, request):
+        #global accountProfile
+        global account
+
+
         access_token = request.data.get('access_token')  # 클라이언트에서 받은 access_token
-        user_id = request.data.get('id')# 클라이언트에서 받은 id
+        user_id = request.data.get('user_id')# 클라이언트에서 받은 id
         email = request.data.get('email')  # 클라이언트에서 받은 email
         nickname = request.data.get('nickname')  # 클라이언트에서 받은 nickname
-        gender = request.data.get('kakao_account', {}).get('gender', '')  # 클라이언트에서 받은 성별
-        age_range = request.data.get('kakao_account', {}).get('age_range', '')  # 클라이언트에서 받은 연령대
-        birthyear = request.data.get('kakao_account', {}).get('birthyear', '')  # 클라이언트에서 받은 출생연도
-
-        print('is operate?')
+        gender = request.data.get('gender', '')  # 클라이언트에서 받은 성별
+        age_range = request.data.get('age_range', '')  # 클라이언트에서 받은 연령대
+        birthyear = request.data.get('birthyear', '')  # 클라이언트에서 받은 출생연도
+        loginType = 'KAKAO'
+        print(f"{request.data}")
 
         if not access_token:
             return JsonResponse({'error': 'Access token is required'}, status=400)
 
-        if not user_id or not email or not nickname or not gender or not age_range or not birthyear:
+        if not user_id or not email or not nickname :
             return JsonResponse({'error': 'All user information (ID, email, nickname, gender, age_range, birthyear) is required'}, status=400)
 
         try:
@@ -95,9 +100,10 @@ class KakaoOauthController(viewsets.ViewSet):
             print('acquire data!')
             account = self.accountService.checkEmailDuplication(email)
             print(f'account: {account}')
+
             if account is None:
                 print("There are no account!")
-                account = self.accountService.createAccount(self, email, roleType, loginType)
+                account = self.accountService.createAccount(email, loginType)
                 accountProfile = self.accountProfileService.createAccountProfile(
                     account.getId(), nickname, gender, birthyear, age_range
                 )

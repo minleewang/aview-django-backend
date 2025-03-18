@@ -22,8 +22,8 @@ class AccountServiceImpl(AccountService):
 
         return cls.__instance
 
-    def createAccount(self, email, roleType, loginType):
-        return self.__accountRepository.save(email, roleType, loginType)
+    def createAccount(self, email, loginType):
+        return self.__accountRepository.save(email, loginType)
 
     def createAdminAccount(self, email):
         return self.__accountRepository.saveAdmin(email)

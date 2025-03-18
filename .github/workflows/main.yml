@@ -6,11 +6,8 @@ on:
       - main
 
 env:
-<<<<<<< HEAD
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/backend-deploy-server:latest
-=======
-  DOCKER_IMAGE: ghcr.io/${GITHUB_ACTOR}/backend-deploy-server:latest
->>>>>>> a109a2640fcb79a0a35c9f4740ea277bbc53fb53
+
 
 jobs:
   build:
