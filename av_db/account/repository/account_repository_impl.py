@@ -24,7 +24,7 @@ class AccountRepositoryImpl(AccountRepository):
 
         return cls.__instance
 
-    def save(self, email, roleType, loginType):
+    def save(self, email, loginType):
         print(f"email: {email}")
         defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.NORMAL).first()
         loginTypeInstance, created = AccountLoginType.objects.get_or_create(loginType=loginType)
@@ -52,7 +52,7 @@ class AccountRepositoryImpl(AccountRepository):
         except IntegrityError as e:
 
             print(
-                f"email={email}, roleType={roleType}, loginType={loginType}")
+                f"email={email}, roleType={defaultRoleType}, loginType={loginType}")
 
             print(f"에러 내용: {e}")
 
@@ -90,6 +90,10 @@ class AccountRepositoryImpl(AccountRepository):
             print(f"{email}")
             return Account.objects.get(email=email)
         except ObjectDoesNotExist:
+            print(f'No account found for email: {email}')  # 예외 발생 시 출력
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
             return None
 
     def deleteAccount(self, accountId: int) -> bool:

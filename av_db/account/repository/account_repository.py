@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class AccountRepository(ABC):
 
     @abstractmethod
-    def save(self, email, roleType, loginType):
+    def save(self, email, loginType):
         pass
 
     @abstractmethod
