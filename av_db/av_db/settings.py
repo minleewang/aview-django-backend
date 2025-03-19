@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'kakao_oauth',
 #    'naver_oauth',
-   'google_oauth',
+#   'google_oauth',
     'account',
     'account_profile',
     'review',
@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'interview',
     'interview_result',
     'authentication',
+#   'github_authentication',
 ]
 
 MIDDLEWARE = [
@@ -124,6 +125,16 @@ NAVER ={
     'REDIRECT_URI': os.getenv('NAVER_REDIRECT_URI'),
     'TOKEN_REQUEST_URI': os.getenv('NAVER_TOKEN_REQUEST_URI'),
     'USER_INFO_REQUEST_URI': os.getenv('NAVER_USERINFO_REQUEST_URI'),
+}
+
+GITHUB = {
+    'LOGIN_URL': os.getenv('GITHUB_LOGIN_URL'),
+    'CLIENT_ID': os.getenv('GITHUB_CLIENT_ID'),
+    'CLIENT_SECRET': os.getenv('GITHUB_CLIENT_SECRET'),
+    'REDIRECT_URI': os.getenv('GITHUB_REDIRECT_URI'),
+    'TOKEN_REQUEST_URI': os.getenv('GITHUB_TOKEN_REQUEST_URI'),
+    'USER_INFO_REQUEST_URI': os.getenv('GITHUB_USER_INFO_REQUEST_URI'),
+    'ADMIN_CODE': os.getenv('GITHUB_ADMIN_CODE'),
 }
 
 TOSS_PAYMENTS = {
