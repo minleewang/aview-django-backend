@@ -7,7 +7,7 @@ class AccountService(ABC):
         pass
 
     @abstractmethod
-    def createAdminAccount(self, email):
+    def createAdminAccount(self, email, loginType):
         pass
 
     @abstractmethod
