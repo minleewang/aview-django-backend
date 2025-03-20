@@ -59,24 +59,30 @@ class AccountRepositoryImpl(AccountRepository):
             return None
             # raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
 
-    def saveAdmin(self, email):
+    def saveAdmin(self, email, loginType):
         print(f"email: {email}")
-        defaultRoleType = AccountRoleType.objects.filter(role_type=RoleType.ADMIN).first()
+        defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.ADMIN).first()
+        loginTypeInstance = AccountLoginType.objects.get_or_create(loginType=loginType)
+        print(f"defaultRoleType: {defaultRoleType}")
 
         # 만약 기본 역할이 없다면, 새로 생성
         if not defaultRoleType:
-            defaultRoleType = AccountRoleType(role_type=RoleType.ADMIN)
+            print(f"defaultRoleType: {defaultRoleType}")
+            defaultRoleType = AccountRoleType(roleType=RoleType.ADMIN)
             defaultRoleType.save()
             print(f"Created new defaultRoleType: {defaultRoleType}")
         else:
             print(f"Found existing defaultRoleType: {defaultRoleType}")
 
         print(f"defaultRoleType: {defaultRoleType}")
+        print(f"loginType: {loginTypeInstance}")
 
-        account = Account(email=email, role_type=defaultRoleType)
-        print(f"account: {account}")
+        account = Account(email=email, roleType=defaultRoleType, loginType=loginTypeInstance)
+        print(f"야 찍히냐?")
 
         account.save()
+        print(f"account: {account}")
+
         return account
 
     def findById(self, accountId):
