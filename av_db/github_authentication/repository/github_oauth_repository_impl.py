@@ -61,7 +61,7 @@ class GithubOauthRepositoryImpl(GithubOauthRepository):
         return response.json()
 
     def getAdminCode(self, adminCode: str) -> bool:
-        print(f"repository validateAdminCode adminCode: {adminCode}")
+        print(f"Repository validateAdminCode adminCode: {adminCode}")
         print(f"repository validateAdminCode self.adminCode: {self.adminCode}")
 
         if self.adminCode is None:
