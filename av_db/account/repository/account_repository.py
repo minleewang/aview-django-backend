@@ -8,7 +8,7 @@ class AccountRepository(ABC):
         pass
 
     @abstractmethod
-    def saveAdmin(self, email):
+    def saveAdmin(self, email, loginType):
         pass
 
     @abstractmethod

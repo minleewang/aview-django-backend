@@ -60,13 +60,14 @@ class GithubOauthController(viewsets.ViewSet):
 
                 email = userInfo.get('email', '')
                 nickname = userInfo.get('login', '')
+                loginType = 'GITHUB'
                 print(f"email: {email}, nickname: {nickname}")
 
                 account = self.accountService.checkEmailDuplication(email)
                 print(f"account: {account}")
 
                 if account is None:
-                    account = self.accountService.createAdminAccount(email)
+                    account = self.accountService.createAdminAccount(email, loginType)
                     print(f"account: {account}")
 
                     accountProfile = self.accountProfileService.createAccountProfile(

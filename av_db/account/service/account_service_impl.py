@@ -25,8 +25,8 @@ class AccountServiceImpl(AccountService):
     def createAccount(self, email, loginType):
         return self.__accountRepository.save(email, loginType)
 
-    def createAdminAccount(self, email):
-        return self.__accountRepository.saveAdmin(email)
+    def createAdminAccount(self, email, loginType):
+        return self.__accountRepository.saveAdmin(email, loginType)
 
     def checkEmailDuplication(self, email):
         try:
