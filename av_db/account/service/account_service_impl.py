@@ -22,12 +22,15 @@ class AccountServiceImpl(AccountService):
 
         return cls.__instance
 
+    # DB 생성
     def createAccount(self, email, loginType):
         return self.__accountRepository.save(email, loginType)
 
     def createAdminAccount(self, email, loginType):
         return self.__accountRepository.saveAdmin(email, loginType)
 
+
+    # 이메일 중복확인
     def checkEmailDuplication(self, email):
         try:
             return self.__accountRepository.findByEmail(email)
@@ -35,6 +38,9 @@ class AccountServiceImpl(AccountService):
         except ObjectDoesNotExist:
             return None
 
+
+
+    # MyPage 회원정보 수정칸
     def findEmail(self, accountId):
         try:
             account = self.__accountRepository.findById(accountId)
@@ -45,5 +51,7 @@ class AccountServiceImpl(AccountService):
         except ObjectDoesNotExist:
             return None
 
+
+    # 회원 탈퇴
     def withdraw(self, accountId: int) -> bool:
         return self.__accountRepository.deleteAccount(accountId)

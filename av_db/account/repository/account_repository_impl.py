@@ -102,6 +102,7 @@ class AccountRepositoryImpl(AccountRepository):
             print(f"Unexpected error: {str(e)}")
             return None
 
+
     def deleteAccount(self, accountId: int) -> bool:
         try:
             account = Account.objects.get(id=accountId)
