@@ -1,6 +1,7 @@
 from django.db import IntegrityError
 
 from account_profile.entity.account_profile import AccountProfile
+from account_profile.entity.admin_profile import AdminProfile
 from account_profile.repository.account_profile_repository import AccountProfileRepository
 
 
@@ -32,6 +33,17 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
 
         except IntegrityError:
             raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
+
+
+    def saveAdmin(self, account, email):
+        print(f"account: {account}")
+        adminProfile = AdminProfile(account=account, email=email)
+        print(f"야 찍히냐?")
+
+        adminProfile.save()
+        print(f"account: {adminProfile}")
+
+        return adminProfile
 
     def findByAccount(self, account):
         try:
