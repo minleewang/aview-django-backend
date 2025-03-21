@@ -70,8 +70,8 @@ class GithubOauthController(viewsets.ViewSet):
                     account = self.accountService.createAdminAccount(email, loginType)
                     print(f"account: {account}")
 
-                    accountProfile = self.accountProfileService.createAccountProfile(
-                        account.getId(), nickname
+                    accountProfile = self.accountProfileService.createAdminProfile(
+                        account.getId(), email
                     )
                     print(f"accountProfile: {accountProfile}")
 
