@@ -22,3 +22,9 @@ class Account(models.Model):
 
     def getEmail(self):
         return self.email
+
+    def getRoleType(self):
+        return self.roleType
+
+    def getLoginType(self):
+        return self.loginType

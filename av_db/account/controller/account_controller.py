@@ -74,3 +74,6 @@ class AccountController(viewsets.ViewSet):
             # 예외 처리
             print(f"서버 오류 발생: {e}")
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
