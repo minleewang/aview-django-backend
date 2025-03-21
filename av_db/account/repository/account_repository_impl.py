@@ -62,7 +62,7 @@ class AccountRepositoryImpl(AccountRepository):
     def saveAdmin(self, email, loginType):
         print(f"email: {email}")
         defaultRoleType = AccountRoleType.objects.filter(roleType=RoleType.ADMIN).first()
-        loginTypeInstance = AccountLoginType.objects.get_or_create(loginType=loginType)
+        loginTypeInstance, created = AccountLoginType.objects.get_or_create(loginType=loginType)
         print(f"defaultRoleType: {defaultRoleType}")
 
         # 만약 기본 역할이 없다면, 새로 생성
