@@ -12,16 +12,16 @@ from account.service.account_service_impl import AccountServiceImpl
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
 from naver_oauth.serializer.naver_oauth_access_token_serializer import NaverOauthAccessTokenSerializer
 from naver_oauth.service.naver_oauth_service_impl import NaverOauthServiceImpl
-from redis_service.service.redis_service_impl import RedisServiceImpl
+from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
 
 
 class NaverOauthController(viewsets.ViewSet):
     naverOauthService = NaverOauthServiceImpl.getInstance()
-    redisService = RedisServiceImpl.getInstance()
+    redisCacheService = RedisCacheServiceImpl.getInstance()
     accountService = AccountServiceImpl.getInstance()
     accountProfileService = AccountProfileServiceImpl.getInstance()
 
-    def requestKakaoOauthLink(self, request):
+    def requestNaverOauthLink(self, request):
         url = self.naverOauthService.requestKakaoOauthLink()
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
@@ -39,20 +39,28 @@ class NaverOauthController(viewsets.ViewSet):
 
             with transaction.atomic():
                 userInfo = self.naverOauthService.requestUserInfo(accessToken)
-                nickname = userInfo.get('properties', {}).get('nickname', '')
-                email = userInfo.get('kakao_account', {}).get('email', '')
-                print(f"email: {email}, nickname: {nickname}")
+                user_id = userInfo.get('id', '')  # 사용자 ID
+                nickname = userInfo.get('properties', {}).get('nickname', '')  # 닉네임
+                email = userInfo.get('naver_account', {}).get('email', '')  # 이메일
+                gender = userInfo.get('naver_account', {}).get('gender', '')  # 성별
+                age_range = userInfo.get('naver_account', {}).get('age_range', '')  # 연령대
+                birthyear = userInfo.get('naver_account', {}).get('birthyear', '')  # 출생연도
+                loginType = 'NAVER'
+                # 정보 출력 (디버깅용)
+                print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")
+                print(f"gender: {gender}, age_range: {age_range}, birthyear: {birthyear}")
 
+                # 이메일 중복 확인
                 account = self.accountService.checkEmailDuplication(email)
                 print(f"account: {account}")
 
                 if account is None:
-                    account = self.accountService.createAccount(email)
-                    print(f"account: {account}")
-
+                    account = self.accountService.createAccount(email, loginType)
+                    print(f"accountProfile: {account}")
                     accountProfile = self.accountProfileService.createAccountProfile(
-                        account.getId(), nickname
+                        account.getId(), nickname, gender, birthyear, age_range
                     )
+
                     print(f"accountProfile: {accountProfile}")
 
                 userToken = self.__createUserTokenWithAccessToken(account, accessToken)
@@ -65,25 +73,38 @@ class NaverOauthController(viewsets.ViewSet):
 
 
     def requestUserToken(self, request):
+        #global accountProfile
+        global account
         access_token = request.data.get('access_token')  # 클라이언트에서 받은 access_token
+        user_id = request.data.get('user_id')# 클라이언트에서 받은 id
         email = request.data.get('email')  # 클라이언트에서 받은 email
         nickname = request.data.get('nickname')  # 클라이언트에서 받은 nickname
+        gender = request.data.get('gender', '')  # 클라이언트에서 받은 성별
+        age_range = request.data.get('age_range', '')  # 클라이언트에서 받은 연령대
+        birthyear = request.data.get('birthyear', '')  # 클라이언트에서 받은 출생연도
+        loginType = 'NAVER'
+        print(f"{request.data}")
 
         if not access_token:
             return JsonResponse({'error': 'Access token is required'}, status=400)
 
-        if not email or not nickname:
-            return JsonResponse({'error': 'Email and nickname are required'}, status=400)
+        if not user_id or not email or not nickname :
+            return JsonResponse({'error': 'All user information (ID, email, nickname, gender, age_range, birthyear) is required'}, status=400)
 
         try:
             # 이메일을 기반으로 계정을 찾거나 새로 생성합니다.
+            print('acquire data!')
             account = self.accountService.checkEmailDuplication(email)
+            print(f'account: {account}')
+
             if account is None:
-                account = self.accountService.createAccount(email)
+                print("There are no account!")
+                account = self.accountService.createAccount(email, loginType)
                 accountProfile = self.accountProfileService.createAccountProfile(
-                    account.getId(), nickname
+                    account.getId(), nickname, gender, birthyear, age_range
                 )
 
+            print("ready to create userToken")
             # 사용자 토큰 생성 및 Redis에 저장
             userToken = self.__createUserTokenWithAccessToken(account, access_token)
 
@@ -95,8 +116,11 @@ class NaverOauthController(viewsets.ViewSet):
     def __createUserTokenWithAccessToken(self, account, accessToken):
         try:
             userToken = str(uuid.uuid4())
-            self.redisService.storeKeyValue(account.getId(), accessToken)
-            self.redisService.storeKeyValue(userToken, account.getId())
+            self.redisCacheService.storeKeyValue(account.getId(), accessToken)
+            self.redisCacheService.storeKeyValue(userToken, account.getId())
+
+            if not account or not account.getId():
+                raise ValueError("Invalid account ID")
 
             return userToken
 
@@ -105,12 +129,12 @@ class NaverOauthController(viewsets.ViewSet):
             raise RuntimeError('Redis에 토큰 저장 중 에러')
 
 
-    def dropRedisTokenForLogout(self, request):
-        try:
-            userToken = request.data.get('userToken')
-            isSuccess = self.redisService.deleteKey(userToken)
-
-            return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print('레디스 토큰 해제 중 에러 발생:', e)
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    # def dropRedisTokenForLogout(self, request):
+    #     try:
+    #         userToken = request.data.get('userToken')
+    #         isSuccess = self.redisService.deleteKey(userToken)
+    #
+    #         return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
+    #     except Exception as e:
+    #         print('레디스 토큰 해제 중 에러 발생:', e)
+    #         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
