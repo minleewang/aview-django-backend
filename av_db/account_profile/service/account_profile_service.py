@@ -9,3 +9,19 @@ class AccountProfileService(ABC):
     @abstractmethod
     def createAdminProfile(self, accountId, email):
         pass
+
+    @abstractmethod
+    def findEmail(self, accountId):
+        pass
+    @abstractmethod
+    def findRoleType(self, accountId):
+        pass
+    @abstractmethod
+    def findNickname(self, accountId):
+        pass
+    @abstractmethod
+    def findGender(self, accountId):
+        pass
+    @abstractmethod
+    def findBirthyear(self, accountId):
+        pass
