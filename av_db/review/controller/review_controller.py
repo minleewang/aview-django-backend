@@ -7,9 +7,9 @@ from review.service.review_service_impl import ReviewServiceImpl
 class ReviewController(viewsets.ViewSet):
     reviewService = ReviewServiceImpl.getInstance()
 
-    def createreviewForm(self, request):
+    def createReviewForm(self, request):
         randomString = request.data.get('randomString')
-        reviewId = self.reviewService.createreviewForm(randomString)
+        reviewId = self.reviewService.createReviewForm(randomString)
         return Response(reviewId, status=status.HTTP_200_OK)
 
     def registerTitleDescription(self, request):
