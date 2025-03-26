@@ -7,8 +7,7 @@ router = DefaultRouter()
 router.register(r'review', ReviewController, basename='review')
 
 urlpatterns = [
-    #path('', include(router.urls)),
-    path('creat-form', ReviewController.as_view({'post': 'createReviewForm'}), name='review-create-form'),
+    path('creat-form', ReviewController.as_view({'post': 'createReviewForm'}), name='review생성'),
     path('register-title-description', ReviewController.as_view({'post': 'registerTitleDescription'}), name='register-title-description'),
     path('register-question', ReviewController.as_view({'post': 'registerQuestion'}), name='review-question'),
     path('register-selection', ReviewController.as_view({'post': 'registerSelection'}), name='review-selection'),

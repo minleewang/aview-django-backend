@@ -38,7 +38,7 @@ class ReviewServiceImpl(ReviewService):
 
     def createReviewForm(self, randomString):
         maxId = self.__reviewRepository.getMaxId()
-        self.__reviewRepository.registerreview(randomString)
+        self.__reviewRepository.registerReview(randomString)
         return maxId + 1
 
     def getReviewByReviewId(self, reviewId):

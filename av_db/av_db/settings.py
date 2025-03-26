@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'kakao_oauth',
-#    'naver_oauth',
+    'naver_oauth',
 #   'google_oauth',
     'account',
     'account_profile',
