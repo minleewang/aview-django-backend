@@ -15,7 +15,7 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
             cls.__instance.clientSecret = settings.NAVER['CLIENT_SECRET']
             cls.__instance.redirectUri = settings.NAVER['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.NAVER['TOKEN_REQUEST_URI']
-            cls.__instance.userInfoRequestUri = settings.NAVER['USERINFO_REQUEST_URI']
+            cls.__instance.userInfoRequestUri = settings.NAVER['USER_INFO_REQUEST_URI']
         return cls.__instance
 
     @classmethod
