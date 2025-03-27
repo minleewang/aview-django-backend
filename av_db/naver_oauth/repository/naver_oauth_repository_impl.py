@@ -31,15 +31,16 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
                 f"&client_id={self.clientId}&redirect_uri={self.redirectUri}&state=RANDOM_STATE")
 
     def getAccessToken(self, code, state):
+        print("다음 진입1")
         accessTokenRequest = {
             'grant_type': 'authorization_code',
             'client_id': self.clientId,
             'redirect_uri': self.redirectUri,
             'code': code,
-            'client_secret': None,
+            'client_secret': self.clientSecret,
             'state' : state
         }
-
+        print(f"{accessTokenRequest}")
         response = requests.post(self.tokenRequestUri, data=accessTokenRequest)
         return response.json()
 
