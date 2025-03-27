@@ -43,12 +43,14 @@ class NaverOauthController(viewsets.ViewSet):
 
             with transaction.atomic():
                 userInfo = self.naverOauthService.requestUserInfo(accessToken)
-                user_id = userInfo.get('id', '')  # 사용자 ID
-                nickname = userInfo.get('properties', {}).get('nickname', '')  # 닉네임
-                email = userInfo.get('naver_account', {}).get('email', '')  # 이메일
-                gender = userInfo.get('naver_account', {}).get('gender', '')  # 성별
-                age_range = userInfo.get('naver_account', {}).get('age_range', '')  # 연령대
-                birthyear = userInfo.get('naver_account', {}).get('birthyear', '')  # 출생연도
+                print(f"{userInfo}")
+                response_data = userInfo.get('response',{})
+                user_id = response_data.get('id', '')  # 사용자 ID
+                nickname = response_data.get('nickname', '')  # 닉네임
+                email = response_data.get('email', '')  # 이메일
+                gender = response_data.get('gender', '')  # 성별
+                age_range = response_data.get('age', '')  # 연령대
+                birthyear = response_data.get('birthyear', '')  # 출생연도
                 loginType = 'NAVER'
                 # 정보 출력 (디버깅용)
                 print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")

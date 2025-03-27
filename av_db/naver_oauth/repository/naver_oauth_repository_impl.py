@@ -45,6 +45,8 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
         return response.json()
 
     def getUserInfo(self, accessToken):
+        print("정보를 위한 진입")
         headers = {'Authorization': f'Bearer {accessToken}'}
         response = requests.post(self.userInfoRequestUri, headers=headers)
+        print(f"{self.userInfoRequestUri}")
         return response.json()

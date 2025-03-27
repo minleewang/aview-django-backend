@@ -107,6 +107,7 @@ class AccountRepositoryImpl(AccountRepository):
         try:
             account = Account.objects.get(id=accountId)
             account.delete()
+            print(f"{account}")
             return True
         except Account.DoesNotExist:
             return False

@@ -42,6 +42,7 @@ class AccountController(viewsets.ViewSet):
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def requestWithdraw(self, request):
+        print("진입")
         postRequest = request.data
         userToken = postRequest.get("userToken")
 
