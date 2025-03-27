@@ -1,4 +1,5 @@
 import requests
+from mypy.state import state
 
 from av_db import settings
 from naver_oauth.repository.naver_oauth_repository import NaverOauthRepository
@@ -26,18 +27,17 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
         return cls.__instance
 
     def getOauthLink(self):
-        print("getOauthLink() for Login")
+        return (f"{self.loginUrl}?response_type=code"
+                f"&client_id={self.clientId}&redirect_uri={self.redirectUri}&state=RANDOM_STATE")
 
-        return (f"{self.loginUrl}/oauth/authorize?"
-                f"client_id={self.clientId}&redirect_uri={self.redirectUri}&response_type=code")
-
-    def getAccessToken(self, code):
+    def getAccessToken(self, code, state):
         accessTokenRequest = {
             'grant_type': 'authorization_code',
             'client_id': self.clientId,
             'redirect_uri': self.redirectUri,
             'code': code,
-            'client_secret': None
+            'client_secret': None,
+            'state' : state
         }
 
         response = requests.post(self.tokenRequestUri, data=accessTokenRequest)

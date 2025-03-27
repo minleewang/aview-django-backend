@@ -1,7 +1,7 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from account_profile.entity.account_profile import AccountProfile
-from account_profile.entity.admin_profile import AdminProfile
 from account_profile.repository.account_profile_repository import AccountProfileRepository
 
 
@@ -34,21 +34,59 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
         except IntegrityError:
             raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
 
-
-    def saveAdmin(self, account, email):
-        print(f"account: {account}")
-        adminProfile = AdminProfile(account=account, email=email)
-        print(f"야 찍히냐?")
-
-        adminProfile.save()
-        print(f"account: {adminProfile}")
-
-        return adminProfile
-
-    def findByAccount(self, account):
+    def findByAccount(self, account): # 객체 하나로 전체 정보 가져오기
         try:
             # 주어진 Account 객체에 해당하는 AccountProfile을 조회
             return AccountProfile.objects.get(account=account)
         except AccountProfile.DoesNotExist:
             # 만약 해당하는 AccountProfile이 없으면 None을 반환
+            return None
+
+    def findByEmail(self, accountId):
+        try:
+            accountProfile = AccountProfile.objects.get(account_id = accountId)
+            return accountProfile.account.email
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
+            return None
+
+    def findByRoleType(self, accountId):
+        try:
+            accountProfile = AccountProfile.objects.get(account_id = accountId)
+            return accountProfile.account.roleType_id
+        except Exception as e:
+            print(f"Unexpected error, findByRoleType() : {str(e)}")
+            return None
+
+    def findByNickname(self, nickname):
+        try:
+            print(f"{nickname}")
+            return AccountProfile.objects.get(nickname=nickname)
+        except ObjectDoesNotExist:
+            print(f'No Account found for nickname: {nickname}')  # 예외 발생 시 출력
+            return None
+        except Exception as e:
+            print(f"Unexpected error, findByNickname() : {str(e)}")
+            return None
+
+    def findByGender(self, gender):
+        try:
+            print(f"{gender}")
+            return AccountProfile.objects.get(gender=gender)
+        except ObjectDoesNotExist:
+            print(f'No Account found for gender: {gender}')  # 예외 발생 시 출력
+            return None
+        except Exception as e:
+            print(f"Unexpected error, findByGender() : {str(e)}")
+            return None
+
+    def findByBirthyear(self, birthyear):
+        try:
+            print(f"{birthyear}")
+            return AccountProfile.objects.get(birthyear=birthyear)
+        except ObjectDoesNotExist:
+            print(f'No Account found for birthyear: {birthyear}')  # 예외 발생 시 출력
+            return None
+        except Exception as e:
+            print(f"Unexpected error, findByBirthyear() : {str(e)}")
             return None

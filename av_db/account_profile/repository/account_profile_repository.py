@@ -8,9 +8,25 @@ class AccountProfileRepository(ABC):
         pass
 
     @abstractmethod
-    def saveAdmin(self, account, email):
+    def findByAccount(self, account):
         pass
 
     @abstractmethod
-    def findByAccount(self, account):
+    def findByEmail(self, email):
+        pass
+
+    @abstractmethod
+    def findByRoleType(self, roleType):
+        pass
+
+    @abstractmethod
+    def findByNickname(self, nickname):
+        pass
+
+    @abstractmethod
+    def findByGender(self, gender):
+        pass
+
+    @abstractmethod
+    def findByBirthyear(self, birthyear):
         pass
