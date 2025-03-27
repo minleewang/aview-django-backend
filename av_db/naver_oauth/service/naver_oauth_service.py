@@ -8,7 +8,7 @@ class NaverOauthService(ABC):
         pass
 
     @abstractmethod
-    def requestNaverAccessToken(self, code):
+    def requestNaverAccessToken(self, code, state):
         pass
 
     @abstractmethod
