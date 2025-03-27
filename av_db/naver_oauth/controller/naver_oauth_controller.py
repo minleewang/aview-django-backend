@@ -22,7 +22,7 @@ class NaverOauthController(viewsets.ViewSet):
     accountProfileService = AccountProfileServiceImpl.getInstance()
 
     def requestNaverOauthLink(self, request):
-        url = self.naverOauthService.requestKakaoOauthLink()
+        url = self.naverOauthService.requestNaverOauthLink()
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
@@ -30,10 +30,11 @@ class NaverOauthController(viewsets.ViewSet):
         serializer = NaverOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
-        print(f"code: {code}")
+        state = serializer.validated_data['state']
+        print(f"code: {code}, {state}")
 
         try:
-            tokenResponse = self.naverOauthService.requestAccessToken(code)
+            tokenResponse = self.naverOauthService.requestAccessToken(code, state)
             accessToken = tokenResponse['access_token']
             print(f"accessToken: {accessToken}")
 
