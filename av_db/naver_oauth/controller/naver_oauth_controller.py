@@ -27,14 +27,17 @@ class NaverOauthController(viewsets.ViewSet):
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
     def requestAccessToken(self, request):
-        serializer = NaverOauthAccessTokenSerializer(data=request.data)
+        print("진입")
+        request_data=request.data['code']
+        serializer = NaverOauthAccessTokenSerializer(data=request_data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
         state = serializer.validated_data['state']
-        print(f"code: {code}, {state}")
+        print(f"code: {code},state: {state}")
 
         try:
-            tokenResponse = self.naverOauthService.requestAccessToken(code, state)
+            tokenResponse = self.naverOauthService.requestNaverAccessToken(code, state)
+            print("완료")
             accessToken = tokenResponse['access_token']
             print(f"accessToken: {accessToken}")
 
