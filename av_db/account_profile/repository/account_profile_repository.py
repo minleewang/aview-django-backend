@@ -12,7 +12,7 @@ class AccountProfileRepository(ABC):
         pass
 
     @abstractmethod
-    def findByEmail(self, email):
+    def findByEmail(self, accountId):
         pass
 
     @abstractmethod
@@ -20,13 +20,13 @@ class AccountProfileRepository(ABC):
         pass
 
     @abstractmethod
-    def findByNickname(self, nickname):
+    def findByNickname(self, accountId):
         pass
 
     @abstractmethod
-    def findByGender(self, gender):
+    def findByGender(self, accountId):
         pass
 
     @abstractmethod
-    def findByBirthyear(self, birthyear):
+    def findByBirthyear(self, accountId):
         pass
