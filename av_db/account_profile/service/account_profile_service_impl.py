@@ -54,7 +54,7 @@ class AccountProfileServiceImpl(AccountProfileService):
 
     def findEmail(self, accountId):  # 얘는 account에서 참조해서 가져와야함
         try:
-            accountProfile = self.__accountProfileRepository.findById(account_id=accountId)
+            accountProfile = self.__accountProfileRepository.findByEmail(accountId)
             return accountProfile  # account 객체에서 이메일 반환
         except ObjectDoesNotExist:
             return None
@@ -68,30 +68,24 @@ class AccountProfileServiceImpl(AccountProfileService):
 
     def findNickname(self, accountId):
         try:
-            accountProfile = self.__accountProfileRepository.findByNickname(id=accountId)
-            if accountProfile:  #
-                return accountProfile.getNickname()
-            return None  # 이메일이 없으면 None 반환
-
+            accountProfile = self.__accountProfileRepository.findByNickname(accountId)
+            return accountProfile  # account 객체에서 이메일 반환
         except ObjectDoesNotExist:
             return None
 
     def findGender(self, accountId):
         try:
-            accountProfile = self.__accountProfileRepository.findByGender(id=accountId)
-            if accountProfile:
-                return accountProfile.getGender()  # account 객체에서 이메일 반환
-            return None  # 이메일이 없으면 None 반환
+            accountProfile = self.__accountProfileRepository.findByGender(accountId)
+            return accountProfile  # account 객체에서 이메일 반환
+        except ObjectDoesNotExist:
+            return None
 
         except ObjectDoesNotExist:
             return None
 
     def findBirthyear(self, accountId):
         try:
-            accountProfile = self.__accountProfileRepository.findByBirthyear(id=accountId)
-            if accountProfile:
-                return accountProfile.getBirthyear()  # account 객체에서 이메일 반환
-            return None  # 이메일이 없으면 None 반환
-
+            accountProfile = self.__accountProfileRepository.findByBirthyear(accountId)
+            return accountProfile  # account 객체에서 이메일 반환
         except ObjectDoesNotExist:
             return None

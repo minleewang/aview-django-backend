@@ -42,6 +42,7 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
             # 만약 해당하는 AccountProfile이 없으면 None을 반환
             return None
 
+    #email 찾기
     def findByEmail(self, accountId):
         try:
             accountProfile = AccountProfile.objects.get(account_id = accountId)
@@ -50,6 +51,7 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
             print(f"Unexpected error: {str(e)}")
             return None
 
+    #roletype 찾기
     def findByRoleType(self, accountId):
         try:
             accountProfile = AccountProfile.objects.get(account_id = accountId)
@@ -58,34 +60,37 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
             print(f"Unexpected error, findByRoleType() : {str(e)}")
             return None
 
-    def findByNickname(self, nickname):
+    #nickname 찾기
+    def findByNickname(self, accountId):
         try:
-            print(f"{nickname}")
-            return AccountProfile.objects.get(nickname=nickname)
+            profileNickname=AccountProfile.objects.get(account_id = accountId)
+            return profileNickname.nickname
         except ObjectDoesNotExist:
-            print(f'No Account found for nickname: {nickname}')  # 예외 발생 시 출력
+            print(f'No Account found for accountId: {accountId}')  # 예외 발생 시 출력
             return None
         except Exception as e:
             print(f"Unexpected error, findByNickname() : {str(e)}")
             return None
 
-    def findByGender(self, gender):
+    #gender 찾기
+    def findByGender(self, accountId):
         try:
-            print(f"{gender}")
-            return AccountProfile.objects.get(gender=gender)
+            profileGender = AccountProfile.objects.get(account_id=accountId)
+            return profileGender.gender
         except ObjectDoesNotExist:
-            print(f'No Account found for gender: {gender}')  # 예외 발생 시 출력
+            print(f'No Account found for accountId: {accountId}')  # 예외 발생 시 출력
             return None
         except Exception as e:
             print(f"Unexpected error, findByGender() : {str(e)}")
             return None
 
-    def findByBirthyear(self, birthyear):
+    #birthYar 찾기
+    def findByBirthyear(self, accountId):
         try:
-            print(f"{birthyear}")
-            return AccountProfile.objects.get(birthyear=birthyear)
+            profileBirth = AccountProfile.objects.get(account_id=accountId)
+            return profileBirth.birthyear
         except ObjectDoesNotExist:
-            print(f'No Account found for birthyear: {birthyear}')  # 예외 발생 시 출력
+            print(f'No Account found for birthyear: {accountId}')  # 예외 발생 시 출력
             return None
         except Exception as e:
             print(f"Unexpected error, findByBirthyear() : {str(e)}")
