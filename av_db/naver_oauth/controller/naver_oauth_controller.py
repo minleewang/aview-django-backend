@@ -48,7 +48,7 @@ class NaverOauthController(viewsets.ViewSet):
                 user_id = response_data.get('id', '')  # 사용자 ID
                 nickname = response_data.get('nickname', '')  # 닉네임
                 email = response_data.get('email', '')  # 이메일
-                gender = response_data.get('gender', '')  # 성별
+                gender = {"M": "male", "F": "female"}.get(response_data.get('gender', ''), '')  # 성별
                 age_range = response_data.get('age', '')  # 연령대
                 birthyear = response_data.get('birthyear', '')  # 출생연도
                 loginType = 'NAVER'
