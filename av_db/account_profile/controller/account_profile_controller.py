@@ -11,8 +11,9 @@ class AccountProfileController(viewsets.ViewSet):
     redisCacheService = RedisCacheServiceImpl.getInstance()
 
     def requestInfo(self, request):
-        postRequest = request.data
+        postRequest = request.data                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
         userToken = postRequest.get("userToken")
+        print(f"인포용 userToken: {userToken}")
 
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다"}, status=400)
