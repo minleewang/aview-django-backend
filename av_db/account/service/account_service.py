@@ -10,6 +10,10 @@ class AccountService(ABC):
     @abstractmethod
     def createAdminAccount(self, email, loginType):
         pass
+    @abstractmethod
+    def createWithdrawalAccount(self, accountId):
+        pass
+
 
     # 이메일 중복확인
     @abstractmethod
@@ -21,6 +25,15 @@ class AccountService(ABC):
     @abstractmethod
     def findEmail(self, accountId):
         pass
+
+    @abstractmethod
+    def createWithdrawAt(self, time):
+        pass
+
+    @abstractmethod
+    def createWithdrawEnd(self, time):
+        pass
+
 
     # 회원탈퇴
     @abstractmethod

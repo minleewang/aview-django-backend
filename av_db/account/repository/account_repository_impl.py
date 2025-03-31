@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
@@ -5,6 +6,7 @@ from account.entity.account_login_type import AccountLoginType
 from account.entity.account import Account
 from account.entity.account_role_type import AccountRoleType
 from account.entity.role_type import RoleType
+from account.entity.withdrawal_membership import WithdrawalMembership
 from account.repository.account_repository import AccountRepository
 
 
@@ -85,6 +87,21 @@ class AccountRepositoryImpl(AccountRepository):
 
         return account
 
+    def saveWithdralInfo(self, accountId):
+        try:
+            print(f"accountId={accountId}")
+            withdralMembership = WithdrawalMembership.objects.create(accountId=accountId)
+            withdralMembership.save()
+            print(f"생성된 withdralMembership 출력: {withdralMembership}")
+
+        except IntegrityError as e:
+            print("saveWithdralInfo 에러 뜸")
+            print(f"에러 내용: {e}")
+            return None
+
+
+
+    # DB에서 조회
     def findById(self, accountId):
         try:
             return Account.objects.get(id=accountId)
@@ -103,6 +120,32 @@ class AccountRepositoryImpl(AccountRepository):
             return None
 
 
+    # 탈퇴시점, 탈퇴시점+3년 DB에 저장
+    def saveWithdrawAt(self, time):
+        try:
+            print(f"{time}")
+            withdrawAt = WithdrawalMembership.objects.create(withdraw_at=time)
+            withdrawAt.save()
+            print(f"{withdrawAt}")
+        except ObjectDoesNotExist:
+            print("saveWithdrawAt 작동 안됨")
+            raise ObjectDoesNotExist(f"time: {time} 존재하지 않음.")
+        #return None
+
+    def saveWithdrawEnd(self, time):
+        try:
+            end = time + relativedelta(years=3)
+            #self.withdraw_end= time + relativedelta(years=3)
+            withdrawEnd = WithdrawalMembership.objects.create(withdraw_end=end)
+            withdrawEnd.save()
+        except Exception as e:
+            print("saveWithdrawEnd 작동 안됨")
+            print(e)
+        #return None
+
+
+
+    # 회원 탈퇴시 사용자 정보 삭제
     def deleteAccount(self, accountId: int) -> bool:
         try:
             account = Account.objects.get(id=accountId)

@@ -10,6 +10,7 @@ class Account(models.Model):
     roleType = models.ForeignKey(AccountRoleType, on_delete=models.CASCADE)
     loginType = models.ForeignKey(AccountLoginType, on_delete=models.CASCADE)  # , related_name ="profile")
 
+
     def __str__(self):
         return f"Account(id={self.id}, email={self.email}, roleType={self.roleType}, loginType={self.loginType})"
 

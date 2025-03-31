@@ -12,12 +12,28 @@ class AccountRepository(ABC):
         pass
 
     @abstractmethod
+    def saveWithdralInfo(self, accountId):
+        pass
+
+
+
+    @abstractmethod
     def findById(self, accountId):
         pass
 
     @abstractmethod
     def findByEmail(self, email):
         pass
+
+
+
+    @abstractmethod
+    def saveWithdrawAt(self, time):
+        pass
+    @abstractmethod
+    def saveWithdrawEnd(self, time):
+        pass
+
 
     @abstractmethod
     def deleteAccount(self, accountId: int) -> bool:

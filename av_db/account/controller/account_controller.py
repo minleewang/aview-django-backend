@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
@@ -51,6 +53,7 @@ class AccountController(viewsets.ViewSet):
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # step 1: accountId 찾아서 DB에 저장
             # Redis에서 userToken에 해당하는 accountId를 가져옴
             accountId = self.redisCacheService.getValueByKey(userToken)
 
@@ -59,7 +62,19 @@ class AccountController(viewsets.ViewSet):
                 return JsonResponse({"error": "유효한 userToken이 아닙니다", "success": False},
                                     status=status.HTTP_404_NOT_FOUND)
 
-            # 회원 탈퇴 처리
+            withdralAccount = self.__accountService.createWithdrawalAccount(accountId)  # accountId DB에 저장
+            print(f"{withdralAccount}")
+            print("withdralAccount() 성공")
+
+            # step 2: withdraw_end= 탈퇴 시간 + 3년 후 시간 저장
+            time = timezone.now() # 탈퇴 시각
+            withdrawAt = self.__accountService.createWithdrawAt(time)
+            print(f"{withdrawAt}")
+            withdrawEnd = self.__accountService.createWithdrawEnd(time)
+            print(f"{withdrawEnd}")
+
+
+            # step 3: 회원 탈퇴 처리
             withdrawalSuccess = self.__accountService.withdraw(accountId)
 
             if not withdrawalSuccess:
@@ -69,7 +84,11 @@ class AccountController(viewsets.ViewSet):
             self.redisCacheService.deleteKey(accountId)
 
             # 탈퇴가 성공적으로 이루어졌다면
-            return JsonResponse({"message": "회원 탈퇴가 완료되었습니다", "success": True}, status=status.HTTP_200_OK)
+            print("탈퇴가 성공적으로 이루어짐")
+            return JsonResponse({
+                "accountId": accountId,
+                "withdraw_at": withdrawAt,
+                "withdraw_end": withdrawEnd}, status=status.HTTP_200_OK)
 
         except Exception as e:
             # 예외 처리

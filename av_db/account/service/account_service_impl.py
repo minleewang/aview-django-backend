@@ -1,5 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+from datetime import timedelta
 
+from account.entity.withdrawal_membership import WithdrawalMembership
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from account.service.account_service import AccountService
 
@@ -29,6 +32,9 @@ class AccountServiceImpl(AccountService):
     def createAdminAccount(self, email, loginType):
         return self.__accountRepository.saveAdmin(email, loginType)
 
+    def createWithdrawalAccount(self, accountId):
+        return self.__accountRepository.saveWithdralInfo(accountId)
+
 
     # 이메일 중복확인
     def checkEmailDuplication(self, email):
@@ -50,6 +56,14 @@ class AccountServiceImpl(AccountService):
 
         except ObjectDoesNotExist:
             return None
+
+    def createWithdrawAt(self, time):
+        return self.__accountRepository.saveWithdrawAt(time)
+
+
+    def createWithdrawEnd(self, time):
+        return self.__accountRepository.saveWithdrawEnd(time)
+
 
 
     # 회원 탈퇴
