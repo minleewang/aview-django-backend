@@ -15,6 +15,7 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
             cls.__instance.userInfoRequestUri = settings.GOOGLE['USER_INFO_REQUEST_URI']
+            cls.__instance.clientSecret = settings.GOOGLE['CLIENT_SECRET']
 
         return cls.__instance
 
@@ -27,23 +28,33 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
 
     def getOauthLink(self):
         print("getOauthLink() for Login")
-
-        return (f"{self.loginUrl}/oauth/authorize?"
-                f"client_id={self.clientId}&redirect_uri={self.redirectUri}&response_type=code")
+        return (
+            f"{self.loginUrl}?"
+            f"client_id={self.clientId}&"
+            f"redirect_uri={self.redirectUri}&"
+            f"response_type=code&"
+            f"scope=openid%20email%20profile&"
+            f"access_type=offline&"
+            f"prompt=consent"
+        )
 
     def getAccessToken(self, code):
-        accessTokenRequest = {
+        accessToken = {
             'grant_type': 'authorization_code',
             'client_id': self.clientId,
             'redirect_uri': self.redirectUri,
             'code': code,
-            'client_secret': None
+            'client_secret': self.clientSecret,
         }
-
-        response = requests.post(self.tokenRequestUri, data=accessTokenRequest)
+        print(f"{accessToken}")
+        response = requests.post(self.tokenRequestUri, data=accessToken)
         return response.json()
 
     def getUserInfo(self, accessToken):
+        print("getUserInfo() 잘 들어감")
         headers = {'Authorization': f'Bearer {accessToken}'}
-        response = requests.post(self.userInfoRequestUri, headers=headers)
+        print(f"{headers}")
+        print(self.userInfoRequestUri)
+        response = requests.get(self.userInfoRequestUri, headers=headers)
+        print(f"response도 잘 들어감: {response}")
         return response.json()
