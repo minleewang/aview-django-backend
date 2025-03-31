@@ -23,7 +23,7 @@ class GoogleOauthServiceImpl(GoogleOauthService):
     def requestGoogleOauthLink(self):
         return self.__googleOauthRepository.getOauthLink()
 
-    def requestAccessToken(self, code):
+    def requestGoogleAccessToken(self, code):
         return self.__googleOauthRepository.getAccessToken(code)
 
     def requestUserInfo(self, accessToken):

@@ -26,7 +26,7 @@ class GoogleOauthController(viewsets.ViewSet):
 
     def requestGoogleOauthLink(self, request):
         url = self.googleOauthService.requestGoogleOauthLink()
-
+        #print(f"{url}")
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
     def requestAccessToken(self, request):
@@ -37,17 +37,22 @@ class GoogleOauthController(viewsets.ViewSet):
 
         try:
             tokenResponse = self.googleOauthService.requestGoogleAccessToken(code)
+            print("세번재")
+            print(f"{tokenResponse}")
             accessToken = tokenResponse['access_token']
+            print("네번재")
             print(f"accessToken: {accessToken}")
 
             with transaction.atomic():
                 userInfo = self.googleOauthService.requestUserInfo(accessToken)
-                user_id = userInfo.get('id', '') # 사용자 ID
-                nickname = userInfo.get('properties', {}).get('nickname', '') # 닉네임
-                email = userInfo.get('google_account', {}).get('email', '') # 이메일
-                gender = userInfo.get('google_account', {}).get('gender', '')  # 성별별
-                age_range = userInfo.get('google_account', {}).get('age_range', '') # 연령대
-                birthyear = userInfo.get('google_account', {}).get('birthyear', '') # 출생연도
+                print(f"{userInfo}")
+                response_data = userInfo.get('response', {})
+                user_id = response_data.get('id', '') # 사용자 ID
+                nickname = response_data.get('properties', {}).get('nickname', '') # 닉네임
+                email = response_data.get('google_account', {}).get('email', '') # 이메일
+                gender = response_data.get('google_account', {}).get('gender', '')  # 성별별
+                age_range = response_data.get('google_account', {}).get('age_range', '') # 연령대
+                birthyear = response_data.get('google_account', {}).get('birthyear', '') # 출생연도
                 loginType = 'GOOGLE'
                 # 정보 출력 (디버깅용)
                 print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")
