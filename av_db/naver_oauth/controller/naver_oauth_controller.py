@@ -28,15 +28,20 @@ class NaverOauthController(viewsets.ViewSet):
 
     def requestAccessToken(self, request):
         print("진입")
-        code=request.data['code']['code']
-        state=request.data['code']['state']
+        try:
+            print(f"{request.data}")
+            code = request.data['code']['code']
+            state = request.data['code']['state']
+        except KeyError as e:
+            print(f"KeyError: {e}")
+            return Response({"error": f"Missing key: {str(e)}"}, status=400)
         print(f"값은:{code}")
         print(f"두번째: {state}")
         serializer = NaverOauthAccessTokenSerializer(data={'code': code, 'state': state})
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
         state = serializer.validated_data['state']
-        print(f"code: {code},state: {state}")
+        print(f"code: {code}, state: {state}")
 
         try:
             tokenResponse = self.naverOauthService.requestNaverAccessToken(code, state)
