@@ -23,7 +23,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('account_profile/', include('account_profile.urls')),
     path('review/', include('review.urls')),
-#   path('google_oauth/', include('google_oauth.urls')),
+   path('google-oauth/', include('google_oauth.urls')),
    path('naver-oauth/', include('naver_oauth.urls')),
     path('company_report/',include('company_report.urls')),
     path('cart/',include('cart.urls')),
