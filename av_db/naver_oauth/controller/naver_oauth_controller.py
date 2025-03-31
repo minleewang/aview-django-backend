@@ -28,8 +28,11 @@ class NaverOauthController(viewsets.ViewSet):
 
     def requestAccessToken(self, request):
         print("진입")
-        request_data=request.data['code']
-        serializer = NaverOauthAccessTokenSerializer(data=request_data)
+        code=request.data['code']['code']
+        state=request.data['code']['state']
+        print(f"값은:{code}")
+        print(f"두번째: {state}")
+        serializer = NaverOauthAccessTokenSerializer(data={'code': code, 'state': state})
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
         state = serializer.validated_data['state']
