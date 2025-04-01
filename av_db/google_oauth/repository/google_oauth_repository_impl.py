@@ -15,7 +15,6 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
             cls.__instance.userInfoRequestUri = settings.GOOGLE['USER_INFO_REQUEST_URI']
-            cls.__instance.clientSecret = settings.GOOGLE['CLIENT_SECRET']
 
         return cls.__instance
 
@@ -27,7 +26,6 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
         return cls.__instance
 
     def getOauthLink(self):
-        print("getOauthLink() for Login")
         return (
             f"{self.loginUrl}?"
             f"client_id={self.clientId}&"
@@ -37,24 +35,19 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             f"access_type=offline&"
             f"prompt=consent"
         )
-
     def getAccessToken(self, code):
-        accessToken = {
+        accessTokenRequest = {
             'grant_type': 'authorization_code',
             'client_id': self.clientId,
             'redirect_uri': self.redirectUri,
             'code': code,
-            'client_secret': self.clientSecret,
+            'client_secret': None
         }
-        print(f"{accessToken}")
-        response = requests.post(self.tokenRequestUri, data=accessToken)
+
+        response = requests.post(self.tokenRequestUri, data=accessTokenRequest)
         return response.json()
 
     def getUserInfo(self, accessToken):
-        print("getUserInfo() 잘 들어감")
         headers = {'Authorization': f'Bearer {accessToken}'}
-        print(f"{headers}")
-        print(self.userInfoRequestUri)
-        response = requests.get(self.userInfoRequestUri, headers=headers)
-        print(f"response도 잘 들어감: {response}")
+        response = requests.post(self.userInfoRequestUri, headers=headers)
         return response.json()

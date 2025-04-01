@@ -90,14 +90,21 @@ class AccountRepositoryImpl(AccountRepository):
     def saveWithdralInfo(self, accountId):
         try:
             print(f"accountId={accountId}")
+
+            # accountId로 새로운 WithdrawalMembership 객체 생성
             withdralMembership = WithdrawalMembership.objects.create(accountId=accountId)
-            withdralMembership.save()
-            print(f"생성된 withdralMembership 출력: {withdralMembership}")
+
+            # 생성된 객체의 필드 값들을 출력하여 확인
+            print(
+                f"생성된 withdralMembership: ID={withdralMembership.id}, accountId={withdralMembership.accountId}, withdraw_at={withdralMembership.withdraw_at}")
+
+            # 객체를 반환
+            return withdralMembership
 
         except IntegrityError as e:
             print("saveWithdralInfo 에러 뜸")
             print(f"에러 내용: {e}")
-            return None
+            return None  # 에러 발생 시 None 반환
 
 
 
@@ -121,27 +128,29 @@ class AccountRepositoryImpl(AccountRepository):
 
 
     # 탈퇴시점, 탈퇴시점+3년 DB에 저장
-    def saveWithdrawAt(self, time):
+    def saveWithdrawAt(self, accountId,time):
         try:
-            print(f"{time}")
-            withdrawAt = WithdrawalMembership.objects.create(withdraw_at=time)
-            withdrawAt.save()
-            print(f"{withdrawAt}")
-        except ObjectDoesNotExist:
-            print("saveWithdrawAt 작동 안됨")
-            raise ObjectDoesNotExist(f"time: {time} 존재하지 않음.")
-        #return None
+            withdrawMembership = WithdrawalMembership.objects.get(accountId=accountId)
+            withdrawMembership.withdraw_at = time
+            withdrawMembership.save()
 
-    def saveWithdrawEnd(self, time):
+            print(f"업데이트된 withdrawMembership: {withdrawMembership}")
+        except WithdrawalMembership.DoesNotExist:
+            print(f"accountId={accountId}인 회원을 찾을 수 없음")
+
+    def saveWithdrawEnd(self, accountId,time):
         try:
             end = time + relativedelta(years=3)
-            #self.withdraw_end= time + relativedelta(years=3)
-            withdrawEnd = WithdrawalMembership.objects.create(withdraw_end=end)
-            withdrawEnd.save()
-        except Exception as e:
-            print("saveWithdrawEnd 작동 안됨")
-            print(e)
-        #return None
+            print(f"saveWithdrawEnd - accountId={accountId}, withdraw_end={end}")
+
+            # 기존의 WithdrawalMembership 객체를 찾아서 업데이트
+            withdrawMembership = WithdrawalMembership.objects.get(accountId=accountId)
+            withdrawMembership.withdraw_end = end
+            withdrawMembership.save()
+
+            print(f"업데이트된 withdrawMembership: {withdrawMembership}")
+        except WithdrawalMembership.DoesNotExist:
+            print(f"accountId={accountId}인 회원을 찾을 수 없음")
 
 
 

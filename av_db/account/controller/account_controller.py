@@ -1,4 +1,5 @@
-from datetime import timezone
+from django.utils import timezone
+from datetime import timedelta
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -68,11 +69,8 @@ class AccountController(viewsets.ViewSet):
 
             # step 2: withdraw_end= 탈퇴 시간 + 3년 후 시간 저장
             time = timezone.now() # 탈퇴 시각
-            withdrawAt = self.__accountService.createWithdrawAt(time)
-            print(f"{withdrawAt}")
-            withdrawEnd = self.__accountService.createWithdrawEnd(time)
-            print(f"{withdrawEnd}")
-
+            self.__accountService.createWithdrawAt(accountId,time)
+            self.__accountService.createWithdrawEnd(accountId,time)
 
             # step 3: 회원 탈퇴 처리
             withdrawalSuccess = self.__accountService.withdraw(accountId)
@@ -87,8 +85,8 @@ class AccountController(viewsets.ViewSet):
             print("탈퇴가 성공적으로 이루어짐")
             return JsonResponse({
                 "accountId": accountId,
-                "withdraw_at": withdrawAt,
-                "withdraw_end": withdrawEnd}, status=status.HTTP_200_OK)
+                "withdraw_at": time,
+                "withdraw_end": time + timedelta(days=3*365)}, status=status.HTTP_200_OK)
 
         except Exception as e:
             # 예외 처리
