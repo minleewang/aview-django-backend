@@ -12,6 +12,7 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             cls.__instance = super().__new__(cls)
             cls.__instance.loginUrl = settings.GOOGLE['LOGIN_URL']
             cls.__instance.clientId = settings.GOOGLE['CLIENT_ID']
+            cls.__instance.clientSecret = settings.GOOGLE['CLIENT_SECRET']
             cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
             cls.__instance.userInfoRequestUri = settings.GOOGLE['USER_INFO_REQUEST_URI']
@@ -41,7 +42,7 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             'client_id': self.clientId,
             'redirect_uri': self.redirectUri,
             'code': code,
-            'client_secret': None
+            'client_secret': self.clientSecret
         }
 
         response = requests.post(self.tokenRequestUri, data=accessTokenRequest)

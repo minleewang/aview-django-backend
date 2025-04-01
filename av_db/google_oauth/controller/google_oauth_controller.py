@@ -30,22 +30,24 @@ class GoogleOauthController(viewsets.ViewSet):
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
     def requestAccessToken(self, request):
-        print("진입")
+        print("google requestAccessToken 진입")
         serializer = GoogleOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.validated_data['code']
         print(f"code: {code}")
 
         try:
+            print("google requestAccessToken try: 진입")
             tokenResponse = self.googleOauthService.requestGoogleAccessToken(code)
             accessToken = tokenResponse['access_token']
             print(f"accessToken: {accessToken}")
 
             with transaction.atomic():
                 userInfo = self.googleOauthService.requestUserInfo(accessToken)
-                user_id = userInfo.get('id', '') # 사용자 ID
-                nickname = userInfo.get('properties', {}).get('nickname', '') # 닉네임
-                email = userInfo.get('google_account', {}).get('email', '') # 이메일
+                user_id = userInfo.get('sub', '') # 사용자 ID
+                #nickname = userInfo.get('properties', {}).get('nickname', '') # 닉네임
+                nickname = userInfo.get('name','')
+                email = userInfo.get('email', '') #.get('email', '') # 이메일
                 gender = userInfo.get('google_account', {}).get('gender', '')  # 성별별
                 age_range = userInfo.get('google_account', {}).get('age_range', '') # 연령대
                 birthyear = userInfo.get('google_account', {}).get('birthyear', '') # 출생연도
