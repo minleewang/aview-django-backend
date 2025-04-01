@@ -28,3 +28,6 @@ class KakaoOauthServiceImpl(KakaoOauthService):
 
     def requestUserInfo(self, accessToken):
         return self.__kakaoOauthRepository.getUserInfo(accessToken)
+
+    def requestKakaoWithdrawLink(self, accessToken):
+        return self.__kakaoOauthRepository.getWithdrawLink(accessToken)

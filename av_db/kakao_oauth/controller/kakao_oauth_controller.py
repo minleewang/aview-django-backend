@@ -28,6 +28,18 @@ class KakaoOauthController(viewsets.ViewSet):
 
         return JsonResponse({"url": url}, status=status.HTTP_200_OK)
 
+    def requestKakaoWithdrawLink(self, request):
+        userToken = request.headers.get("Authorization")
+        userToken = userToken.replace("Bearer ", "")
+        accountId = self.redisCacheService.getValueByKey(userToken)
+        accessToken = self.redisCacheService.getValueByKey(accountId)
+        if not userToken:
+            return JsonResponse({"error": "userToken이 없습니다."}, status=400)
+
+        url = self.kakaoOauthService.requestKakaoWithdrawLink(accessToken)
+        print(f"{url}")
+        return JsonResponse({"url": url}, status=status.HTTP_200_OK)
+
     def requestAccessToken(self, request):
         serializer = KakaoOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
