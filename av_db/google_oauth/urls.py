@@ -10,7 +10,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('request-login-url',
          GoogleOauthController.as_view({ 'get': 'requestGoogleOauthLink' }),
-         name='Kakao Oauth 링크 요청'),
+         name='Google Oauth 링크 요청'),
     path('redirect-access-token',
          GoogleOauthController.as_view({ 'post': 'requestAccessToken' }),
          name='Google Access Token 요청'),

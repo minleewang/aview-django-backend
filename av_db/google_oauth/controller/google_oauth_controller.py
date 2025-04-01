@@ -48,9 +48,9 @@ class GoogleOauthController(viewsets.ViewSet):
                 #nickname = userInfo.get('properties', {}).get('nickname', '') # 닉네임
                 nickname = userInfo.get('name','')
                 email = userInfo.get('email', '') #.get('email', '') # 이메일
-                gender = userInfo.get('google_account', {}).get('gender', '')  # 성별별
-                age_range = userInfo.get('google_account', {}).get('age_range', '') # 연령대
-                birthyear = userInfo.get('google_account', {}).get('birthyear', '') # 출생연도
+                gender = userInfo.get('')  # 성별별
+                age_range = userInfo.get('') # 연령대
+                birthyear = userInfo.get('') # 출생연도
                 loginType = 'GOOGLE'
                 # 정보 출력 (디버깅용)
                 print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")
@@ -74,9 +74,9 @@ class GoogleOauthController(viewsets.ViewSet):
 
                 userToken = self.__createUserTokenWithAccessToken(account, accessToken)
                 print(f"userToken: {userToken}")
-            
+
             return JsonResponse({'userToken': userToken})
-        
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
@@ -107,7 +107,7 @@ class GoogleOauthController(viewsets.ViewSet):
         gender = request.data.get('gender', '')  # 클라이언트에서 받은 성별
         age_range = request.data.get('age_range', '')  # 클라이언트에서 받은 연령대
         birthyear = request.data.get('birthyear', '')  # 클라이언트에서 받은 출생연도
-        loginType = 'KAKAO'
+        loginType = 'GOOGLE'
         print(f"{request.data}")
 
         if not access_token:
