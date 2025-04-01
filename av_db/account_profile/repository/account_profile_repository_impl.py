@@ -22,13 +22,15 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
         return cls.__instance
 
     def save(self, account, nickname, gender, birthyear, age_range):
+        print(f"accountProfile: {gender}, {birthyear}, {age_range}")
         try:
             accountProfile = AccountProfile.objects.create(
                 account=account,
                 nickname=nickname,
-                gender=gender,
-                birthyear=birthyear,
-                age_range=age_range)
+                gender=gender or '',
+                birthyear=birthyear or '',
+                age_range=age_range or '')
+            print(f"accountProfile: {gender}, {birthyear}, {age_range}")
             return accountProfile
 
         except IntegrityError:

@@ -26,11 +26,25 @@ class AccountProfileServiceImpl(AccountProfileService):
 
     def createAccountProfile(self, accountId, nickname, gender, birthyear, age_range):
         print("profile 진입")
-        if not nickname:
-            nickname = "temporary"
-
         account = self.__accountRepository.findById(accountId)
-        savedAccountProfile = self.__accountProfileRepository.save(account, nickname, gender, birthyear, age_range)
+        savedAccountProfile = self.__accountProfileRepository.save(
+            account,
+            nickname or "temporary",
+            gender or '',
+            birthyear or '',
+            age_range or ''
+        )
+        # if not nickname:
+        #     nickname = "temporary"
+        # if not gender:
+        #     gender = ''
+        # if not birthyear:
+        #     birthyear = ''
+        # if not age_range:
+        #     age_range = ''
+        #
+        # account = self.__accountRepository.findById(accountId)
+        # savedAccountProfile = self.__accountProfileRepository.save(account, nickname, gender, birthyear, age_range)
         if savedAccountProfile is not None:
             print(f"Profile 생성 성공: {savedAccountProfile}")
             return True
