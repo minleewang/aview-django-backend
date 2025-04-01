@@ -11,6 +11,7 @@ class KakaoOauthRepositoryImpl(KakaoOauthRepository):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.loginUrl = settings.KAKAO['LOGIN_URL']
+            cls.__instance.withdrawUrl = settings.KAKAO['WITHDRAW_URL']
             cls.__instance.clientId = settings.KAKAO['CLIENT_ID']
             cls.__instance.redirectUri = settings.KAKAO['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.KAKAO['TOKEN_REQUEST_URI']
@@ -30,6 +31,24 @@ class KakaoOauthRepositoryImpl(KakaoOauthRepository):
 
         return (f"{self.loginUrl}/oauth/authorize?"
                 f"client_id={self.clientId}&redirect_uri={self.redirectUri}&response_type=code")
+
+
+
+    def getWithdrawLink(self,accessToken):
+        print("getWithdrawLink() for withdraw")
+
+        headers = {
+            "Authorization": f"Bearer {accessToken}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        response = requests.post(self.withdrawUrl, headers=headers)
+
+        # 응답 확인
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.text  # 에러 메시지 반환
+
 
     def getAccessToken(self, code):
         accessTokenRequest = {
