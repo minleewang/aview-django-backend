@@ -48,9 +48,9 @@ class GoogleOauthController(viewsets.ViewSet):
                 #nickname = userInfo.get('properties', {}).get('nickname', '') # 닉네임
                 nickname = userInfo.get('name','')
                 email = userInfo.get('email', '') #.get('email', '') # 이메일
-                gender = userInfo.get('')  # 성별별
-                age_range = userInfo.get('') # 연령대
-                birthyear = userInfo.get('') # 출생연도
+                gender = userInfo.get('gender', None)  # 성별별
+                age_range = userInfo.get('age_range', None) # 연령대
+                birthyear = userInfo.get('birthyear', None) # 출생연도
                 loginType = 'GOOGLE'
                 # 정보 출력 (디버깅용)
                 print(f"user_id: {user_id}, email: {email}, nickname: {nickname}")

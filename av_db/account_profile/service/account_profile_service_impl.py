@@ -34,6 +34,7 @@ class AccountProfileServiceImpl(AccountProfileService):
             birthyear or '',
             age_range or ''
         )
+
         # if not nickname:
         #     nickname = "temporary"
         # if not gender:
