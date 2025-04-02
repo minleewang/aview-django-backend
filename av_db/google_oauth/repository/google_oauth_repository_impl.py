@@ -49,6 +49,11 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
         return response.json()
 
     def getUserInfo(self, accessToken):
+        print("getUserInfo 진입")
         headers = {'Authorization': f'Bearer {accessToken}'}
+        print(f" accessToken: {accessToken}")
+        print(f" headers: {headers}")
+        print(f" URL: {self.userInfoRequestUri}")
         response = requests.post(self.userInfoRequestUri, headers=headers)
+        print(f"{response}")
         return response.json()
