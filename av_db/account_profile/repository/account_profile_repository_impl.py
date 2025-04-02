@@ -22,19 +22,26 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
         return cls.__instance
 
     def save(self, account, nickname, gender, birthyear, age_range):
-        print(f"accountProfile: {gender}, {birthyear}, {age_range}")
+        print("여긴가")
+        print(f"accountProfile이: {gender}, {birthyear}, {age_range}")
+
+        gender = gender if gender != '' else 'None'
+        birthyear = birthyear if birthyear != '' else '0000'  # 정수형으로 처리할 수 있도록 None을 사용
+        age_range = age_range if age_range != '' else 'None'
+
         try:
             accountProfile = AccountProfile.objects.create(
                 account=account,
                 nickname=nickname,
-                gender=gender or '',
-                birthyear=birthyear or '',
-                age_range=age_range or '')
+                gender=gender ,
+                birthyear=birthyear ,
+                age_range=age_range )
             print(f"accountProfile: {gender}, {birthyear}, {age_range}")
             return accountProfile
 
-        except IntegrityError:
-            raise IntegrityError(f"Nickname '{nickname}' 이미 존재함.")
+        except Exception as e:
+            print(f"Error during account profile creation: {e}")
+            raise
 
     def findByAccount(self, account): # 객체 하나로 전체 정보 가져오기
         try:
