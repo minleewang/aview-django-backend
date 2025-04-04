@@ -24,7 +24,7 @@ services:
       - KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}
       - KAKAO_TOKEN_REQUEST_URI=${KAKAO_TOKEN_REQUEST_URI}
       - KAKAO_USER_INFO_REQUEST_URI=${KAKAO_USER_INFO_REQUEST_URI}
-      - KAKAO_WITHDRAW_URL=https://kapi.kakao.com/v1/user/unlink
+      - KAKAO_WITHDRAW_URL="https://kapi.kakao.com/v1/user/unlink"
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
