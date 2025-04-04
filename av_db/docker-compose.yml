@@ -49,8 +49,8 @@ services:
       - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
       - GOOGLE_TOKEN_REQUEST_URI=${GOOGLE_TOKEN_REQUEST_URI}
       - GOOGLE_USER_INFO_REQUEST_URI=${GOOGLE_USER_INFO_REQUEST_URI}
-  networks:
-    - app
+    networks:
+      - app
 
   db:
     image: mysql:8.0
