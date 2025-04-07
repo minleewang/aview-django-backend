@@ -153,6 +153,27 @@ class GoogleOauthController(viewsets.ViewSet):
             print('Redis에 토큰 저장 중 에러:', e)
             raise RuntimeError('Redis에 토큰 저장 중 에러')
 
+    def requestGoogleWithdrawLink(self, request):
+        print("requestGoogleWithdrawLink 진입")
+
+        userToken = request.headers.get("Authorization")
+        userToken = userToken.replace("Bearer ", "")
+        if not userToken:
+            return JsonResponse({"error": "Authorization 헤더가 필요합니다."}, status=400)
+
+        accountId = self.redisService.getValue(userToken)
+        if not accountId:
+            return JsonResponse({"error": "유효하지 않은 userToken입니다."}, status=400)
+
+        accessToken = self.redisService.getValue(accountId)
+        if not accessToken:
+            return JsonResponse({"error": "AccessToken을 찾을 수 없습니다."}, status=400)
+
+        # 여기서 바로 Service 호출
+        result = self.googleOauthService.requestGoogleWithdrawLink(accessToken)
+
+        return JsonResponse(result, status=HTTP_200_OK)
+
     # def dropRedisTokenForLogout(self, request):
     #     try:
     #         userToken = request.data.get('userToken')
