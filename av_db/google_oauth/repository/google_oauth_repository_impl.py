@@ -16,6 +16,7 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
             cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
             cls.__instance.userInfoRequestUri = settings.GOOGLE['USER_INFO_REQUEST_URI']
+            cls.__instance.revokeUrl = settings.GOOGLE['REVOKE_URL']
 
         return cls.__instance
 
@@ -57,3 +58,24 @@ class GoogleOauthRepositoryImpl(GoogleOauthRepository):
         response = requests.post(self.userInfoRequestUri, headers=headers)
         print(f"{response}")
         return response.json()
+
+    def getWithdrawLink(self, accessToken):
+        """
+        구글 OAuth Revoke API 호출
+        """
+        print("getWithdrawLink() for withdraw - Google")
+
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        payload = {
+            "token": accessToken
+        }
+
+        response = requests.post(self.revokeUrl, params=payload, headers=headers)
+
+        # 응답 확인
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.text  # 에러 메시지 반환
