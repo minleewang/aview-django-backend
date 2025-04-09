@@ -27,13 +27,36 @@ class AccountProfileServiceImpl(AccountProfileService):
     def createAccountProfile(self, accountId, nickname, gender, birthyear, age_range):
         print("profile 진입")
         account = self.__accountRepository.findById(accountId)
-        savedAccountProfile = self.__accountProfileRepository.save(
-            account,
-            nickname or "temporary",
-            gender or '',
-            birthyear or '',
-            age_range or ''
-        )
+
+        original_nickname = nickname or "temporary"
+        new_nickname = original_nickname
+        count = 1
+
+        while True:
+            from MySQLdb import IntegrityError
+            try:
+                savedAccountProfile = self.__accountProfileRepository.save(
+                    account,
+                    new_nickname,
+                    gender or '',
+                    birthyear or '',
+                    age_range or ''
+                )
+                break  # 저장 성공하면 루프 탈출
+            except IntegrityError:
+                # 닉네임 중복일 경우 새로운 닉네임 생성
+                new_nickname = f"{original_nickname}_{count}"
+                count += 1
+                print(f"닉네임 중복 발생, 새로운 닉네임 시도: {new_nickname}")
+
+
+        # savedAccountProfile = self.__accountProfileRepository.save(
+        #     account,
+        #     nickname or "temporary",
+        #     gender or '',
+        #     birthyear or '',
+        #     age_range or ''
+        # )
 
         # if not nickname:
         #     nickname = "temporary"

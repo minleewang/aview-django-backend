@@ -28,3 +28,9 @@ class GoogleOauthServiceImpl(GoogleOauthService):
 
     def requestUserInfo(self, accessToken):
         return self.__googleOauthRepository.getUserInfo(accessToken)
+
+    def requestGoogleWithdrawLink(self, accessToken):
+        return self.__googleOauthRepository.getWithdrawLink(accessToken)
+
+    # def requestKakaoWithdrawLink(self, accessToken):
+    #     return self.__kakaoOauthRepository.getWithdrawLink(accessToken)

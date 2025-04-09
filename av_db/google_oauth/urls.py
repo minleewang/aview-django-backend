@@ -17,6 +17,7 @@ urlpatterns = [
     path('request-user-token',
          GoogleOauthController.as_view({ 'post': 'requestUserToken' }),
          name='User Token 요청'),
-    # path('logout', GoogleOauthController.as_view({'post': 'dropRedisTokenForLogout'}),
-    #     name='drop-redis_service-token-for-logout'),
+    path('request-withdraw-url',
+         GoogleOauthController.as_view({'post': 'requestGoogleWithdrawLink'}),
+         name='Google 연결 끊기 요청'),
 ]

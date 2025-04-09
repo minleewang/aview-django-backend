@@ -26,22 +26,30 @@ class AccountProfileRepositoryImpl(AccountProfileRepository):
         print(f"accountProfile이: {gender}, {birthyear}, {age_range}")
 
         gender = gender if gender != '' else 'None'
-        birthyear = birthyear if birthyear != '' else '0000'  # 정수형으로 처리할 수 있도록 None을 사용
+        birthyear = birthyear if birthyear != '' else '0000'
         age_range = age_range if age_range != '' else 'None'
 
-        try:
-            accountProfile = AccountProfile.objects.create(
-                account=account,
-                nickname=nickname,
-                gender=gender ,
-                birthyear=birthyear ,
-                age_range=age_range )
-            print(f"accountProfile: {gender}, {birthyear}, {age_range}")
-            return accountProfile
+        original_nickname = nickname or "temporary"
+        new_nickname = original_nickname
+        count = 1
 
-        except Exception as e:
-            print(f"Error during account profile creation: {e}")
-            raise
+        # 사전에 nickname 존재 여부 확인
+        while AccountProfile.objects.filter(nickname=new_nickname).exists():
+            new_nickname = f"{original_nickname}_{count}"
+            count += 1
+            print(f"Nickname 중복 발견, 새 닉네임 시도: {new_nickname}")
+
+        # 중복 없으면 저장
+        accountProfile = AccountProfile.objects.create(
+            account=account,
+            nickname=new_nickname,
+            gender=gender,
+            birthyear=birthyear,
+            age_range=age_range
+        )
+        print(f"accountProfile 생성 성공: {gender}, {birthyear}, {age_range}")
+
+        return accountProfile
 
     def findByAccount(self, account): # 객체 하나로 전체 정보 가져오기
         try:
