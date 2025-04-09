@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.status import HTTP_200_OK
-
+from streamlit import header
 
 from account.service.account_service_impl import AccountServiceImpl
 from account_profile.service.account_profile_service_impl import AccountProfileServiceImpl
@@ -51,6 +51,7 @@ class NaverOauthController(viewsets.ViewSet):
 
             with transaction.atomic():
                 userInfo = self.naverOauthService.requestUserInfo(accessToken)
+                print(f"{header}")
                 print(f"{userInfo}")
                 response_data = userInfo.get('response',{})
                 user_id = response_data.get('id', '')  # 사용자 ID
