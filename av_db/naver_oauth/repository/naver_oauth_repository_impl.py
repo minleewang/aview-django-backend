@@ -17,6 +17,7 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
             cls.__instance.redirectUri = settings.NAVER['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.NAVER['TOKEN_REQUEST_URI']
             cls.__instance.userInfoRequestUri = settings.NAVER['USER_INFO_REQUEST_URI']
+            cls.__instance.withdrawUrl = settings.NAVER['WITHDRAW_URL']
         return cls.__instance
 
     @classmethod
@@ -53,3 +54,30 @@ class NaverOauthRepositoryImpl(NaverOauthRepository):
         print(f"찍히냐?")
         print(f"{self.userInfoRequestUri}")
         return response.json()
+
+    def getWithdrawLink(self, accessToken):
+        """
+        네이버 OAuth 연결 해제 API 호출
+        """
+        print("네이버 getWithdrawLink() 실행")
+
+        params = {
+            'grant_type': 'delete',
+            'client_id': settings.NAVER['CLIENT_ID'],
+            'client_secret': settings.NAVER['CLIENT_SECRET'],
+            'access_token': accessToken,
+            'service_provider': 'NAVER'
+        }
+
+        response = requests.post(self.withdrawUrl, params=params)
+
+        print(f"네이버 연결 끊기 응답: {response.status_code} / {response.text}")
+
+        if response.status_code == 200:
+            return {"message": "네이버 연결 해제 성공"}
+        else:
+            try:
+                return {"error": response.json()}
+            except Exception:
+                return {"error": response.text}
+
