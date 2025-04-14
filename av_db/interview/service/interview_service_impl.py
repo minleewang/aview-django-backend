@@ -33,8 +33,10 @@ class InterviewServiceImpl(InterviewService):
                     questionList.append(dic.get('question'))
             interviewId = self.__interviewRepositoryImpl.getMaxId()
             self.__interviewRepositoryImpl.insertData(interviewId+1, questionList)
-        print('저장 완료')
 
+            if questionList:
+                self.__interviewRepositoryImpl.insertFirstQuestion(questionList[0])
+        print('저장 완료')
         return True
 
     def insertFirstQuestion(self):
