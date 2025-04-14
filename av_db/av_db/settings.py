@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'interview_result',
     'authentication',
     'github_authentication',
-#    'github_action_monitor',
+    'blog_post',
+    #    'github_action_monitor',
 ]
 
 MIDDLEWARE = [
