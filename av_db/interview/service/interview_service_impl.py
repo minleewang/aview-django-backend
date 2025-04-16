@@ -1,74 +1,89 @@
-import glob
-import json
-import os
-
+from django.core.paginator import Paginator
+from account.repository.account_repository_impl import AccountRepositoryImpl
+from interview.entity.interview import Interview
+from interview.entity.interview_status import InterviewStatus
 from interview.repository.interview_repository_impl import InterviewRepositoryImpl
 from interview.service.interview_service import InterviewService
 
 
 class InterviewServiceImpl(InterviewService):
     __instance = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.__interviewRepositoryImpl = InterviewRepositoryImpl.getInstance()
-
+            cls.__instance.__interviewRepository = InterviewRepositoryImpl.getInstance()
+            cls.__instance.__accountRepository = AccountRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
     def getInstance(cls):
         if cls.__instance is None:
             cls.__instance = cls()
-
         return cls.__instance
 
-    def insertSession(self):
-        questionFiles = glob.glob(os.path.join('assets/json_qa_pair', '*.json'))
-        for questionFile in questionFiles:
-            questionList = []
-            with open(questionFile, 'r', encoding='utf-8') as file:
-                print('열려는 qu file: ', questionFile)
-                data = json.load(file)
-                for dic in data:
-                    questionList.append(dic.get('question'))
-            interviewId = self.__interviewRepositoryImpl.getMaxId()
-            self.__interviewRepositoryImpl.insertData(interviewId+1, questionList)
+    def createInterview(self, accountId, jobCategory, experienceLevel):
+        foundAccount = self.__accountRepository.findById(accountId)
 
-            if questionList:
-                self.__interviewRepositoryImpl.insertFirstQuestion(questionList[0])
-        print('저장 완료')
-        return True
+        if not foundAccount:
+            raise Exception("해당 accountId에 해당하는 account를 찾을 수 없습니다.")
 
-    def insertFirstQuestion(self):
-        file_path = 'assets\\start_question_3061.json'
+        newInterview = Interview(
+            account=foundAccount,
+            status=InterviewStatus.IN_PROGRESS.value,
+            topic=jobCategory.value if hasattr(jobCategory, 'value') else jobCategory,
+            experience_level=experienceLevel.value if hasattr(experienceLevel, 'value') else experienceLevel
+        )
+        print(f"newInterview: {newInterview}")
 
-        # 파일 열기 및 JSON 파싱
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
+        savedInterview = self.__interviewRepository.save(newInterview)
+        return savedInterview
 
-        [self.__interviewRepositoryImpl.insertFirstQuestion(item["question"]) for item in data]
+    def listInterview(self, accountId, page, pageSize):
+        try:
+            account = self.__accountRepository.findById(accountId)
+            if not account:
+                raise ValueError(f"Account with ID {accountId} not found.")
 
-        return True
+            paginatedInterviewList = self.__interviewRepository.findInterviewByAccount(account, page, pageSize)
 
-    def insertTechQuestion(self):
-        file_path = 'assets\\tech_question_3014.json'
+            total_items = paginatedInterviewList.paginator.count
 
-        # 파일 열기 및 JSON 파싱
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
+            interviewDataList = [
+                {
+                    "id": interview.id,
+                    "topic": interview.topic,  # Updated field
+                    "yearsOfExperience": interview.yearsOfExperience,  # Updated field
+                    "created_at": interview.created_at,  # Included created_at field
+                }
+                for interview in paginatedInterviewList
+            ]
 
-        [self.__interviewRepositoryImpl.insertTechQuestion(item["question"], item["job"]) for item in data]
+            return interviewDataList, total_items
 
-        return True
+        except Exception as e:
+            print(f"Unexpected error in listInterview: {e}")
+            raise
 
-    def getSession(self, sessionId):
-        questionList = self.__interviewRepositoryImpl.getData(sessionId)
-        return questionList
+    def removeInterview(self, accountId, interviewId):
+        try:
+            interview = self.__interviewRepository.findById(interviewId)
+            if interview is None or str(interview.account.id) != str(accountId):
+                return {
+                    "error": "해당 인터뷰를 찾을 수 없거나 소유자가 일치하지 않습니다.",
+                    "success": False
+                }
 
-    def getFirstQuestion(self, questionId):
-        firstQuestionList = self.__interviewRepositoryImpl.getFirstQuestion(questionId)
-        return firstQuestionList
+            result = self.__interviewRepository.deleteById(interviewId)
+            if result:
+                return {
+                    "success": True,
+                    "message": "인터뷰가 삭제되었습니다."
+                }
 
-    def getTechQuestion(self, job):
-        techQuestion = self.__interviewRepositoryImpl.getTechQuestion(job)
-        return techQuestion
+        except Exception as e:
+            print(f"Error in InterviewService.removeInterview: {e}")
+            return {
+                "error": "서버 내부 오류",
+                "success": False
+            }

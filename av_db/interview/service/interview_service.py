@@ -2,26 +2,15 @@ from abc import ABC, abstractmethod
 
 
 class InterviewService(ABC):
+
     @abstractmethod
-    def insertSession(self):
+    def createInterview(self, accountId, jobCategory, experienceLevel):
         pass
 
     @abstractmethod
-    def insertFirstQuestion(self):
+    def listInterview(self, accountId, page, pageSize):
         pass
 
     @abstractmethod
-    def insertTechQuestion(self):
-        pass
-
-    @abstractmethod
-    def getSession(self, sessionId):
-        pass
-
-    @abstractmethod
-    def getFirstQuestion(self, questionId):
-        pass
-
-    @abstractmethod
-    def getTechQuestion(self, job):
+    def removeInterview(self, accountId, interviewId):
         pass
