@@ -10,9 +10,8 @@ class InterviewData(models.Model):
     source = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'interview_question_data_per_job_category'
-        app_label = 'interview'
+        #app_label = 'interview'
 
     def __str__(self):
         return self.question[:50]
