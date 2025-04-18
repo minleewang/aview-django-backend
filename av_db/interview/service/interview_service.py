@@ -14,3 +14,11 @@ class InterviewService(ABC):
     @abstractmethod
     def removeInterview(self, accountId, interviewId):
         pass
+
+    @abstractmethod
+    def saveQuestion(self, interview_id: int, question: str) -> bool:
+        pass
+
+    @abstractmethod
+    def saveAnswer(self, accountId: int, interviewId: int, questionId: int, answerText: str) -> bool:
+        pass

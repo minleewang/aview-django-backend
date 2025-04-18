@@ -7,3 +7,4 @@ class InterviewTopic(models.TextChoices):
     EMBEDDED = "Embedded", "임베디드"
     AI = "AI", "인공지능"
     DEVOPS = "DevOps", "데브옵스"
+    WEBAPP = "AppWeb", "App", "Web", "앱웹", "앱", "웹"

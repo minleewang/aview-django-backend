@@ -10,6 +10,10 @@ class InterviewRepository(ABC):
         pass
 
     @abstractmethod
+    def saveQuestion(self, interview_id: int, question: str) -> int | None:
+        pass
+
+    @abstractmethod
     def findById(self, interviewId: int) -> Optional[object]:
         """인터뷰 ID로 인터뷰를 찾습니다."""
         pass
