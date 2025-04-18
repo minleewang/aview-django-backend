@@ -1,6 +1,6 @@
-from interview_question.entity.interview_question import InterviewQuestion
-from interview_question.repository.interview_question_repository_impl import InterviewQuestionRepositoryImpl
-from interview_question.service.interview_question_service import InterviewQuestionService
+from interview_question_data.entity.interview_data import InterviewData
+from interview_question_data.repository.interview_question_repository_impl import InterviewQuestionRepositoryImpl
+from interview_question_data.service.interview_question_service import InterviewQuestionService
 from interview.repository.interview_repository_impl import InterviewRepositoryImpl
 
 import pandas as pd
@@ -34,7 +34,7 @@ class InterviewQuestionServiceImpl(InterviewQuestionService):
         for text in question_list:
             if text in existing_questions:
                 continue  # 중복은 저장하지 않음
-            q = InterviewQuestion(interview=interview, question_text=text)
+            q = InterviewData(interview=interview, question_text=text)
             saved = self.repository.save(q)
             saved_questions.append(saved)
             existing_questions.add(text)  # 메모리에도 추가하여 중복 방지

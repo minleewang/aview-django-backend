@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from django.http import JsonResponse
-from interview_question.service.interview_question_service_impl import InterviewQuestionServiceImpl
+from interview_question_data.service.interview_question_service_impl import InterviewQuestionServiceImpl
 
 
 # 질문 관련 HTTP 요청을 처리하는 컨트롤러

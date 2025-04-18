@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from interview_question.entity.interview_question import InterviewQuestion
+from interview_question_data.entity.interview_data import InterviewData
 
 
 # 질문 관련 비즈니스 로직 인터페이스
