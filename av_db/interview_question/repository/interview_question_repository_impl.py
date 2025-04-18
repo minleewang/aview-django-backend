@@ -14,15 +14,29 @@ class InterviewQuestionRepositoryImpl(InterviewQuestionRepository):
     def getInstance(cls):
         return cls()
 
-    def save(self, question: InterviewQuestion) -> InterviewQuestion:
-        # 질문 저장 후 반환
-        question.save()
-        return question
+    # def save(self, question: InterviewQuestion) -> InterviewQuestion:
+    #     # 질문 저장 후 반환
+    #     question.save()
+    #     return question
+    #
+    # def findByInterviewId(self, interview_id: int):
+    #     # 특정 인터뷰 ID에 해당하는 질문 목록 조회
+    #     return InterviewQuestion.objects.filter(interview_id=interview_id).order_by("created_at")
+    #
+    # def findAllQuestionTexts(self) -> list:
+    #     # DB 전체에서 질문 텍스트만 추출
+    #     return InterviewQuestion.objects.values_list("question_text", flat=True)
 
-    def findByInterviewId(self, interview_id: int):
-        # 특정 인터뷰 ID에 해당하는 질문 목록 조회
-        return InterviewQuestion.objects.filter(interview_id=interview_id).order_by("created_at")
+    def create_question(self, question, category=None, source=None):
+        return InterviewQuestion.objects.create(
+            question=question,
+            category=category,
+            source=source
+        )
 
-    def findAllQuestionTexts(self) -> list:
-        # DB 전체에서 질문 텍스트만 추출
-        return InterviewQuestion.objects.values_list("question_text", flat=True)
+    def get_all_questions(self):
+        return InterviewQuestion.objects.all()
+
+    def find_by_category(self, category):
+        return InterviewQuestion.objects.filter(category=category)
+
