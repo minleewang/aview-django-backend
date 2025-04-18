@@ -1,5 +1,5 @@
-from interview_question.entity.interview_question import InterviewQuestion
-from interview_question.repository.interview_question_repository import InterviewQuestionRepository
+from interview_question_data.entity.interview_data import InterviewData
+from interview_question_data.repository.interview_question_repository import InterviewQuestionRepository
 
 # 질문 저장소 구현체
 class InterviewQuestionRepositoryImpl(InterviewQuestionRepository):
@@ -28,15 +28,15 @@ class InterviewQuestionRepositoryImpl(InterviewQuestionRepository):
     #     return InterviewQuestion.objects.values_list("question_text", flat=True)
 
     def create_question(self, question, category=None, source=None):
-        return InterviewQuestion.objects.create(
+        return InterviewData.objects.create(
             question=question,
             category=category,
             source=source
         )
 
     def get_all_questions(self):
-        return InterviewQuestion.objects.all()
+        return InterviewData.objects.all()
 
     def find_by_category(self, category):
-        return InterviewQuestion.objects.filter(category=category)
+        return InterviewData.objects.filter(category=category)
 

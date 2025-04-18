@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from interview_question.entity.interview_question import InterviewQuestion
+from interview_question_data.entity.interview_data import InterviewData
 
 # 질문 저장소 인터페이스 정의
 class InterviewQuestionRepository(ABC):

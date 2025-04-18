@@ -3,7 +3,7 @@ import os
 
 
 # 엑셀 파일들이 있는 폴더 경로
-folder_path = '../interview_question/question_data/excel_files'
+folder_path = '../interview_question_data/question_data/excel_files'
 
 for file in os.listdir(folder_path):
     if file.endswith('.xlsx') or file.endswith('.xls'):
