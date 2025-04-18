@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage
 from django.db import models
 from interview.entity.interview import Interview
+from interview.entity.interview_question import InterviewQuestion
 from interview.repository.interview_repository import InterviewRepository
 
 
@@ -22,6 +23,17 @@ class InterviewRepositoryImpl(InterviewRepository):
         """인터뷰 저장"""
         interview.save()
         return interview
+
+    def saveQuestion(self, interview_id: int, question: str) -> int | None:
+        try:
+            saved = InterviewQuestion.objects.create(
+                interview_id=interview_id,
+                content=question
+            )
+            return saved.id
+        except Exception as e:
+            print(f"❌ 질문 저장 실패: {e}")
+            return None
 
     def findById(self, interviewId: int) -> Interview:
         """인터뷰 ID로 인터뷰 찾기"""
