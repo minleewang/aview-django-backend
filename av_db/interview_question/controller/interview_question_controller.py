@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from django.http import JsonResponse
 from interview_question.service.interview_question_service_impl import InterviewQuestionServiceImpl
 
+
 # 질문 관련 HTTP 요청을 처리하는 컨트롤러
 class InterviewQuestionController(viewsets.ViewSet):
     service = InterviewQuestionServiceImpl.getInstance()
@@ -37,3 +38,14 @@ class InterviewQuestionController(viewsets.ViewSet):
             return JsonResponse({"success": True, "questions": data}, status=status.HTTP_200_OK)
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_all_questions(self, request):
+        questions = InterviewQuestionServiceImpl.list_questions()
+        data = [
+            {
+                'question': q.question,
+                'category': q.category,
+                'source': q.source
+            } for q in questions
+        ]
+        return JsonResponse(data, safe=False)

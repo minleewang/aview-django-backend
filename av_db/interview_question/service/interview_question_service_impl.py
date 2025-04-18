@@ -3,6 +3,9 @@ from interview_question.repository.interview_question_repository_impl import Int
 from interview_question.service.interview_question_service import InterviewQuestionService
 from interview.repository.interview_repository_impl import InterviewRepositoryImpl
 
+import pandas as pd
+
+
 # 질문 관련 서비스 구현체
 class InterviewQuestionServiceImpl(InterviewQuestionService):
     __instance = None
@@ -41,3 +44,17 @@ class InterviewQuestionServiceImpl(InterviewQuestionService):
     def getQuestions(self, interview_id: int):
         # 특정 인터뷰의 질문 목록 조회
         return self.repository.findByInterviewId(interview_id)
+
+    def import_questions_from_excel(self, file_path):
+        #
+        df = pd.read_excel(file_path)
+
+        for _, row in df.iterrows():
+            InterviewQuestionRepositoryImpl.create_question(
+                question=row.get('question', ''),
+                category=row.get('category', ''),
+                source=row.get('source', '')
+            )
+
+    def list_questions(self):
+        return InterviewQuestionRepositoryImpl.get_all_questions()
