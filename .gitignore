@@ -298,4 +298,4 @@ pyrightconfig.json
 .pem
 
 # exclude .xlsx
-.xlsx
+*.xlsx
