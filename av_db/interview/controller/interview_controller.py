@@ -35,9 +35,9 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel
+                    accountId, jobCategory, experienceLevel  # 지금 accountId가 안옴
                 )
-                print(f"createdInterview: {createdInterview}")
+                print(f"createdInterview : {createdInterview}")
 
                 if createdInterview is None:
                     raise Exception("면접 생성 실패")
@@ -48,6 +48,7 @@ class InterviewController(viewsets.ViewSet):
                     "topic": createdInterview.topic,
                     "experienceLevel": createdInterview.experience_level
                 }
+                print(f" 아 드디어 여기까지 옴: payload {payload}")
 
                 response = HttpClient.postToAI("/interview/question/generate", payload)
                 print(f"FastAPI Response: {response}")
