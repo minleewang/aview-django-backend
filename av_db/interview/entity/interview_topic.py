@@ -1,10 +1,11 @@
-from django.db import models
 
+from django.db.models import IntegerChoices
 
-class InterviewTopic(models.TextChoices):
-    BACKEND = "Backend", "백엔드"
-    FRONTEND = "Frontend", "프론트엔드"
-    EMBEDDED = "Embedded", "임베디드"
-    AI = "AI", "인공지능"
-    DEVOPS = "DevOps", "데비옵스"
-    WEBAPP = "AppWeb", "웹앱"
+class InterviewTopic(IntegerChoices):
+    BACKEND = 1, "Backend"
+    FRONTEND = 2, "Frontend"
+    EMBEDDED = 3, "Embedded"
+    AI = 4, "AI"
+    DEVOPS = 5, "DevOps"
+    WEBAPP = 6, "App·Web"
+
