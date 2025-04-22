@@ -52,6 +52,7 @@ services:
       - GOOGLE_TOKEN_REQUEST_URI=${GOOGLE_TOKEN_REQUEST_URI}
       - GOOGLE_USER_INFO_REQUEST_URI=${GOOGLE_USER_INFO_REQUEST_URI}
       - GOOGLE_REVOKE_URL=${GOOGLE_REVOKE_URL}
+      - FASTAPI_URL=https://sj6bo9orbe.execute-api.ap-northeast-2.amazonaws.com
     networks:
       - app
 
