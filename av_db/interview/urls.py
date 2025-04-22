@@ -20,4 +20,7 @@ urlpatterns = [
     path('user-answer',
          InterviewController.as_view({ 'post': 'requestCreateAnswer' }),
          name='인터뷰 사용자 답변 등록'),
+    path('followup',
+         InterviewController.as_view({'post': 'requestFollowUpQuestion'}),
+         name='꼬리 질문 요청'),
 ]
