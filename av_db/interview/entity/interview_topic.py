@@ -8,4 +8,3 @@ class InterviewTopic(IntegerChoices):
     AI = 4, "AI"
     DEVOPS = 5, "DevOps"
     WEBAPP = 6, "App·Web"
-
