@@ -21,11 +21,13 @@ class InterviewController(viewsets.ViewSet):
         userToken = postRequest.get("userToken")
         jobCategory = postRequest.get("jobCategory")
         experienceLevel = postRequest.get("experienceLevel")
+        projectExperience = postRequest.get("projectExperience")
+        academicBackground = postRequest.get("academicBackground")
 
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if not jobCategory or not experienceLevel:
-            return JsonResponse({"error": "jobCategory와 experienceLevel이 필요합니다", "success": False},
+        if not jobCategory or not experienceLevel or not projectExperience or not academicBackground:
+            return JsonResponse({"error": "jobCategory와 experienceLevel와 projectExperience와 academicBackground이 필요합니다", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
         print(f"userToken 획득")
@@ -36,7 +38,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel, projectExperience, academicBackground  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -47,7 +49,9 @@ class InterviewController(viewsets.ViewSet):
                     "userToken": userToken,
                     "interviewId": str(createdInterview.id),
                     "topic": createdInterview.topic,
-                    "experienceLevel": createdInterview.experience_level
+                    "experienceLevel": createdInterview.experience_level,
+                    "projectExperience": createdInterview.project_experience,
+                    "academicBackground": createdInterview.academic_background
                 }
                 print(f" 아 드디어 여기까지 옴: payload {payload}")
 
