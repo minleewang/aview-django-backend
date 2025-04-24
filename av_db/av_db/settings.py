@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'github_authentication',
     'blog_post',
     'excel_basic',
+    'interview_tech_stack',
     #    'github_action_monitor',
 ]
 
