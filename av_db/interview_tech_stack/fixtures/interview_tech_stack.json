@@ -1,0 +1,163 @@
+[
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 1,
+    "fields": {
+      "name": "풀스택"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 2,
+    "fields": {
+      "name": "백엔드/서버개발"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 3,
+    "fields": {
+      "name": "프론트엔드"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 4,
+    "fields": {
+      "name": "웹개발"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 5,
+    "fields": {
+      "name": "Flutter"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 6,
+    "fields": {
+      "name": "Java"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 7,
+    "fields": {
+      "name": "JavaScript"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 8,
+    "fields": {
+      "name": "Python"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 9,
+    "fields": {
+      "name": "Vue.js"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 10,
+    "fields": {
+      "name": "API"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 11,
+    "fields": {
+      "name": "MYSQL"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 12,
+    "fields": {
+      "name": "MariaDB"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 13,
+    "fields": {
+      "name": "ReactJS"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 14,
+    "fields": {
+      "name": "ASP"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 15,
+    "fields": {
+      "name": "Angular"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 16,
+    "fields": {
+      "name": "Bootstrap"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 17,
+    "fields": {
+      "name": "Node.js"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 18,
+    "fields": {
+      "name": "jQuery"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 19,
+    "fields": {
+      "name": "PHP"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 20,
+    "fields": {
+      "name": "JSP"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 21,
+    "fields": {
+      "name": "GraphQL"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 22,
+    "fields": {
+      "name": "React"
+    }
+  },
+  {
+    "model": "interview.InterviewTechStack",
+    "pk": 23,
+    "fields": {
+      "name": "HTML5"
+    }
+  }
+]

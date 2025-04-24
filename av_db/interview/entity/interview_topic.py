@@ -1,4 +1,3 @@
-
 from django.db.models import IntegerChoices
 
 class InterviewTopic(IntegerChoices):

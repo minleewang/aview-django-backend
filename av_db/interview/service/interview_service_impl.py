@@ -25,7 +25,7 @@ class InterviewServiceImpl(InterviewService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createInterview(self, accountId, jobCategory, experienceLevel,projectExperience, academicBackground):
+    def createInterview(self, accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack):
         foundAccount = self.__accountRepository.findById(accountId)
 
         if not foundAccount:
@@ -37,7 +37,8 @@ class InterviewServiceImpl(InterviewService):
             topic=jobCategory.value if hasattr(jobCategory, 'value') else jobCategory,
             experience_level=experienceLevel.value if hasattr(experienceLevel, 'value') else experienceLevel,
             project_experience = projectExperience.value if hasattr(projectExperience, 'value') else projectExperience,
-            academic_background = academicBackground.value if hasattr(academicBackground, 'value') else academicBackground
+            academic_background = academicBackground.value if hasattr(academicBackground, 'value') else academicBackground,
+            interview_tech_stack = interviewTechStack.value if hasattr(interviewTechStack, 'value') else interviewTechStack
         )
         print(f"newInterview: {newInterview}")
 
