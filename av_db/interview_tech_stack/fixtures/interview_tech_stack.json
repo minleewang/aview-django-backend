@@ -150,13 +150,6 @@
     "model": "interview.InterviewTechStack",
     "pk": 22,
     "fields": {
-      "name": "React"
-    }
-  },
-  {
-    "model": "interview.InterviewTechStack",
-    "pk": 23,
-    "fields": {
       "name": "HTML5"
     }
   }
