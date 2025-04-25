@@ -69,6 +69,3 @@ class Interview(models.Model):
 
     def getInterviewTechStack(self):
         return InterviewTechStack(self.interview_tech_stack)
-
-    def getCreatedAt(self):
-        return self.created_at
