@@ -163,12 +163,14 @@ class InterviewController(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"])
     def requestFollowUpQuestion(self, request):
+        # POST 요청으로부터 데이터 파싱
         postRequest = request.data
         userToken = postRequest.get("userToken")
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
 
+        # 필수 값이 누락된 경우 400 Bad Request 반환
         if not userToken or not interviewId or not questionId or not answerText:
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText 모두 필요합니다.",
@@ -176,6 +178,7 @@ class InterviewController(viewsets.ViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # FastAPI로 전송할 payload 구성
             payload = {
                 "userToken": userToken,
                 "interviewId": interviewId,
@@ -183,14 +186,18 @@ class InterviewController(viewsets.ViewSet):
                 "answerText": answerText
             }
 
+            # FastAPI에 후속 질문 요청 API 호출
             response = HttpClient.postToAI("/interview/question/generate-after-answer", payload)
             print(f"[FastAPI] Follow-up response: {response}")
 
+            # FastAPI 응답이 없으면 에러 처리
             if not response:
                 raise Exception("FastAPI 질문 생성 실패")
 
+            # 정상 응답일 경우 클라이언트에 응답 전달
             return JsonResponse(response, status=200)
 
         except Exception as e:
+            # 예외 발생 시 로그 출력 및 에러 응답 반환
             print(f"[Error] requestFollowUpQuestion: {e}")
             return JsonResponse({"error": str(e), "success": False}, status=500)
