@@ -38,12 +38,13 @@ class Interview(models.Model):
         app_label = 'interview'
 
     def __str__(self):
-        return (f"Interview(id={self.id}, account={self.account}, topic={self.topic}, "
-                f"experience_level={self.experience_level}, status={self.status}",
-                f"project_experience={self.project_experience})"
-                f"academic_background={self.academic_background})"
-                f"interview_tech_stack={self.interview_tech_stack})"
-                )
+        return (
+            f"Interview(id={self.id}, account={self.account}, topic={self.topic}, "
+            f"experience_level={self.experience_level}, status={self.status}, "
+            f"project_experience={self.project_experience}, "
+            f"academic_background={self.academic_background}, "
+            f"interview_tech_stack={self.interview_tech_stack})"
+        )
 
     def getId(self):
         return self.id

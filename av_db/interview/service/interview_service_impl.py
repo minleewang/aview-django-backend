@@ -25,13 +25,14 @@ class InterviewServiceImpl(InterviewService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createInterview(self, accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack):
-        foundAccount = self.__accountRepository.findById(accountId)
+                                                                        # 일단 첫 질문은 고정이라 많은 정보 필요X
+    def createInterview(self, accountId, jobCategory, experienceLevel, projectExperience, academicBackground,interviewTechStack): #,projectExperience, academicBackground, interviewTechStack):
+        foundAccount = self.__accountRepository.findById(accountId)  # 여기서 회원 식별
 
         if not foundAccount:
             raise Exception("해당 accountId에 해당하는 account를 찾을 수 없습니다.")
 
-        newInterview = Interview(
+        newInterview = Interview(  # 인터뷰 DB에 정보 저장을 위한 단계 (구조가 조금 바뀔 예정)
             account=foundAccount,
             status=InterviewStatus.IN_PROGRESS.value,
             topic=jobCategory.value if hasattr(jobCategory, 'value') else jobCategory,
@@ -42,12 +43,15 @@ class InterviewServiceImpl(InterviewService):
         )
         print(f"newInterview: {newInterview}")
 
-        savedInterview = self.__interviewRepository.save(newInterview)
+        savedInterview = self.__interviewRepository.save(newInterview)  # 인터뷰 정보 저장
         return savedInterview
+
 
     def saveQuestion(self, interview_id: int, question: str) -> int | None:
         print(f"📥 [service] Saving question to DB for interviewId={interview_id}")
         return self.__interviewRepository.saveQuestion(interview_id, question)
+
+
 
     def listInterview(self, accountId, page, pageSize):
         try:

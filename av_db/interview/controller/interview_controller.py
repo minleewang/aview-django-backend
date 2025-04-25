@@ -25,10 +25,11 @@ class InterviewController(viewsets.ViewSet):
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
 
+        # 첫 질문
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if not jobCategory or not experienceLevel or not projectExperience or not academicBackground or not interviewTechStack:
-            return JsonResponse({"error": "jobCategory, experienceLevel, projectExperience, academicBackground, interviewTechStack이 필요합니다", "success": False},
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None):
+            return JsonResponse({"error": "필수 항목 누락", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
         print(f"userToken 획득")
@@ -39,32 +40,33 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel, projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
                 if createdInterview is None:
                     raise Exception("면접 생성 실패")
 
-                payload = {
+                payload = {   # 이 정보만 FastAPI로 전달
                     "userToken": userToken,
                     "interviewId": str(createdInterview.id),
                     "topic": createdInterview.topic,
                     "experienceLevel": createdInterview.experience_level,
-                    "projectExperience": createdInterview.project_experience,
-                    "academicBackground": createdInterview.academic_background,
-                    "interviewTechStack": createdInterview.interview_tech_stack
+                    #"projectExperience": createdInterview.project_experience,
+                    #"academicBackground": createdInterview.academic_background,
+                    #"interviewTechStack": createdInterview.interview_tech_stack
                 }
                 print(f" 아 드디어 여기까지 옴: payload {payload}")
 
                 response = HttpClient.postToAI("/interview/question/generate", payload)
-                print(f"FastAPI Response: {response}")
+                print(f"FastAPI Response: {response}") # 이게 출력되면 FastAPI로 정보 보내기 성공
 
                 if not response:
                     raise Exception("FastAPI 질문 생성 실패")
 
                 question = response["questions"]
                 questionId = self.interviewService.saveQuestion(createdInterview.id, question)
+                # 방금 생성된 면접 세션(createdInterview.id)에 질문 하나를 DB에 저장하고, 그 질문의 ID(questionId)를 반환받는 코드
 
                 if questionId is None:
                     raise Exception("질문 저장 실패")
@@ -81,52 +83,51 @@ class InterviewController(viewsets.ViewSet):
             print(f"❌ 면접 생성 트랜잭션 실패: {e}")
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def requestListInterview(self, request):
+
+    # 첫질문 꼬리질문
+    @action(detail=False, methods=["post"])
+    def requestFollowUpQuestion(self, request):
         postRequest = request.data
+        jobCategory = postRequest.get("jobCategory")
+        experienceLevel = postRequest.get("experienceLevel")
+        academicBackground = postRequest.get("academicBackground")
         userToken = postRequest.get("userToken")
+        interviewId = postRequest.get("interviewId")
+        questionId = postRequest.get("questionId")
+        answerText = postRequest.get("answerText")
 
-        page = postRequest.get("page", 1)
-        perPage = postRequest.get("perPage", 10)
 
-        if not userToken:
-            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            accountId = self.redisCacheService.getValueByKey(userToken)
-
-            interviewList, totalItems = self.interviewService.listInterview(accountId, page, perPage)
-
+        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground:
             return JsonResponse({
-                "interviewList": interviewList,
-                "totalItems": totalItems,
-                "success": True
-            }, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            print(f"면접 정보 조회 중 오류 발생: {e}")
-            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def requestRemoveInterview(self, request):
-        postRequest = request.data
-        userToken = postRequest.get("userToken")
-        interviewId = postRequest.get("id")
-
-        if not userToken:
-            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
+                "error": "userToken, interviewId, questionId, answerText, jobCategory, experienceLevel, academicBackground 모두 필요합니다.",
+                "success": False
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            accountId = self.redisCacheService.getValueByKey(userToken)
-            result = self.interviewService.removeInterview(accountId, interviewId)
+            payload = {
+                "userToken": userToken,
+                "interviewId": interviewId,
+                "questionId": questionId,
+                "answerText": answerText,
+                "topic": jobCategory,
+                "experienceLevel": experienceLevel,
+                "academicBackground": academicBackground
+            }
 
-            if result["success"]:
-                return JsonResponse(result, status=status.HTTP_200_OK)
-            else:
-                return JsonResponse(result, status=status.HTTP_400_BAD_REQUEST)
+            response = HttpClient.postToAI("/interview/question/first-followup-generate", payload)
+            print(f"[FastAPI]First Follow-up response: {response}")
+
+            if not response:
+                raise Exception("FastAPI 질문 생성 실패")
+
+            return JsonResponse(response, status=200)
 
         except Exception as e:
-            print(f"면접 정보 제거 중 오류 발생: {e}")
-            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f"[Error] requestFollowUpQuestion: {e}")
+            return JsonResponse({"error": str(e), "success": False}, status=500)
 
+
+    # 사용자 답변 저장 코드
     @action(detail=False, methods=["post"])
     def requestCreateAnswer(self, request):
         postRequest = request.data
@@ -161,36 +162,52 @@ class InterviewController(viewsets.ViewSet):
             print(f"[Error] requestCreateAnswer: {e}")
             return JsonResponse({"error": str(e), "success": False}, status=500)
 
-    @action(detail=False, methods=["post"])
-    def requestFollowUpQuestion(self, request):
+
+    def requestListInterview(self, request):
         postRequest = request.data
         userToken = postRequest.get("userToken")
-        interviewId = postRequest.get("interviewId")
-        questionId = postRequest.get("questionId")
-        answerText = postRequest.get("answerText")
 
-        if not userToken or not interviewId or not questionId or not answerText:
-            return JsonResponse({
-                "error": "userToken, interviewId, questionId, answerText 모두 필요합니다.",
-                "success": False
-            }, status=status.HTTP_400_BAD_REQUEST)
+        page = postRequest.get("page", 1)
+        perPage = postRequest.get("perPage", 10)
+
+        if not userToken:
+            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            payload = {
-                "userToken": userToken,
-                "interviewId": interviewId,
-                "questionId": questionId,
-                "answerText": answerText
-            }
+            accountId = self.redisCacheService.getValueByKey(userToken)
 
-            response = HttpClient.postToAI("/interview/question/generate-after-answer", payload)
-            print(f"[FastAPI] Follow-up response: {response}")
+            interviewList, totalItems = self.interviewService.listInterview(accountId, page, perPage)
 
-            if not response:
-                raise Exception("FastAPI 질문 생성 실패")
-
-            return JsonResponse(response, status=200)
+            return JsonResponse({
+                "interviewList": interviewList,
+                "totalItems": totalItems,
+                "success": True
+            }, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(f"[Error] requestFollowUpQuestion: {e}")
-            return JsonResponse({"error": str(e), "success": False}, status=500)
+            print(f"면접 정보 조회 중 오류 발생: {e}")
+            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    def requestRemoveInterview(self, request):
+        postRequest = request.data
+        userToken = postRequest.get("userToken")
+        interviewId = postRequest.get("id")
+
+        if not userToken:
+            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            accountId = self.redisCacheService.getValueByKey(userToken)
+            result = self.interviewService.removeInterview(accountId, interviewId)
+
+            if result["success"]:
+                return JsonResponse(result, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse(result, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(f"면접 정보 제거 중 오류 발생: {e}")
+            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
