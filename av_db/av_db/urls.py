@@ -40,4 +40,5 @@ urlpatterns = [
     path("excel-basic/", include('excel_basic.urls')),
     path("interview_tech_stack/", include('interview_tech_stack.urls')),
     path('guest_account/', include('guest_account.urls')),
+    path('guest-oauth/', include('guest_oauth.urls')),
 ]

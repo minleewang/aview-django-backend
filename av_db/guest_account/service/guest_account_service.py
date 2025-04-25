@@ -12,3 +12,7 @@ class GuestAccountService(ABC):
     @abstractmethod
     def findEmail(self, guestAccountId):
         pass
+
+    @abstractmethod
+    def countEmail(self, guest_email):
+        pass
