@@ -22,8 +22,8 @@ class GuestAccountServiceImpl(GuestAccountService):
         return cls.__instance
 
     # DB 생성
-    def createGuestAccount(self, email, loginType):
-        return self.__guestAccountRepository.save(email, loginType)
+    def createGuestAccount(self, new_guest_email, loginType):
+        return self.__guestAccountRepository.save(new_guest_email, loginType)
 
     # MyPage 회원정보 수정칸
     def findEmail(self, guestAccountId):
@@ -35,3 +35,6 @@ class GuestAccountServiceImpl(GuestAccountService):
 
         except ObjectDoesNotExist:
             return None
+
+    def countEmail(self, guest_email):
+        return self.__guestAccountRepository.countEmail(guest_email)

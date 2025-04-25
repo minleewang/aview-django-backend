@@ -21,21 +21,21 @@ class GuestAccountRepositoryImpl(GuestAccountRepository):
 
         return cls.__instance
 
-    def save(self, email, loginType):
-        print(f"email: {email}")
-        loginTypeInstance, created = LoginType.objects.get_or_create(loginType=loginType)
+    def save(self, new_guest_email, loginType):
+        print(f"email: {new_guest_email}")
+        loginType=loginType
 
         try:
             guest_account = GuestAccount.objects.create(
-                email=email,
-                loginType=loginTypeInstance,
+                email=new_guest_email,
+                loginType=loginType,
             )
             print("완료")
             return guest_account
 
         except IntegrityError as e:
             print(
-                f"email={email}, loginType={loginType}")
+                f"email={new_guest_email}, loginType={loginType}")
             print(f"에러 내용: {e}")
 
             return None
@@ -61,3 +61,6 @@ class GuestAccountRepositoryImpl(GuestAccountRepository):
         except Exception as e:
             print(f"Unexpected error: {str(e)}")
             return None
+
+    def countEmail(self, guest_email):
+        return GuestAccount.objects.filter(email__startswith=guest_email).count()

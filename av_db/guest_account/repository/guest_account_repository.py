@@ -14,3 +14,7 @@ class GuestAccountRepository(ABC):
     @abstractmethod
     def findByEmail(self, email):
         pass
+
+    @abstractmethod
+    def countEmail(self, guest_email):
+        pass
