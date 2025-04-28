@@ -24,6 +24,7 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
+        print(f"topic:{jobCategory}")
 
         # 첫 질문
         if not userToken:
@@ -95,7 +96,8 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
-
+        print(
+            f"[요청 데이터] { {'jobCategory': jobCategory, 'experienceLevel': experienceLevel, 'academicBackground': academicBackground, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText} }")
 
         if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground:
             return JsonResponse({
@@ -113,6 +115,7 @@ class InterviewController(viewsets.ViewSet):
                 "experienceLevel": experienceLevel,
                 "academicBackground": academicBackground
             }
+            print(f"payload: {payload}")
 
             response = HttpClient.postToAI("/interview/question/first-followup-generate", payload)
             print(f"[FastAPI]First Follow-up response: {response}")
