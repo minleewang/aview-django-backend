@@ -52,9 +52,9 @@ class InterviewController(viewsets.ViewSet):
                     "interviewId": str(createdInterview.id),
                     "topic": createdInterview.topic,
                     "experienceLevel": createdInterview.experience_level,
-                    #"projectExperience": createdInterview.project_experience,
-                    #"academicBackground": createdInterview.academic_background,
-                    #"interviewTechStack": createdInterview.interview_tech_stack
+                    "projectExperience": createdInterview.project_experience,
+                    "academicBackground": createdInterview.academic_background,
+                    "interviewTechStack": createdInterview.interview_tech_stack
                 }
                 print(f" 아 드디어 여기까지 옴: payload {payload}")
 
