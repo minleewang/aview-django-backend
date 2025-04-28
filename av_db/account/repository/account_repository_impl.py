@@ -166,3 +166,7 @@ class AccountRepositoryImpl(AccountRepository):
             return True
         except Account.DoesNotExist:
             return False
+    #게스트 이메일 수
+    def countEmail(self, guest_email):
+        return Account.objects.filter(email__startswith=guest_email).count()
+

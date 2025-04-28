@@ -6,13 +6,12 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.status import HTTP_200_OK
 
-from guest_account.service.guest_account_service_impl import GuestAccountServiceImpl
-from guest_oauth.service.guest_oauth_service_impl import GuestOauthServiceImpl
+from account.service.account_service_impl import AccountServiceImpl
 from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
 
 
 class GuestOauthController(viewsets.ViewSet):
-    guestOauthService = GuestAccountServiceImpl.getInstance()
+    accountService = AccountServiceImpl.getInstance()
     redisCacheService = RedisCacheServiceImpl.getInstance()
 
     def requestGuestSignIn(self, request):
@@ -22,17 +21,18 @@ class GuestOauthController(viewsets.ViewSet):
             loginType = "GUEST"
 
             #guest 이메일 수 카운트
-            guest_count = self.guestOauthService.countEmail(guest_email)
+            guest_count = self.accountService.countEmail(guest_email)
 
             #새 이메일 생성
             new_guest_email = f"{guest_email}{guest_count+1}{guest_dmain}"
 
             # 계정 생성
-            account = self.guestOauthService.createGuestAccount(new_guest_email,loginType)
+            account = self.accountService.createGuestAccount(new_guest_email,loginType)
 
             #Redis 발급
             userToken = str(uuid.uuid4())
             self.redisCacheService.storeKeyValue(userToken,account.getId())
+            print(f"{userToken}")
 
             #토큰 반환
             return JsonResponse({'userToken':userToken},status=HTTP_200_OK)
