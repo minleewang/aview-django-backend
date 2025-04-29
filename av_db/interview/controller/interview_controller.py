@@ -284,3 +284,46 @@ class InterviewController(viewsets.ViewSet):
         except Exception as e:
             print(f"❌ 면접 생성 트랜잭션 실패: {e}")
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["post"])
+    def requestProjectFollowUpQuestion(self, request):
+        postRequest = request.data
+        jobCategory = postRequest.get("jobCategory")
+        experienceLevel = postRequest.get("experienceLevel")
+        academicBackground = postRequest.get("academicBackground")
+        userToken = postRequest.get("userToken")
+        interviewId = postRequest.get("interviewId")
+        questionId = postRequest.get("questionId")
+        answerText = postRequest.get("answerText")
+        print(
+            f"[요청 데이터] { {'jobCategory': jobCategory, 'experienceLevel': experienceLevel, 'academicBackground': academicBackground, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText} }")
+
+        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground:
+            return JsonResponse({
+                "error": "userToken, interviewId, questionId, answerText, jobCategory, experienceLevel, academicBackground 모두 필요합니다.",
+                "success": False
+            }, status=status.HTTP_400_BAD_REQUEST)
+        print("팔로우업까진 옴. 시작?")
+        try:
+            payload = {
+                "userToken": userToken,
+                "interviewId": interviewId,
+                "questionId": questionId,
+                "answerText": answerText,
+                "topic": jobCategory,
+                "experienceLevel": experienceLevel,
+                "academicBackground": academicBackground
+            }
+            print(f"payload: {payload}")
+
+            response = HttpClient.postToAI("/interview/question/project-followup-generate", payload)
+            print(f"[FastAPI]First Follow-up response: {response}")
+
+            if not response:
+                raise Exception("FastAPI 질문 생성 실패")
+
+            return JsonResponse(response, status=200)
+
+        except Exception as e:
+            print(f"[Error] requestFollowUpQuestion: {e}")
+            return JsonResponse({"error": str(e), "success": False}, status=500)
