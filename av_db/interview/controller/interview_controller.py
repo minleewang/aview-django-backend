@@ -92,6 +92,7 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
+        print(f"answerText= {answerText}")
 
         if not userToken or not interviewId or not questionId or not answerText:
             return JsonResponse({
@@ -214,4 +215,72 @@ class InterviewController(viewsets.ViewSet):
             print(f"면접 정보 제거 중 오류 발생: {e}")
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def requestCreateProjectInterview(self, request):
+        postRequest = request.data
+        print(f"postRequest: {postRequest}")
 
+        userToken = postRequest.get("userToken")
+        jobCategory = postRequest.get("jobCategory")
+        experienceLevel = postRequest.get("experienceLevel")
+        projectExperience = postRequest.get("projectExperience")
+        academicBackground = postRequest.get("academicBackground")
+        interviewTechStack = postRequest.get("interviewTechStack")
+        print(f"topic:{jobCategory}")
+
+        # 첫 질문
+        if not userToken:
+            return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None):
+            return JsonResponse({"error": "필수 항목 누락", "success": False},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        print(f"userToken 획득")
+
+        try:
+            accountId = self.redisCacheService.getValueByKey(userToken)
+            print(f"accountId 찾기: {accountId}")
+
+            with transaction.atomic():  # ✅ 트랜잭션 블록 시작
+                createdInterview = self.interviewService.createInterview(
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
+                )
+                print(f"createdInterview : {createdInterview}")
+
+                if createdInterview is None:
+                    raise Exception("면접 생성 실패")
+
+                payload = {   # 이 정보만 FastAPI로 전달
+                    "userToken": userToken,
+                    "interviewId": createdInterview.id,
+                    "topic": createdInterview.topic,
+                    "experienceLevel": createdInterview.experience_level,
+                    "projectExperience": createdInterview.project_experience,
+                    "academicBackground": createdInterview.academic_background,
+                    "interviewTechStack": createdInterview.interview_tech_stack
+                }
+                print(f" 아 드디어 여기까지 옴: payload {payload}")
+
+                response = HttpClient.postToAI("/interview/question/project-generate", payload)
+                print(f"FastAPI Response: {response}") # 이게 출력되면 FastAPI로 정보 보내기 성공
+
+                if not response:
+                    raise Exception("FastAPI 질문 생성 실패")
+
+                question = response["questions"]
+                questionId = self.interviewService.saveQuestion(createdInterview.id, question)
+                # 방금 생성된 면접 세션(createdInterview.id)에 질문 하나를 DB에 저장하고, 그 질문의 ID(questionId)를 반환받는 코드
+
+                if questionId is None:
+                    raise Exception("질문 저장 실패")
+
+            return JsonResponse({
+                "message": "면접 정보가 추가되었습니다.",
+                "interviewId": createdInterview.id,
+                "questionId": questionId,
+                "question": question,
+                "success": True
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(f"❌ 면접 생성 트랜잭션 실패: {e}")
+            return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
