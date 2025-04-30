@@ -263,11 +263,11 @@ class InterviewController(viewsets.ViewSet):
                 payload = {   # 이 정보만 FastAPI로 전달
                     "userToken": userToken,
                     "interviewId": createdInterview.id,
-                    "topic": createdInterview.topic,
-                    "experienceLevel": createdInterview.experience_level,
+                    #"topic": createdInterview.topic,
+                    #"experienceLevel": createdInterview.experience_level,
                     "projectExperience": createdInterview.project_experience,
-                    "academicBackground": createdInterview.academic_background,
-                    "interviewTechStack": createdInterview.interview_tech_stack
+                    #"academicBackground": createdInterview.academic_background,
+                    #"interviewTechStack": createdInterview.interview_tech_stack
                 }
                 print(f" project: payload {payload}")
 
