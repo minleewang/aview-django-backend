@@ -226,7 +226,7 @@ class InterviewController(viewsets.ViewSet):
             print(f"면접 정보 제거 중 오류 발생: {e}")
             return JsonResponse({"error": "서버 내부 오류", "success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def requestCreateProjectInterview(self, request):
+    def requestProjectCreateInterview(self, request):
         postRequest = request.data
         print(f"postRequest: {postRequest}")
 
@@ -269,7 +269,7 @@ class InterviewController(viewsets.ViewSet):
                     "academicBackground": createdInterview.academic_background,
                     "interviewTechStack": createdInterview.interview_tech_stack
                 }
-                print(f" 아 드디어 여기까지 옴: payload {payload}")
+                print(f" project: payload {payload}")
 
                 response = HttpClient.postToAI("/interview/question/project-generate", payload)
                 print(f"FastAPI Response: {response}") # 이게 출력되면 FastAPI로 정보 보내기 성공
