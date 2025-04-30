@@ -236,7 +236,7 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
-        print(f"topic:{jobCategory}")
+        print(f"interviewTechStack:{interviewTechStack}")
 
         # 첫 질문
         if not userToken:
