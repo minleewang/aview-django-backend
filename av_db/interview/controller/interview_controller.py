@@ -299,7 +299,6 @@ class InterviewController(viewsets.ViewSet):
     @action(detail=False, methods=["post"])
     def requestProjectFollowUpQuestion(self, request):
         postRequest = request.data
-        print("와??")
         jobCategory = postRequest.get("jobCategory")
         projectExperience = postRequest.get("projectExperience")
         #experienceLevel = postRequest.get("experienceLevel")

@@ -41,6 +41,7 @@ class InterviewResultRepositoryImpl(InterviewResultRepository):
 
     def getLastInterviewResult(self):
         interviewResult = InterviewResult.objects.all()
+        print(f"{interviewResult}")
         return interviewResult.last()
 
     def getLastInterviewResultQASList(self, interviewResult):

@@ -1,6 +1,7 @@
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from interview_result.repository.interview_result_repository_impl import InterviewResultRepositoryImpl
 from interview_result.service.interview_result_service import InterviewResultService
+from utility.http_client import HttpClient
 
 class InterviewResultServiceImpl(InterviewResultService):
     __instance = None
@@ -18,13 +19,14 @@ class InterviewResultServiceImpl(InterviewResultService):
 
         return cls.__instance
 
-    def saveInterviewResult(self, scoreResultList, accountId):
+    def saveInterviewResult(self, accountId):
         account = self.__accountRepository.findById(accountId)
         interviewResult = self.__interviewResultRepository.registerInterviewResult(account)
-        self.__interviewResultRepository.registerInterviewResultQAS(interviewResult, scoreResultList)
+        self.__interviewResultRepository.registerInterviewResultQAS(interviewResult)
 
     def getInterviewResult(self, accountId):
         account = self.__accountRepository.findById(accountId)
         interviewResult = self.__interviewResultRepository.getLastInterviewResult()
         interviewResultList = self.__interviewResultRepository.getLastInterviewResultQASList(interviewResult)
         return interviewResultList
+

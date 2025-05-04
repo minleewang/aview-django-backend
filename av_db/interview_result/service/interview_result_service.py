@@ -2,10 +2,12 @@ from abc import ABC, abstractmethod
 
 class InterviewResultService(ABC):
     @abstractmethod
-    def saveInterviewResult(self, scoreResultList, accountId):
+    def saveInterviewResult(self, accountId):
         pass
 
 
     @abstractmethod
-    def getInterviewResult(self, accountId):
+    def getInterviewResult(self, userToken):
         pass
+
+
