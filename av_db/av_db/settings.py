@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'orders',
     'marketing',
     'interview',
-    #'interview_result',
+    'interview_result',
     'interview_question_data',
     'authentication',
     'github_authentication',

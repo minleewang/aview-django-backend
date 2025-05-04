@@ -9,4 +9,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('save-interview-result', InterviewResultController.as_view({'post': 'saveInterviewResult'}), name='save-interview-result'),
     path('get-interview-result', InterviewResultController.as_view({'post': 'getInterviewResult'}), name='get-interview-result'),
+    path('end-interview', InterviewResultController.as_view({'post': 'reqeustEndInterview'}), name='end-interview'),
 ]
