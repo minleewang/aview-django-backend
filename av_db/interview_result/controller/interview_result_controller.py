@@ -72,25 +72,62 @@ class InterviewResultController(viewsets.ViewSet):
                 "success": False
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    #def saveInterviewResult(self, request):
-     #   try:
-            #scoreResultList = request.data.get('scoreResultList') # 질문, 답변, 의도, 점수+피드백
+    # 요약 생성
+    @action(detail=False, methods=["post"])
+    def requestInterviewSummary(self, request):
+        try:
+            data = request.data
+            userToken = data.get("userToken")
+            interviewId=data.get("interviewId")
 
-      #      userToken = request.data.get('userToken')
-       #     accountId = self.redisCacheService.getValueByKey(userToken)
+            accountId = self.redisCacheService.getValueByKey(userToken)
+            context = {
+                "userToken": userToken,
+                "topic": data.get("jobCategory"),
+                "experienceLevel": data.get("experienceLevel"),
+                "projectExperience": data.get("projectExperience"),
+                "academicBackground": data.get("academicBackground"),
+                "interviewTechStack": data.get("interviewTechStack"),
+            }
 
-#            self.interviewResultService.saveInterviewResult(accountId)
+            questions, answers = self.interviewResultService.getFullQAList(interviewId)
 
- #           return Response(True, status=status.HTTP_200_OK)
+            if not questions or not answers:
+                raise Exception("질문/답변 복원 실패")
 
-  #      except Exception as e :
-   #         print('interview result 저장중 error: ', e)
+            # FastAPI 전송용 payload 생성
+            payload = {
+                "session_id": f"interview-{interviewId}",
+                "context": context,
+                "questions": questions,
+                "answers": answers
+            }
+
+            print(f"📡 FastAPI 요청: {payload}")
+            response = HttpClient.postToAI("/interview/question/end_interview", payload)
+
+            if not response or not response.get("summary"):
+                raise Exception("FastAPI 응답 실패")
+
+            summary = response["summary"]
+
+            # 결과 저장
+            self.interviewResultService.saveInterviewResult(accountId, userToken, summary, questions, answers)
+
+            return JsonResponse({
+                "message": "면접 결과 요약 및 저장 완료",
+                "summary": summary,
+                "success": True
+            }, status=200)
+
+        except Exception as e:
+            print(f"❌ requestInterviewSummary 오류: {e}")
+            return JsonResponse({"error": str(e), "success": False}, status=500)
 
     def getInterviewResult(self, request):
-        print(f"{request}")
         userToken = request.data.get('userToken')
         accountId = self.redisCacheService.getValueByKey(userToken)
         interviewResultList = self.interviewResultService.getInterviewResult(accountId)
         result_list = list(interviewResultList)
-        print(f"{result_list}")
+        print(f"결과:{result_list}")
         return JsonResponse({'interviewResultList': result_list}, status=status.HTTP_200_OK)
