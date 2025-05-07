@@ -24,13 +24,13 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
-        interviewCompany = postRequest.get("interviewCompany")
+        companyName = postRequest.get("companyName")
         print(f"topic:{jobCategory}")
 
         # 첫 질문
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None or interviewCompany is None):
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None or companyName is None):
             return JsonResponse({"error": "필수 항목 누락", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -133,7 +133,7 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
-        interviewCompany = postRequest.get("interviewCompany")
+        companyName = postRequest.get("companyName")
 
         request_data = {
             'jobCategory': jobCategory,
@@ -144,10 +144,10 @@ class InterviewController(viewsets.ViewSet):
             'questionId': questionId,
             'answerText': answerText,
             'projectExperience': projectExperience,
-            'interviewCompany': interviewCompany
+            'companyName': companyName
         }
         print(f"[요청 데이터] {request_data}")
-        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground or not projectExperience or not interviewCompany:
+        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground or not projectExperience or not companyName:
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, experienceLevel, academicBackground, projectExperience, interviewCompany 모두 필요합니다.",
                 "success": False
@@ -163,7 +163,7 @@ class InterviewController(viewsets.ViewSet):
                 "experienceLevel": experienceLevel,
                 "academicBackground": academicBackground,
                 "projectExperience": projectExperience,
-                "interviewCompany": interviewCompany
+                "companyName": companyName
             }
             print(f"payload: {payload}")
 
@@ -242,14 +242,14 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
-        interviewCompany = postRequest.get("interviewCompany")
+        #companyName = postRequest.get("companyName")
         questionId = postRequest.get("questionId")
         print(f"interviewTechStack:{interviewTechStack}")
 
         # 첫 질문
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None or interviewCompany in None):
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None ):
             return JsonResponse({"error": "필수 항목 누락", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -323,12 +323,12 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
-        interviewCompany = postRequest.get("interviewCompany")
+        companyName = postRequest.get("companyName")
 
         print(
             f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'interviewCompany': interviewCompany} }")
 
-        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience or not interviewCompany:
+        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience or not companyName:
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, projectExperience 모두 필요합니다.",
                 "success": False
@@ -342,7 +342,7 @@ class InterviewController(viewsets.ViewSet):
                 "topic": jobCategory,
                 "techStack": interviewTechStack,
                 "projectExperience": projectExperience,
-                "interviewCompany": interviewCompany
+                "companyName": companyName
             }
             print(f"payload: {payload}")
 

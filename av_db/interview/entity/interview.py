@@ -1,8 +1,8 @@
 from django.db import models
 from account.entity.account import Account
 from interview.entity.academic_background import AcademicBackground
+from interview.entity.company_name import CompanyName
 from interview.entity.experience_level import ExperienceLevel
-from interview.entity.interview_company import InterviewCompany
 from interview.entity.interview_status import InterviewStatus
 from interview.entity.interview_topic import InterviewTopic
 from interview.entity.project_experience import ProjectExperience
@@ -31,9 +31,9 @@ class Interview(models.Model):
         default=AcademicBackground.NON_MAJOR  # 기본값: 비전공자
     )
     interview_tech_stack = models.JSONField(default=list, blank=True)
-    interview_company = models.CharField(
+    CompanyName = models.CharField(
         max_length=20,
-        choices=InterviewCompany.choices,
+        choices=CompanyName.choices,
         blank=False,
         null=False
     )
