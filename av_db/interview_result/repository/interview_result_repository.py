@@ -18,6 +18,10 @@ class InterviewResultRepository(ABC):
         pass
 
     @abstractmethod
-    def saveInterviewResult(self, accountId, userToken, summary, questions, answers):
+    def saveInterviewResult(self, accountId):
+        pass
+
+    @abstractmethod
+    def saveQAScoreList(self, interview_result, qa_scores):
         pass
 
