@@ -39,13 +39,50 @@ class InterviewResultRepositoryImpl(InterviewResultRepository):
             InterviewResultQAS.objects.create(question=question, answer=answer, intent=intent,
                                               feedback=feedback, interview_result=interviewResult)
 
-    def getLastInterviewResult(self):
-        interviewResult = InterviewResult.objects.all()
-        print(f"{interviewResult}")
-        return interviewResult.last()
+    def getLastInterviewResult(self,account):
+        result = InterviewResult.objects.filter(account=account).order_by('-id').first()
+        print(f"▶ getLastInterviewResultByAccount() → {result}")
+        return result
 
     def getLastInterviewResultQASList(self, interviewResult):
-        interviewResult = InterviewResultQAS.objects.filter(interview_result=interviewResult)
-        interviewResultQASList = interviewResult.order_by('id').values_list('question', 'answer', 'intent', 'feedback')
+        query = InterviewResultQAS.objects.filter(interview_result=interviewResult)
+        print(f"▶ QAS count: {query.count()}")  # 0이면 인터뷰에 QAS가 없음
+
+        interviewResultQASList = query.order_by('id').values_list('question', 'answer', 'intent', 'feedback')
+        print(f"▶ QAS values_list: {list(interviewResultQASList)}")  # 튜플 리스트로 출력
+
         return interviewResultQASList
 
+    def saveInterviewResult(self, accountId: int, summary: str, questions: list[str], answers: list[str]):
+        try:
+            # 1. 면접 결과 저장
+            interviewResult = InterviewResult.objects.create(
+                account_id=accountId,
+                summary=summary
+            )
+
+            # 2. 질문/답변 저장 반복
+            for q, a in zip(questions, answers):
+                intent = "기본"
+                feedback = "피드백 없음"
+
+                # 자동 피드백 로직
+                if len(a) <= 30:
+                    feedback = '10점<s>답변이 짧습니다. 사례 중심으로 구체적으로 설명해보세요.'
+                    if any(word in a for word in ['모르', '몰라', '모름', '못했', '죄송']):
+                        feedback = '0점<s>질문에 대한 충분한 답변이 없습니다. 최대한 노력해보세요.'
+
+                InterviewResultQAS.objects.create(
+                    interview_result=interviewResult,
+                    question=q,
+                    answer=a,
+                    intent=intent,
+                    feedback=feedback
+                )
+
+            print("✅ 면접 결과 및 QAS 저장 완료")
+            return interviewResult
+
+        except Exception as e:
+            print(f"❌ 면접 결과 저장 중 오류 발생: {e}")
+            raise

@@ -10,10 +10,14 @@ class InterviewResultRepository(ABC):
         pass
 
     @abstractmethod
-    def getLastInterviewResult(self):
+    def getLastInterviewResult(self,account):
         pass
 
     @abstractmethod
     def getLastInterviewResultQASList(self, interviewResult):
+        pass
+
+    @abstractmethod
+    def saveInterviewResult(self, accountId, userToken, summary, questions, answers):
         pass
 

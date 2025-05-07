@@ -58,7 +58,6 @@ class InterviewController(viewsets.ViewSet):
                     "academicBackground": createdInterview.academic_background,
                     "interviewTechStack": createdInterview.interview_tech_stack
                 }
-                print(f" 아 드디어 여기까지 옴: payload {payload}")
 
                 response = HttpClient.postToAI("/interview/question/generate", payload)
                 print(f"FastAPI Response: {response}") # 이게 출력되면 FastAPI로 정보 보내기 성공
@@ -66,7 +65,7 @@ class InterviewController(viewsets.ViewSet):
                 if not response:
                     raise Exception("FastAPI 질문 생성 실패")
 
-                question = response["questions"]
+                question = response["question"]
                 questionId = self.interviewService.saveQuestion(createdInterview.id, question)
                 # 방금 생성된 면접 세션(createdInterview.id)에 질문 하나를 DB에 저장하고, 그 질문의 ID(questionId)를 반환받는 코드
 
@@ -173,14 +172,16 @@ class InterviewController(viewsets.ViewSet):
 
             if not response:
                 raise Exception("FastAPI 질문 생성 실패")
-
+            questions = response.get("questions", [])
+            if questions:
+                question_text = questions[0] if isinstance(questions, list) and questions else questions
+                saved_question_id = self.interviewService.saveQuestion(interviewId, question_text)
+                print(f"✅ 심화질문 저장 완료. 질문 ID: {saved_question_id}")
             return JsonResponse(response, status=200)
 
         except Exception as e:
             print(f"[Error] requestFollowUpQuestion: {e}")
             return JsonResponse({"error": str(e), "success": False}, status=500)
-
-
 
 
     def requestListInterview(self, request):
@@ -235,12 +236,14 @@ class InterviewController(viewsets.ViewSet):
         print(f"postRequest: {postRequest}")
 
         userToken = postRequest.get("userToken")
+        interviewId = postRequest.get("interviewId")
         jobCategory = postRequest.get("jobCategory")
         experienceLevel = postRequest.get("experienceLevel")
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
         interviewCompany = postRequest.get("interviewCompany")
+        questionId = postRequest.get("questionId")
         print(f"interviewTechStack:{interviewTechStack}")
 
         # 첫 질문
@@ -261,16 +264,21 @@ class InterviewController(viewsets.ViewSet):
                     accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, interviewCompany  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
+                #createdInterview = self.interviewService.createInterview(
+                 #   accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
+                #)
+                #print(f"createdInterview : {createdInterview}")
 
-                if createdInterview is None:
-                    raise Exception("면접 생성 실패")
+                #if createdInterview is None:
+                    #raise Exception("면접 생성 실패")
 
                 payload = {   # 이 정보만 FastAPI로 전달
                     "userToken": userToken,
-                    "interviewId": createdInterview.id,
+                    "interviewId": interviewId,
                     #"topic": createdInterview.topic,
+                    "questionId": questionId,
                     #"experienceLevel": createdInterview.experience_level,
-                    "projectExperience": createdInterview.project_experience,
+                    "projectExperience": projectExperience,
                     #"academicBackground": createdInterview.academic_background,
                     #"interviewTechStack": createdInterview.interview_tech_stack
                 }
@@ -282,8 +290,10 @@ class InterviewController(viewsets.ViewSet):
                 if not response:
                     raise Exception("FastAPI 질문 생성 실패")
 
-                question = response["questions"]
-                questionId = self.interviewService.saveQuestion(createdInterview.id, question)
+                question = response["question"]
+                question_text = question[0]
+                flowQuestionId = response["questionId"]
+                questionId = self.interviewService.saveQuestion(interviewId, question_text)
                 # 방금 생성된 면접 세션(createdInterview.id)에 질문 하나를 DB에 저장하고, 그 질문의 ID(questionId)를 반환받는 코드
 
                 if questionId is None:
@@ -291,8 +301,8 @@ class InterviewController(viewsets.ViewSet):
 
             return JsonResponse({
                 "message": "면접 정보가 추가되었습니다.",
-                "interviewId": createdInterview.id,
-                "questionId": questionId,
+                "interviewId": interviewId,
+                "questionId": flowQuestionId,
                 "question": question,
                 "success": True
             }, status=status.HTTP_200_OK)
@@ -341,7 +351,11 @@ class InterviewController(viewsets.ViewSet):
 
             if not response:
                 raise Exception("FastAPI 질문 생성 실패")
-
+            questions = response.get("questions", [])
+            if questions:
+                question_text = questions[0]
+                saved_question_id = self.interviewService.saveQuestion(interviewId, question_text)
+                print(f"✅ 저장된 프로젝트 심화질문 ID: {saved_question_id}")
             return JsonResponse(response, status=200)
 
         except Exception as e:
