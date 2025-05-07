@@ -24,12 +24,13 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
+        interviewCompany = postRequest.get("interviewCompany")
         print(f"topic:{jobCategory}")
 
         # 첫 질문
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None):
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None or interviewCompany is None):
             return JsonResponse({"error": "필수 항목 누락", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,7 +42,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, interviewCompany  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -133,6 +134,7 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
+        interviewCompany = postRequest.get("interviewCompany")
 
         request_data = {
             'jobCategory': jobCategory,
@@ -142,12 +144,13 @@ class InterviewController(viewsets.ViewSet):
             'interviewId': interviewId,
             'questionId': questionId,
             'answerText': answerText,
-            'projectExperience': projectExperience
+            'projectExperience': projectExperience,
+            'interviewCompany': interviewCompany
         }
         print(f"[요청 데이터] {request_data}")
-        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground or not projectExperience:
+        if not userToken or not interviewId or not questionId or not answerText or not jobCategory or not experienceLevel or not academicBackground or not projectExperience or not interviewCompany:
             return JsonResponse({
-                "error": "userToken, interviewId, questionId, answerText, jobCategory, experienceLevel, academicBackground, projectExperience 모두 필요합니다.",
+                "error": "userToken, interviewId, questionId, answerText, jobCategory, experienceLevel, academicBackground, projectExperience, interviewCompany 모두 필요합니다.",
                 "success": False
             }, status=status.HTTP_400_BAD_REQUEST)
         print("팔로우업까진 옴. 시작?")
@@ -160,7 +163,8 @@ class InterviewController(viewsets.ViewSet):
                 "topic": jobCategory,
                 "experienceLevel": experienceLevel,
                 "academicBackground": academicBackground,
-                "projectExperience": projectExperience
+                "projectExperience": projectExperience,
+                "interviewCompany": interviewCompany
             }
             print(f"payload: {payload}")
 
@@ -236,12 +240,13 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
+        interviewCompany = postRequest.get("interviewCompany")
         print(f"interviewTechStack:{interviewTechStack}")
 
         # 첫 질문
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
-        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None):
+        if (jobCategory is None or experienceLevel is None or projectExperience is None or academicBackground is None or interviewCompany in None):
             return JsonResponse({"error": "필수 항목 누락", "success": False},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -253,7 +258,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, interviewCompany  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -308,12 +313,12 @@ class InterviewController(viewsets.ViewSet):
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
         answerText = postRequest.get("answerText")
-
+        interviewCompany = postRequest.get("interviewCompany")
 
         print(
-            f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience} }")
+            f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'interviewCompany': interviewCompany} }")
 
-        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience:
+        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience or not interviewCompany:
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, projectExperience 모두 필요합니다.",
                 "success": False
@@ -326,7 +331,8 @@ class InterviewController(viewsets.ViewSet):
                 "answerText": answerText,
                 "topic": jobCategory,
                 "techStack": interviewTechStack,
-                "projectExperience": projectExperience
+                "projectExperience": projectExperience,
+                "interviewCompany": interviewCompany
             }
             print(f"payload: {payload}")
 

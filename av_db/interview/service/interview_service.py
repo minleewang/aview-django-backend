@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class InterviewService(ABC):
 
     @abstractmethod
-    def createInterview(self, accountId, jobCategory, experienceLevel,projectExperience,academicBackground,interviewTechStack):
+    def createInterview(self, accountId, jobCategory, experienceLevel,projectExperience,academicBackground,interviewTechStack, interviewCompany):
         pass
 
     @abstractmethod

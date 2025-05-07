@@ -2,6 +2,7 @@ from django.db import models
 from account.entity.account import Account
 from interview.entity.academic_background import AcademicBackground
 from interview.entity.experience_level import ExperienceLevel
+from interview.entity.interview_company import InterviewCompany
 from interview.entity.interview_status import InterviewStatus
 from interview.entity.interview_topic import InterviewTopic
 from interview.entity.project_experience import ProjectExperience
@@ -30,6 +31,12 @@ class Interview(models.Model):
         default=AcademicBackground.NON_MAJOR  # 기본값: 비전공자
     )
     interview_tech_stack = models.JSONField(default=list, blank=True)
+    interview_company = models.CharField(
+        max_length=20,
+        choices=InterviewCompany.choices,
+        blank=False,
+        null=False
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -44,6 +51,7 @@ class Interview(models.Model):
             f"project_experience={self.project_experience}, "
             f"academic_background={self.academic_background}, "
             f"interview_tech_stack={self.interview_tech_stack})"
+            f"interview_company={self.interview_company}"
         )
 
     def getId(self):
@@ -69,3 +77,6 @@ class Interview(models.Model):
 
     def getInterviewTechStack(self):
         return InterviewTechStack(self.interview_tech_stack)
+
+    def getInterviewCompany(self):
+        return InterviewCompany(self.interview_company)
