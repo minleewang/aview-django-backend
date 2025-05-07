@@ -26,7 +26,7 @@ class InterviewServiceImpl(InterviewService):
         return cls.__instance
 
                                                                         # 일단 첫 질문은 고정이라 많은 정보 필요X
-    def createInterview(self, accountId, jobCategory, experienceLevel, projectExperience, academicBackground,interviewTechStack, interviewCompany): #,projectExperience, academicBackground, interviewTechStack):
+    def createInterview(self, accountId, jobCategory, experienceLevel, projectExperience, academicBackground,interviewTechStack, companyName): #,projectExperience, academicBackground, interviewTechStack):
         foundAccount = self.__accountRepository.findById(accountId)  # 여기서 회원 식별
 
         if not foundAccount:
@@ -40,7 +40,7 @@ class InterviewServiceImpl(InterviewService):
             project_experience = projectExperience.value if hasattr(projectExperience, 'value') else projectExperience,
             academic_background = academicBackground.value if hasattr(academicBackground, 'value') else academicBackground,
             interview_tech_stack = interviewTechStack.value if hasattr(interviewTechStack, 'value') else interviewTechStack,
-            interview_company = interviewCompany.value if hasattr(interviewCompany, 'value') else interviewCompany
+            company_name = companyName.value if hasattr(companyName, 'value') else companyName
         )
         print(f"newInterview: {newInterview}")
 

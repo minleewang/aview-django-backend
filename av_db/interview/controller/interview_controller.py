@@ -42,7 +42,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, interviewCompany  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, companyName  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -242,7 +242,7 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
         interviewTechStack = postRequest.get("interviewTechStack")
-        #companyName = postRequest.get("companyName")
+        companyName = postRequest.get("companyName")
         questionId = postRequest.get("questionId")
         print(f"interviewTechStack:{interviewTechStack}")
 
@@ -261,7 +261,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, interviewCompany  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, companyName  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
                 #createdInterview = self.interviewService.createInterview(
@@ -326,7 +326,7 @@ class InterviewController(viewsets.ViewSet):
         companyName = postRequest.get("companyName")
 
         print(
-            f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'interviewCompany': interviewCompany} }")
+            f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'companyName': companyName} }")
 
         if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience or not companyName:
             return JsonResponse({

@@ -31,7 +31,7 @@ class Interview(models.Model):
         default=AcademicBackground.NON_MAJOR  # 기본값: 비전공자
     )
     interview_tech_stack = models.JSONField(default=list, blank=True)
-    CompanyName = models.CharField(
+    company_name = models.CharField(
         max_length=20,
         choices=CompanyName.choices,
         blank=False,
@@ -51,7 +51,7 @@ class Interview(models.Model):
             f"project_experience={self.project_experience}, "
             f"academic_background={self.academic_background}, "
             f"interview_tech_stack={self.interview_tech_stack})"
-            f"interview_company={self.interview_company}"
+            f"company_name={self.company_name}"
         )
 
     def getId(self):
@@ -78,5 +78,5 @@ class Interview(models.Model):
     def getInterviewTechStack(self):
         return InterviewTechStack(self.interview_tech_stack)
 
-    def getInterviewCompany(self):
-        return InterviewCompany(self.interview_company)
+    def getCompanyName(self):
+        return CompanyName(self.company_name)
