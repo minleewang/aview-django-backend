@@ -53,36 +53,31 @@ class InterviewResultRepositoryImpl(InterviewResultRepository):
 
         return interviewResultQASList
 
-    def saveInterviewResult(self, accountId: int, summary: str, questions: list[str], answers: list[str]):
+    def saveInterviewResult(self, accountId):
         try:
-            # 1. 면접 결과 저장
-            interviewResult = InterviewResult.objects.create(
-                account_id=accountId,
-                summary=summary
-            )
+            interviewResult = InterviewResult.objects.create(account_id=accountId)
+            print("✅ 면접 완료 기록 저장")
+            return interviewResult
+        except Exception as e:
+            print(f"❌ 오류 발생: {e}")
+            raise
 
-            # 2. 질문/답변 저장 반복
-            for q, a in zip(questions, answers):
-                intent = "기본"
-                feedback = "피드백 없음"
-
-                # 자동 피드백 로직
-                if len(a) <= 30:
-                    feedback = '10점<s>답변이 짧습니다. 사례 중심으로 구체적으로 설명해보세요.'
-                    if any(word in a for word in ['모르', '몰라', '모름', '못했', '죄송']):
-                        feedback = '0점<s>질문에 대한 충분한 답변이 없습니다. 최대한 노력해보세요.'
+    def saveQAScoreList(self, interview_result, qa_scores):
+        try:
+            for qa in qa_scores:
+                question = qa.get("question","")
+                answer = qa.get("answer","")
+                intent = qa.get("intent","기본") #없으면 기본값
+                feedback = qa.get("feedback","피드백 없음")
 
                 InterviewResultQAS.objects.create(
-                    interview_result=interviewResult,
-                    question=q,
-                    answer=a,
+                    interview_result=interview_result,
+                    question=question,
+                    answer=answer,
                     intent=intent,
                     feedback=feedback
                 )
-
-            print("✅ 면접 결과 및 QAS 저장 완료")
-            return interviewResult
-
+                print("평가 결과 저장 완료")
         except Exception as e:
-            print(f"❌ 면접 결과 저장 중 오류 발생: {e}")
+            print(f"평가 결과 저장 실패: {e}")
             raise

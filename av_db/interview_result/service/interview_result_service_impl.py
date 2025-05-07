@@ -1,7 +1,8 @@
 from account.repository.account_repository_impl import AccountRepositoryImpl
 from interview_result.repository.interview_result_repository_impl import InterviewResultRepositoryImpl
 from interview_result.service.interview_result_service import InterviewResultService
-from redis_cache.service.redis_cache_service_impl import RedisCacheServiceImpl
+from interview.entity.interview_question import InterviewQuestion
+from interview.entity.interview_answer import InterviewAnswer
 from utility.http_client import HttpClient
 
 import json
@@ -22,8 +23,8 @@ class InterviewResultServiceImpl(InterviewResultService):
         return cls.__instance
 
 
-    def saveInterviewResult(self, accountId, userToken, summary, questions, answers):
-        return  self.__interviewResultRepository.saveInteviewResult(accountId, userToken, summary, questions, answers)
+    def saveInterviewResult(self, accountId):
+        return  self.__interviewResultRepository.saveInterviewResult(accountId)
 
     def getInterviewResult(self, accountId):
         account = self.__accountRepository.findById(accountId)
@@ -39,22 +40,20 @@ class InterviewResultServiceImpl(InterviewResultService):
         return interviewResultList
 
     def getFullQAList(self, interviewId: int) -> tuple[list[str], list[str]]:
-        redis = RedisCacheServiceImpl.getInstance()  # 이미 싱글톤 객체로 사용 중
+        print("들어옴")
+        questions = list(
+            InterviewQuestion.objects.filter(interview_id=interviewId)
+            .order_by("id")
+            .values_list("content", flat=True)
+        )
+        answers = list(
+            InterviewAnswer.objects.filter(interview_id=interviewId)
+            .order_by("question_id")
+            .values_list("answer_text", flat=True)
+        )
+        print("나감")
+        return questions, answers
 
-        key = f"interview:{interviewId}:qas"
-        raw = redis.getValueByKey(key)
-
-        if not raw:
-            raise Exception("Redis에서 Q/A 데이터를 찾을 수 없습니다")
-
-        try:
-            qa_list = json.loads(raw)
-            questions = [qa["question"] for qa in qa_list]
-            answers = [qa["answer"] for qa in qa_list]
-            return questions, answers
-        except Exception as e:
-            print(f"❌ Q/A 복원 실패: {e}")
-            raise
-
-
+    def saveQAScoreList(self, interview_result, qa_scores):
+        return self.__interviewResultRepository.saveQAScoreList(interview_result, qa_scores)
 
