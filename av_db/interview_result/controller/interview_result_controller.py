@@ -89,16 +89,17 @@ class InterviewResultController(viewsets.ViewSet):
             print(f"📡 FastAPI 요청: {payload}")
             response = HttpClient.postToAI("/interview/question/end_interview", payload)
             summary = response.get("summary", "")
-            #qa_scores = response.get("qa_scores",[])
-            #if not qa_scores:
-             #   raise Exception("FastAPI 응답dp qa_scores가 없음")
+            qa_scores = response.get("qa_scores",[])
+            if not qa_scores:
+                raise Exception("FastAPI 응답dp qa_scores가 없음")
 
             #평가 결과 저장
-            #self.interviewResultService.saveQAScoreList(interview_result, qa_scores)
+            self.interviewResultService.saveQAScoreList(interview_result, qa_scores)
 
             return JsonResponse({
                 "message": "면접 평가 저장 성공",
                 "summary": summary,
+                "qa_scores": qa_scores,
                 "success": True
             }, status=200)
 
@@ -113,12 +114,12 @@ class InterviewResultController(viewsets.ViewSet):
             interview_result = InterviewResult.objects.filter(account_id=accountId).latest("id")
 
             result_list = list(
-                InterviewResultQAS.objects.filter(interview_result=interview_result)
-                .values_list("question", "answer", "intent", "feedback")
+               InterviewResultQAS.objects.filter(interview_result=interview_result)
+               .values_list("question", "answer", "intent", "feedback")
             )
 
             return JsonResponse({
-                "message": "면접 평가 결과 조회 성공",
+               "message": "면접 평가 결과 조회 성공",
                 "interviewResultList": result_list,
                 "success": True
             }, status=200)
