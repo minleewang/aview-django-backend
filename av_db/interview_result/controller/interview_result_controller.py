@@ -114,8 +114,8 @@ class InterviewResultController(viewsets.ViewSet):
             interview_result = InterviewResult.objects.filter(account_id=accountId).latest("id")
 
             result_list = list(
-               InterviewResultQAS.objects.filter(interview_result=interview_result)
-               .values_list("question", "answer", "intent", "feedback")
+                InterviewResultQAS.objects.filter(interview_result=interview_result)
+                .values("question", "answer", "intent", "feedback")
             )
 
             return JsonResponse({
