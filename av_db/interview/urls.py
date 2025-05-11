@@ -29,4 +29,10 @@ urlpatterns = [
     path('project-followup',
          InterviewController.as_view({'post': 'requestProjectFollowUpQuestion'}),
          name='꼬리 질문 요청'),
+    path('tech-create',
+         InterviewController.as_view({'post': 'requestTechCreateInterview'}),
+         name='인터뷰 질문 생성 및 추가'),
+    path('tech-followup',
+         InterviewController.as_view({'post': 'requestTechFollowUpQuestion'}),
+         name='꼬리 질문 요청'),
 ]
