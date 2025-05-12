@@ -8,7 +8,7 @@ from account_profile.entity.account_profile import AccountProfile
 from marketing.entity.marketing import Marketing
 from datetime import datetime, date, timedelta
 
-from orders.entity.orders import Orders
+from orders.entity.orders import Order
 
 
 class ManagementRepositoryImpl(ManagementRepository):
@@ -91,11 +91,11 @@ class ManagementRepositoryImpl(ManagementRepository):
         #    'account_id').distinct().count()
 
         # 주문 수 필터링
-        orders = Orders.objects.filter(createdDate__range=(start_date, end_date)).values(
+        orders = Order.objects.filter(createdDate__range=(start_date, end_date)).values(
             'account_id').distinct().count()
 
         # 두 번 이상 주문한 계정 수 필터링
-        two_or_more_orders = Orders.objects.filter(
+        two_or_more_orders = Order.objects.filter(
             createdDate__range=(start_date, end_date)
         ).values('account_id').annotate(order_count=Count('id')).filter(order_count__gte=2).count()
 
