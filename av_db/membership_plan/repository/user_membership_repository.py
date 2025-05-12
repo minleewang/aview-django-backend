@@ -17,3 +17,20 @@ class UserMembershipRepository(ABC):
     def findExpiringWithinDays(self, days):
         # X일 내 만료되는 구독 리스트 조회 (자동 갱신 대상자 추출)
         pass
+
+    @abstractmethod
+    def findAllByUserId(self, userId):
+        # 특정 유저의 모든 구독 이력
+        pass
+
+    @abstractmethod
+    def countAll(self):
+        pass
+
+    @abstractmethod
+    def countActive(self):
+        pass
+
+    @abstractmethod
+    def totalRevenue(self):
+        pass

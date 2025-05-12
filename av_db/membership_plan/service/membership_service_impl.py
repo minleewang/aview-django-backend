@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
 from datetime import timedelta, datetime
 from django.utils import timezone
+
 
 from membership_plan.entity.user_membership import UserMembership
 from membership_plan.repository.user_membership_repository_impl import UserMembershipRepositoryImpl
@@ -92,3 +92,25 @@ class MembershipServiceImpl:
                 deactivated_count += 1
 
         return deactivated_count
+
+    def getUserMembershipHistory(self, userId):
+        return self.__userMembershipRepository.findAllByUserId(userId)
+
+    def cancelMembership(self, userId):
+        userMembership = self.__userMembershipRepository.findByUserId(userId)
+        if not userMembership or not userMembership.is_active:
+            raise Exception("활성화된 구독이 없습니다.")
+
+        userMembership.is_active = False
+        userMembership.is_renew_scheduled = False
+        return self.__userMembershipRepository.save(userMembership)
+
+    def getMembershipSummary(self):
+        total_subscribers = self.__userMembershipRepository.countAll()
+        active_subscribers = self.__userMembershipRepository.countActive()
+        total_revenue = self.__userMembershipRepository.totalRevenue()
+        return {
+            "total_subscribers": total_subscribers,
+            "active_subscribers": active_subscribers,
+            "total_revenue": total_revenue
+        }

@@ -8,7 +8,7 @@ class MembershipController(viewsets.ViewSet):
     membershipService = MembershipServiceImpl.getInstance()
 
     # ✅ 구독 생성
-    def create_membership(self, request):
+    def requestCreateMembership(self, request):
         user_id = request.data.get("userId")
         membership_id = request.data.get("membershipId")
 
@@ -22,7 +22,7 @@ class MembershipController(viewsets.ViewSet):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # ✅ 유저 구독 상태 조회
-    def get_membership(self, request):
+    def requestGetUserMembership(self, request):
         user_id = request.query_params.get("userId")
 
         if not user_id:
@@ -42,7 +42,7 @@ class MembershipController(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     # ✅ 구독 연장
-    def extend_membership(self, request):
+    def requestExtendMembership(self, request):
         user_id = request.data.get("userId")
         days = request.data.get("days")
 
@@ -56,7 +56,7 @@ class MembershipController(viewsets.ViewSet):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # ✅ 만료 예정 구독 목록 조회
-    def get_expiring_memberships(self, request):
+    def requestGetExpiringMemberships(self, request):
         days = request.query_params.get("days")
         if not days:
             return Response({"error": "days 파라미터는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -72,7 +72,7 @@ class MembershipController(viewsets.ViewSet):
         return Response({"expiring_memberships": data}, status=status.HTTP_200_OK)
 
     # ✅ 자동 갱신 실행
-    def auto_renew_memberships(self, request):
+    def requestRenewScheduledMemberships(self, request):
         try:
             count = self.membershipService.renewScheduledMemberships()
             return Response({"message": f"자동 갱신 완료: {count}건"}, status=status.HTTP_200_OK)
@@ -80,9 +80,40 @@ class MembershipController(viewsets.ViewSet):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # ✅ 만료된 구독 비활성화
-    def deactivate_expired_memberships(self, request):
+    def requestDeactivateExpiredMemberships(self, request):
         try:
             count = self.membershipService.deactivateExpiredMemberships()
             return Response({"message": f"비활성화 완료: {count}건"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def requestGetUserMembershipHistory(self, request):
+        user_id = request.query_params.get("userId")
+        if not user_id:
+            return Response({"error": "userId는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        histories = self.membershipService.getUserMembershipHistory(user_id)
+        data = [{
+            "plan": h.plan.name,
+            "start_date": h.start_date,
+            "end_date": h.end_date,
+            "is_active": h.is_active
+        } for h in histories]
+        return Response({"history": data}, status=status.HTTP_200_OK)
+
+    def requestCancelMembership(self, request):
+        user_id = request.data.get("userId")
+        if not user_id:
+            return Response({"error": "userId는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            self.membershipService.cancelMembership(user_id)
+            return Response({"message": "구독이 취소되었습니다."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def requestGetMembershipSummary(self, request):
+        try:
+            summary = self.membershipService.getMembershipSummary()
+            return Response(summary, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
