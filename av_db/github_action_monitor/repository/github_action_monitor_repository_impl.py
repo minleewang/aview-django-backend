@@ -29,7 +29,7 @@ class GithubActionMonitorRepositoryImpl(GithubActionMonitorRepository):
 
         try:
             # HttpClient의 비동기 POST 메서드를 사용하여 요청
-            result = HttpClient.post(endpoint, data)
+            result = HttpClient.postToAdmin(endpoint, data)
 
             if result:
                 print(f"✅ 성공: GitHub Workflow 데이터 수신")
