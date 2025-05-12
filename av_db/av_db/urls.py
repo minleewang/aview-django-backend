@@ -35,7 +35,7 @@ urlpatterns = [
     path('interview_question_data/', include('interview_question_data.urls')),
     path('authentication/', include('authentication.urls')),
     path('github-oauth/', include('github_authentication.urls')),
-    #path("github-action-monitor/", include('github_action_monitor.urls')),
+    path("github-action-monitor/", include('github_action_monitor.urls')),
     path("blog-post/", include('blog_post.urls')),
     path("excel-basic/", include('excel_basic.urls')),
     path("interview_tech_stack/", include('interview_tech_stack.urls')),

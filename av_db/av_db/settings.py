@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'blog_post',
     'excel_basic',
     'interview_tech_stack',
-    #    'github_action_monitor',
+    'github_action_monitor',
     'guest_oauth',
 ]
 
