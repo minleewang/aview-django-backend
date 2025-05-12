@@ -25,8 +25,11 @@ urlpatterns = [
          name='꼬리 질문 요청'),
     path('project-create',
          InterviewController.as_view({'post': 'requestProjectCreateInterview'}),
-         name='인터뷰 질문 생성 및 추가'),
+         name='Project 인터뷰 질문 생성 및 추가'),
     path('project-followup',
          InterviewController.as_view({'post': 'requestProjectFollowUpQuestion'}),
-         name='꼬리 질문 요청'),
+         name='Project 꼬리 질문 요청'),
+    path('tech-followup',
+         InterviewController.as_view({'post': 'requestTechFollowUpQuestion'}),
+         name='Tech 질문 요청'),
 ]
