@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'interview_tech_stack',
     'github_action_monitor',
     'guest_oauth',
+    'membership_plan',
 ]
 
 MIDDLEWARE = [
