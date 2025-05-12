@@ -32,3 +32,15 @@ class MembershipService(ABC):
     def deactivateExpiredMemberships(self):
         # 이미 만료된 구독을 찾아 is_active=False로 비활성화
         pass
+
+    @abstractmethod
+    def getUserMembershipHistory(self, userId):
+        pass
+
+    @abstractmethod
+    def cancelMembership(self, userId):
+        pass
+
+    @abstractmethod
+    def getMembershipSummary(self):
+        pass
