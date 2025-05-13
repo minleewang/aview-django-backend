@@ -46,9 +46,9 @@ class GithubActionMonitorRepositoryImpl(GithubActionMonitorRepository):
         """GitHub Actions Workflow 트리거"""
         endpoint = "/github-actions-trigger/run"
         data = {
-            "token": token,
-            "repo_url": repoUrl,
-            "workflow_name": workflowName,
+            "userToken": token,
+            "repoUrl": repoUrl,
+            "workflowName": workflowName,
         }
 
         try:
