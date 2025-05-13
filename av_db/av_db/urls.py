@@ -41,4 +41,5 @@ urlpatterns = [
     path("interview_tech_stack/", include('interview_tech_stack.urls')),
     path('guest-oauth/', include('guest_oauth.urls')),
     path('memberships/', include('membership_plan.urls')),
+    path('payments/', include('payments.urls')),
 ]

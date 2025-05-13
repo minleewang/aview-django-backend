@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'github_action_monitor',
     'guest_oauth',
     'membership_plan',
+    'payments',
 ]
 
 MIDDLEWARE = [
