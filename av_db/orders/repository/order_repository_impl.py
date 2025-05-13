@@ -1,4 +1,4 @@
-from orders.entity.orders import Order
+from orders.entity.orders import Orders
 from orders.repository.order_repository import OrderRepository
 
 
@@ -24,6 +24,6 @@ class OrderRepositoryImpl(OrderRepository):
 
     def findById(self, orderId):
         try:
-            return Order.objects.get(id=orderId)
-        except Order.DoesNotExist:
+            return Orders.objects.get(id=orderId)
+        except Orders.DoesNotExist:
             return None

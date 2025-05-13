@@ -4,7 +4,7 @@ from account.entity.account import Account
 from orders.entity.order_status import OrderStatus
 
 
-class Order(models.Model):
+class Orders(models.Model):
     id = models.AutoField(primary_key=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='orders')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)

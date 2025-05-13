@@ -1,12 +1,12 @@
 from django.db import models
 
 from membership_plan.entity.membership import Membership
-from orders.entity.orders import Order
+from orders.entity.orders import Orders
 
 
 class OrderItems(models.Model):
     id = models.AutoField(primary_key=True)
-    orders = models.ForeignKey(Order, related_name="items", on_delete=models.PROTECT)  # Order와 연결
+    orders = models.ForeignKey(Orders, related_name="items", on_delete=models.PROTECT)  # Order와 연결
     membership_plan = models.ForeignKey(Membership, related_name="items", on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)

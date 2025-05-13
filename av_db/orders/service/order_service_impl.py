@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from orders.entity.orders import Order
+from orders.entity.orders import Orders
 from orders.entity.order_status import OrderStatus
 from orders.entity.order_item import OrderItems
 from orders.repository.order_item_repository_impl import OrderItemRepositoryImpl
@@ -49,7 +49,7 @@ class OrderServiceImpl(OrderService):
         if not items or not isinstance(items, list):
             raise Exception("유효하지 않은 주문 항목입니다.")
 
-        order = Order(
+        order = Orders(
             account=account,
             total_amount=total,
             status=OrderStatus.PENDING,
@@ -62,8 +62,9 @@ class OrderServiceImpl(OrderService):
             membership = self.__membershipRepository.findById(item["id"])
             if not membership:
                 raise Exception(f"Membership ID {item['id']} 존재하지 않음.")
-            else:
-                self.__membershipService.createMembership(accountId, membership.id)
+
+            # 멤버쉽 구독생성
+            self.__membershipService.createMembership(accountId, membership.id)
 
             orderItem = OrderItems(
                 orders=order,  # order가 올바르게 연결되었는지 확인
@@ -75,10 +76,10 @@ class OrderServiceImpl(OrderService):
 
         print(f"orderItemList: {orderItemList}")
 
-        # 구독 생성
-        self.__membershipService.createMembership(accountId, membership.id)
-
         if orderItemList:
             self.__orderItemRepository.bulkCreate(orderItemList)
+
+        order.status = OrderStatus.COMPLETED
+        self.__orderRepository.save(order)
 
         return order.getId()
