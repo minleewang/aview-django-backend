@@ -18,7 +18,7 @@ class ReviewController(viewsets.ViewSet):
         getRequest = request.GET
         page = int(getRequest.get("page", 1))
         perPage = int(getRequest.get("perPage", 8))
-        paginatedReview, totalItems, totalPages = self.blogPostService.requestList(page, perPage)
+        paginatedReview, totalItems, totalPages = self.reviewService.requestList(page, perPage)
 
         # JSON 응답 생성
         return JsonResponse({
@@ -33,7 +33,6 @@ class ReviewController(viewsets.ViewSet):
             return JsonResponse({'error': '파일을 제공해야 합니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
         print(f"fileContent: {fileContent}")
-
         title = request.data.get('title')
 
         try:
