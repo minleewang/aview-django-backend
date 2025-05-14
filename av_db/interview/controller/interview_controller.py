@@ -107,7 +107,7 @@ class InterviewController(viewsets.ViewSet):
         experienceLevel = postRequest.get("experienceLevel")
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
-        interviewTechStack = postRequest.get("interviewTechStack")
+        techStack = postRequest.get("interviewTechStack")
         companyName = postRequest.get("companyName")
         print(f"topic:{jobCategory}")
 
@@ -126,7 +126,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, companyName  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, techStack, companyName  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -140,7 +140,7 @@ class InterviewController(viewsets.ViewSet):
                     "experienceLevel": createdInterview.experience_level,
                     "projectExperience": createdInterview.project_experience,
                     "academicBackground": createdInterview.academic_background,
-                    "interviewTechStack": createdInterview.interview_tech_stack
+                    "techStack": createdInterview.tech_stack
                 }
 
                 response = HttpClient.postToAI("/interview/question/generate", payload)
@@ -240,10 +240,10 @@ class InterviewController(viewsets.ViewSet):
         experienceLevel = postRequest.get("experienceLevel")
         projectExperience = postRequest.get("projectExperience")
         academicBackground = postRequest.get("academicBackground")
-        interviewTechStack = postRequest.get("interviewTechStack")
+        techStack = postRequest.get("interviewTechStack")
         companyName = postRequest.get("companyName")
         questionId = postRequest.get("questionId")
-        print(f"interviewTechStack:{interviewTechStack}")
+        print(f"techStack:{techStack}")
 
         # 두번째 질문
         if not userToken:
@@ -260,7 +260,7 @@ class InterviewController(viewsets.ViewSet):
 
             with transaction.atomic():  # ✅ 트랜잭션 블록 시작
                 createdInterview = self.interviewService.createInterview(
-                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, companyName  # 지금 accountId가 안옴
+                    accountId, jobCategory, experienceLevel,projectExperience, academicBackground, techStack, companyName  # 지금 accountId가 안옴
                 )
                 print(f"createdInterview : {createdInterview}")
 
@@ -272,7 +272,7 @@ class InterviewController(viewsets.ViewSet):
                     #"experienceLevel": createdInterview.experience_level,
                     "projectExperience": projectExperience,
                     #"academicBackground": createdInterview.academic_background,
-                    #"interviewTechStack": createdInterview.interview_tech_stack
+                    #"techStack": createdInterview.tech_stack
                 }
                 print(f" project: payload {payload}")
 
@@ -310,7 +310,7 @@ class InterviewController(viewsets.ViewSet):
         projectExperience = postRequest.get("projectExperience")
         #experienceLevel = postRequest.get("experienceLevel")
         #academicBackground = postRequest.get("academicBackground")
-        interviewTechStack = postRequest.get("interviewTechStack")
+        techStack = postRequest.get("interviewTechStack")
         userToken = postRequest.get("userToken")
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
@@ -318,9 +318,9 @@ class InterviewController(viewsets.ViewSet):
         companyName = postRequest.get("companyName")
 
         print(
-            f"[요청 데이터] { {'jobCategory': jobCategory, 'interviewTechStack':interviewTechStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'companyName': companyName} }")
+            f"[요청 데이터] { {'jobCategory': jobCategory, 'techStack':techStack, 'userToken': userToken, 'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText, 'projectExperience': projectExperience, 'companyName': companyName} }")
 
-        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText or not jobCategory or not projectExperience or not companyName:
+        if not userToken or not interviewId or not questionId or not techStack or not answerText or not jobCategory or not projectExperience or not companyName:
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, projectExperience 모두 필요합니다.",
                 "success": False
@@ -332,7 +332,7 @@ class InterviewController(viewsets.ViewSet):
                 "questionId": questionId,
                 "answerText": answerText,
                 "topic": jobCategory,
-                "techStack": interviewTechStack,
+                "techStack": techStack,
                 "projectExperience": projectExperience,
                 "companyName": companyName
             }
@@ -361,7 +361,7 @@ class InterviewController(viewsets.ViewSet):
         # projectExperience = postRequest.get("projectExperience")
         # experienceLevel = postRequest.get("experienceLevel")
         # academicBackground = postRequest.get("academicBackground")
-        interviewTechStack = postRequest.get("interviewTechStack")
+        techStack = postRequest.get("interviewTechStack")
         userToken = postRequest.get("userToken")
         interviewId = postRequest.get("interviewId")
         questionId = postRequest.get("questionId")
@@ -369,10 +369,10 @@ class InterviewController(viewsets.ViewSet):
         # companyName = postRequest.get("companyName")
 
         print(
-            f"[요청 데이터] { {'interviewTechStack':interviewTechStack, 'userToken': userToken, 
+            f"[요청 데이터] { {'techStack':techStack, 'userToken': userToken, 
                           'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText} }")
 
-        if not userToken or not interviewId or not questionId or not interviewTechStack or not answerText :
+        if not userToken or not interviewId or not questionId or not techStack or not answerText :
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, projectExperience 모두 필요합니다.",
                 "success": False
@@ -384,7 +384,7 @@ class InterviewController(viewsets.ViewSet):
                 "questionId": questionId,
                 "answerText": answerText,
                 # "topic": jobCategory,
-                "techStack": interviewTechStack,
+                "techStack": techStack,
                 # "academicBackground": academicBackground,
                 # "experienceLevel": experienceLevel,
                 # "projectExperience": projectExperience,
@@ -418,10 +418,10 @@ class InterviewController(viewsets.ViewSet):
     #     experienceLevel = postRequest.get("experienceLevel")
     #     projectExperience = postRequest.get("projectExperience")
     #     academicBackground = postRequest.get("academicBackground")
-    #     interviewTechStack = postRequest.get("interviewTechStack")
+    #     techStack = postRequest.get("interviewTechStack")
     #     companyName = postRequest.get("companyName")
     #     questionId = postRequest.get("questionId")
-    #     print(f"interviewTechStack:{interviewTechStack}")
+    #     print(f"techStack:{techStack}")
     #
     #     # 세번째 질문
     #     if not userToken:
@@ -438,7 +438,7 @@ class InterviewController(viewsets.ViewSet):
     #
     #         with transaction.atomic():  # ✅ 트랜잭션 블록 시작
     #             createdInterview = self.interviewService.createInterview(
-    #                 accountId, jobCategory, experienceLevel,projectExperience, academicBackground, interviewTechStack, companyName  # 지금 accountId가 안옴
+    #                 accountId, jobCategory, experienceLevel,projectExperience, academicBackground, techStack, companyName  # 지금 accountId가 안옴
     #             )
     #             print(f"createdInterview : {createdInterview}")
     #
@@ -450,7 +450,7 @@ class InterviewController(viewsets.ViewSet):
     #                 #"experienceLevel": createdInterview.experience_level,
     #                 "projectExperience": projectExperience,
     #                 "academicBackground": createdInterview.academic_background,
-    #                 "interviewTechStack": createdInterview.interview_tech_stack
+    #                 "techStack": createdInterview.tech_stack
     #             }
     #             print(f" tech: payload {payload}")
     #

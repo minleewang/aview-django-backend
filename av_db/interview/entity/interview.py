@@ -6,7 +6,7 @@ from interview.entity.experience_level import ExperienceLevel
 from interview.entity.interview_status import InterviewStatus
 from interview.entity.interview_topic import InterviewTopic
 from interview.entity.project_experience import ProjectExperience
-from interview_tech_stack.entity.interview_tech_stack import InterviewTechStack
+from interview.entity.tech_stack import TechStack
 
 class Interview(models.Model):
     id = models.AutoField(primary_key=True)
@@ -30,7 +30,7 @@ class Interview(models.Model):
         choices=AcademicBackground.choices,
         default=AcademicBackground.NON_MAJOR  # 기본값: 비전공자
     )
-    interview_tech_stack = models.JSONField(default=list, blank=True)
+    tech_stack = models.JSONField(blank=False, null=False)
     company_name = models.CharField(
         max_length=20,
         choices=CompanyName.choices,
@@ -50,7 +50,7 @@ class Interview(models.Model):
             f"experience_level={self.experience_level}, status={self.status}, "
             f"project_experience={self.project_experience}, "
             f"academic_background={self.academic_background}, "
-            f"interview_tech_stack={self.interview_tech_stack})"
+            f"tech_stack={self.tech_stack})"
             f"company_name={self.company_name}"
         )
 
@@ -75,8 +75,20 @@ class Interview(models.Model):
     def getAcademicBackground(self):
         return AcademicBackground(self.academic_background)
 
-    def getInterviewTechStack(self):
-        return InterviewTechStack(self.interview_tech_stack)
+    def getTechStack(self):
+        raw = self.tech_stack
+
+        if isinstance(raw, list):
+            return [TechStack(sid) for sid in raw if isinstance(sid, int)]
+        elif isinstance(raw, int):
+            try:
+                return [TechStack(raw)]
+            except ValueError:
+                print(f"[경고] 유효하지 않은 단일 tech_stack ID: {raw}")
+                return []
+        else:
+            print(f"[경고] tech_stack 타입 오류: {raw}")
+            return []
 
     def getCompanyName(self):
         return CompanyName(self.company_name)

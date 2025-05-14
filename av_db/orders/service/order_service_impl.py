@@ -70,7 +70,7 @@ class OrderServiceImpl(OrderService):
                 orders=order,  # order가 올바르게 연결되었는지 확인
                 membership_plan=membership,
                 quantity=1,
-                price=membership.Price
+                price=membership.price
             )
             orderItemList.append(orderItem)
 
