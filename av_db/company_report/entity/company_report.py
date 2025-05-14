@@ -1,24 +1,15 @@
 from django.db import models
 
-from company_report.entity.company_data_total import CompanyDataTotal
-from company_report.entity.company_data_finance import FinancialData
-
-
 class CompanyReport(models.Model):
-    companyReportId = models.AutoField(primary_key=True)
-    companyReportName = models.CharField(max_length=128, null=False)
-    companyReportPrice = models.IntegerField(null=False)
-    companyReportCategory = models.CharField(max_length=128, null=False)
-    content = models.TextField()
-    keyword = models.CharField(max_length=255,null=True)
-    companyReportTitleImage = models.CharField(max_length=100,null=True) # 이미지 경로가 들어간다
-    # 추후 이미지 관련 필드 추가
-    regDate = models.DateTimeField(auto_now_add=True)
-    updDate = models.DateTimeField(auto_now=True)
+    source = models.CharField(max_length=30, null=True, blank=True)        # 예: '당근', '토스'
+    company_name = models.CharField(max_length=100, null=True, blank=True) # 회사명
+    job_title = models.CharField(max_length=200, null=True, blank=True)    # 채용 제목
+    post_url = models.URLField(null=True, blank=True)                      # 채용공고 URL
+    posted_at = models.DateTimeField(null=True, blank=True)                # 공고 게시일
+    description = models.TextField(null=True, blank=True)                  # 공고 요약 or 본문
 
     def __str__(self):
-        return self.companyReportName
+        return f"[{self.source}] {self.company_name} - {self.job_title}"
 
     class Meta:
         db_table = 'company_report'
-        app_label = 'company_report'
