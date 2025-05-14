@@ -62,7 +62,6 @@ INSTALLED_APPS = [
     'authentication',
     'github_authentication',
     'excel_basic',
-    'interview_tech_stack',
     'github_action_monitor',
     'guest_oauth',
     'membership_plan',
