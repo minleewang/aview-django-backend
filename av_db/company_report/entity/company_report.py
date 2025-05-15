@@ -1,15 +1,17 @@
 from django.db import models
 
 class CompanyReport(models.Model):
-    source = models.CharField(max_length=30, null=True, blank=True)        # 예: '당근', '토스'
-    company_name = models.CharField(max_length=100, null=True, blank=True) # 회사명
-    job_title = models.CharField(max_length=200, null=True, blank=True)    # 채용 제목
-    post_url = models.URLField(null=True, blank=True)                      # 채용공고 URL
-    posted_at = models.DateTimeField(null=True, blank=True)                # 공고 게시일
-    description = models.TextField(null=True, blank=True)                  # 공고 요약 or 본문
+    source = models.CharField(max_length=50)  # 예: 잡플래닛, 잡코리아
+    company_name = models.CharField(max_length=100)
+    rating = models.FloatField(null=True, blank=True)         # 회사 평점
+    overview = models.TextField(null=True, blank=True)        # 한줄소개 / 기업 개요
+    welfare = models.TextField(null=True, blank=True)         # 복지 정보
+    salary_info = models.TextField(null=True, blank=True)     # 연봉 관련 설명
+    culture = models.TextField(null=True, blank=True)         # 조직문화, 분위기
+    review_summary = models.TextField(null=True, blank=True)  # 좋아요/아쉬운점 요약
+    collected_at = models.DateTimeField(auto_now_add=True)    # 수집 시각
 
     def __str__(self):
-        return f"[{self.source}] {self.company_name} - {self.job_title}"
+        return f"{self.company_name} ({self.source})"
 
-    class Meta:
-        db_table = 'company_report'
+
