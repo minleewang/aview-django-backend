@@ -1,11 +1,17 @@
 from abc import ABC, abstractmethod
+from typing import List
+from company_report.entity.company_report import CompanyReport
 
 class CompanyReportRepository(ABC):
 
     @abstractmethod
-    def createMany(self, reportDataList):
+    def create(self, data: dict) -> CompanyReport:
         pass
 
     @abstractmethod
-    def findAll(self):
+    def create_many(self, data_list: List[dict]) -> List[CompanyReport]:
+        pass
+
+    @abstractmethod
+    def find_all(self) -> List[CompanyReport]:
         pass

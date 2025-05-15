@@ -1,18 +1,18 @@
 from crawl.job.google_search_job import crawl_google_search_jobs
 from crawl.job.jobkorea_job import crawl_jobkorea_jobs
 from crawl.job.jobplanet_company import crawl_jobplanet_company_info
-from crawl.repository.crawl_repository import CrawlRepository
+from crawl.repository.job_crawl_repository import JobCrawlRepository
 from crawl.job.daangn_job import crawl_daangn_jobs
 from crawl.job.toss_job import crawl_toss_jobs
 from crawl.job.wanted_job import crawl_wanted_jobs
 from crawl.job.saramin_job import crawl_saramin_jobs
 
-class CrawlRepositoryImpl(CrawlRepository):
+class JobCrawlRepositoryImpl(JobCrawlRepository):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
-            cls.__instance = super(CrawlRepositoryImpl, cls).__new__(cls)
+            cls.__instance = super(JobCrawlRepositoryImpl, cls).__new__(cls)
         return cls.__instance
 
     @classmethod
@@ -21,7 +21,7 @@ class CrawlRepositoryImpl(CrawlRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def crawl(self, source: str) -> list[dict]:
+    def jobCrawl(self, source: str) -> list[dict]:
         if source == "당근":
             return crawl_daangn_jobs()
         elif source == "토스":

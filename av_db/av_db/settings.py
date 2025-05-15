@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'account_profile',
     'review',
     'company_report',
+    'company_job',
     'cart',
     'orders',
     'marketing',

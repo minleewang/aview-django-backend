@@ -26,6 +26,7 @@ urlpatterns = [
     path('google-oauth/', include('google_oauth.urls')),
     path('naver-oauth/', include('naver_oauth.urls')),
     path('company_report/',include('company_report.urls')),
+    path('company_job/', include('company_job.urls')),
     path('cart/',include('cart.urls')),
     path('orders/',include('orders.urls')),
     path('marketing/',include('marketing.urls')),
