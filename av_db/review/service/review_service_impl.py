@@ -36,7 +36,7 @@ class ReviewServiceImpl(ReviewService):
             {
                 "id": review.id,
                 "title": review.title,
-                "nickname": review.writer.nickname,  # writer 객체의 nickname 가져오기
+                "nickname": review.writer.email,  # writer 객체의 nickname 가져오기
                 "createDate": review.create_date.strftime("%Y-%m-%d %H:%M"),
             }
             for review in paginatedReviewList
@@ -64,16 +64,11 @@ class ReviewServiceImpl(ReviewService):
         if not account:
             raise ValueError(f"Account with ID {accountId} does not exist.")
 
-        # 3. AccountProfile 조회
-        accountProfile = self.__accountProfileRepository.findByAccount(account)
-        if not accountProfile:
-            raise ValueError(f"AccountProfile for account ID {accountId} does not exist.")
-
         # 4. Board 객체 생성 및 저장
         review = Review(
             title=title,
             content=content,
-            writer=accountProfile)  # ForeignKey로 연결된 account_profile)
+            writer=account)  # ForeignKey로 연결된 account_profile)
         savedReview = self.__reviewRepository.save(review)
 
         # 5. 응답 데이터 구조화
