@@ -368,10 +368,6 @@ class InterviewController(viewsets.ViewSet):
         answerText = postRequest.get("answerText")
         # companyName = postRequest.get("companyName")
 
-        print(
-            f"[요청 데이터] { {'techStack':techStack, 'userToken': userToken, 
-                          'interviewId': interviewId, 'questionId': questionId, 'answerText': answerText} }")
-
         if not userToken or not interviewId or not questionId or not techStack or not answerText :
             return JsonResponse({
                 "error": "userToken, interviewId, questionId, answerText, jobCategory, projectExperience 모두 필요합니다.",
