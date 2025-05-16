@@ -76,7 +76,7 @@ class ReviewServiceImpl(ReviewService):
             "id": savedReview.id,
             "title": savedReview.title,
             "content": review.content,
-            "writerNickname": savedReview.writer.nickname,
+            "writerNickname": savedReview.writer.email,
             "createDate": savedReview.create_date.strftime("%Y-%m-%d %H:%M"),
         }
 
@@ -88,7 +88,7 @@ class ReviewServiceImpl(ReviewService):
                 "title": review.title,
                 "content": review.content,
                 "createDate": review.create_date.strftime("%Y-%m-%d %H:%M"),
-                "nickname": review.writer.nickname
+                "nickname": review.writer.email
             }
 
         return None
@@ -127,13 +127,13 @@ class ReviewServiceImpl(ReviewService):
     def requestDelete(self, id, accountId):
         try:
             account = self.__accountRepository.findById(accountId)
-            accountProfile = self.__accountProfileRepository.findByAccount(account)
+            #accountProfile = self.__accountProfileRepository.findByAccount(account)
 
             review = self.__reviewRepository.findById(id)
             if not review:
                 raise ValueError(f"Review with ID {id} does not exist.")
 
-            if review.writer.id != accountProfile.id:
+            if review.writer.id != account.id:
                 raise ValueError("You are not authorized to modify this post.")
 
             content = f"review/{review.content}"
