@@ -48,6 +48,7 @@ class ReviewController(viewsets.ViewSet):
 
         title = postRequest.get("title")
         content = postRequest.get("content")
+        imageUrl = postRequest.get("imageUrl")
         userToken = postRequest.get("userToken")
 
         if not userToken:  # userToken이 없거나 빈 문자열이면 400 반환
@@ -106,10 +107,11 @@ class ReviewController(viewsets.ViewSet):
 
     def requestDeleteReview(self, request, pk=None):
         try:
-            postRequest = request.data
-            print(f"postRequest: {postRequest}")
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return JsonResponse({"error": "인증 토큰이 없습니다."}, status=401)
 
-            userToken = postRequest.get("userToken")
+            userToken = auth_header.split("Bearer ")[1]
             accountId = self.redisCacheService.getValueByKey(userToken)
             if not accountId:
                 return JsonResponse({"error": "유저 토큰이 유효하지 않음"}, status=status.HTTP_400_BAD_REQUEST)
