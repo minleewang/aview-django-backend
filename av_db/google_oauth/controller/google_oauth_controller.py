@@ -63,10 +63,6 @@ class GoogleOauthController(viewsets.ViewSet):
                 if account is None:
                     account = self.accountService.createAccount(email, loginType)
                     print(f"accountProfile: {account}")
-                    self.accountProfileService.createAccountProfile(
-                        account.getId(), nickname, gender, birthyear, age_range
-                    )
-                    print("accountProfile 최초 생성 완료")
                     accountProfile = self.accountProfileService.createAccountProfile(
                         account.getId(), nickname, gender, birthyear, age_range
                     )
@@ -87,6 +83,9 @@ class GoogleOauthController(viewsets.ViewSet):
             return JsonResponse({'userToken': userToken})
 
         except Exception as e:
+            import traceback
+            print("[Google OAuth Error]", str(e))
+            traceback.print_exc()
             return JsonResponse({'error': str(e)}, status=500)
 
         #     if account is None:
