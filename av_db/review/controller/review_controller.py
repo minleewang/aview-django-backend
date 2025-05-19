@@ -77,6 +77,7 @@ class ReviewController(viewsets.ViewSet):
 
             print(f"requestReadReview() -> pk: {pk}")
             readReview = self.reviewService.requestRead(pk)
+            print("readReview:", readReview)
 
             return JsonResponse(readReview, status=200)
 
