@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'guest_oauth',
     'membership_plan',
     'payments',
+    'training_sample',
 ]
 
 MIDDLEWARE = [

@@ -15,7 +15,7 @@ def crawl_daangn_jobs() -> list[dict]:
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.implicitly_wait(3)
-    driver.get("https://about.daangn.com/jobs/software-engineer-backend/#_filter")
+    driver.get("https://about.daangn.com/jobs")
 
     results = []
 

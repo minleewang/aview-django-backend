@@ -41,4 +41,5 @@ urlpatterns = [
     path('guest-oauth/', include('guest_oauth.urls')),
     path('memberships/', include('membership_plan.urls')),
     path('payments/', include('payments.urls')),
+    path('training_sample/', include('training_sample.urls')),
 ]

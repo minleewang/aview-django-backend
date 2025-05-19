@@ -63,6 +63,10 @@ class GoogleOauthController(viewsets.ViewSet):
                 if account is None:
                     account = self.accountService.createAccount(email, loginType)
                     print(f"accountProfile: {account}")
+                    self.accountProfileService.createAccountProfile(
+                        account.getId(), nickname, gender, birthyear, age_range
+                    )
+                    print("accountProfile 최초 생성 완료")
                     accountProfile = self.accountProfileService.createAccountProfile(
                         account.getId(), nickname, gender, birthyear, age_range
                     )
@@ -186,13 +190,3 @@ class GoogleOauthController(viewsets.ViewSet):
         print(f"탈퇴 결과 result: {result}")
 
         return JsonResponse(result, status=HTTP_200_OK)
-
-    # def dropRedisTokenForLogout(self, request):
-    #     try:
-    #         userToken = request.data.get('userToken')
-    #         isSuccess = self.RedisService.deleteKey(userToken)
-    #
-    #         return Response({'isSuccess': isSuccess}, status=status.HTTP_200_OK)
-    #     except Exception as e:
-    #         print(f'레디스 토큰 해제 중 에러 발생:', e)
-    #         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
