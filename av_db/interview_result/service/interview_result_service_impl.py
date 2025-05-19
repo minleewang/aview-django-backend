@@ -57,3 +57,5 @@ class InterviewResultServiceImpl(InterviewResultService):
     def saveQAScoreList(self, interview_result, qa_scores):
         return self.__interviewResultRepository.saveQAScoreList(interview_result, qa_scores)
 
+    def recordHexagonEvaluation(self, interview_result, evaluation_scores: dict):
+        return self.__interviewResultRepository.saveHexagonScore(interview_result, evaluation_scores)

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from interview_result.entity.interview_result import InterviewResult
 from interview_result.entity.interview_result_qas import InterviewResultQAS
 from interview_result.repository.interview_result_repository import InterviewResultRepository
-
+from interview_result.entity.interview_result_score import InterviewResultScore
 
 class InterviewResultRepositoryImpl(InterviewResultRepository):
     __instance = None
@@ -80,4 +80,20 @@ class InterviewResultRepositoryImpl(InterviewResultRepository):
                 print("평가 결과 저장 완료")
         except Exception as e:
             print(f"평가 결과 저장 실패: {e}")
+            raise
+
+    def saveHexagonScore(self, interview_result, evaluation_scores: dict):
+        try:
+            InterviewResultScore.objects.create(
+                interview_result=interview_result,
+                productivity=evaluation_scores.get("productivity", 0.0),
+                communication=evaluation_scores.get("communication", 0.0),
+                development=evaluation_scores.get("development", 0.0),
+                documentation=evaluation_scores.get("documentation", 0.0),
+                flexibility=evaluation_scores.get("flexibility", 0.0),
+                decision_making=evaluation_scores.get("decision_making", 0.0),
+            )
+            print("✅ 6각형 점수 저장 완료")
+        except Exception as e:
+            print(f"❌ 6각형 점수 저장 실패: {e}")
             raise

@@ -18,4 +18,6 @@ class InterviewResultService(ABC):
     def saveQAScoreList(self, interview_result, qa_scores):
         pass
 
-
+    @abstractmethod
+    def recordHexagonEvaluation(self, interview_result, evaluation_scores: dict):
+        pass
