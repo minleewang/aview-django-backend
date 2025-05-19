@@ -96,12 +96,11 @@ class ReviewServiceImpl(ReviewService):
     def requestUpdate(self, id, title, accountId):
         try:
             account = self.__accountRepository.findById(accountId)
-            accountProfile = self.__accountProfileRepository.findByAccount(account)
 
             review = self.__reviewRepository.findById(id)
 
             # 게시글 작성자와 요청한 사용자가 동일한지 확인
-            if review.writer.id != accountProfile.id:
+            if review.writer.id != account.id:
                 raise ValueError("You are not authorized to modify this post.")
 
             # 제목 업데이트
@@ -115,7 +114,7 @@ class ReviewServiceImpl(ReviewService):
                 "id": updatedReview.id,
                 "title": updatedReview.title,
                 "content": updatedReview.content,
-                "writerNickname": updatedReview.writer.nickname,  # 작성자의 닉네임
+                "writerNickname": updatedReview.writer.email,  # 작성자의 닉네임
                 "createDate": updatedReview.create_date.strftime("%Y-%m-%d %H:%M"),
             }
 
