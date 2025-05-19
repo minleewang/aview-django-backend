@@ -25,3 +25,6 @@ class InterviewResultRepository(ABC):
     def saveQAScoreList(self, interview_result, qa_scores):
         pass
 
+    @abstractmethod
+    def saveHexagonScore(self, interview_result, evaluation_scores: dict):
+        pass

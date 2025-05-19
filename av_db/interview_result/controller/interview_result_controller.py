@@ -87,14 +87,32 @@ class InterviewResultController(viewsets.ViewSet):
             }
 
             print(f"📡 FastAPI 요청: {payload}")
+            # ✅ FastAPI 요청 후 응답 받기
             response = HttpClient.postToAI("/interview/question/end_interview", payload)
             summary = response.get("summary", "")
             qa_scores = response.get("qa_scores",[])
+            evaluation_scores = response.get("evaluation_scores", {})  # ✅ 새로 추가된 평가 점수
+
+            # summary = "테스트 요약입니다"
+            # qa_scores = []  # 테스트용 피드백 비워두기
+            # evaluation_scores = {
+            #     "productivity": 88,
+            #     "communication": 76,
+            #     "development": 93,
+            #     "documentation": 67,
+            #     "flexibility": 74,
+            #     "decision_making": 82
+            # }
+
             if not qa_scores:
                 raise Exception("FastAPI 응답dp qa_scores가 없음")
 
             #평가 결과 저장
             self.interviewResultService.saveQAScoreList(interview_result, qa_scores)
+
+            # ✅ 6각형 점수 저장
+            if evaluation_scores:
+                self.interviewResultService.recordHexagonEvaluation(interview_result, evaluation_scores)
 
             return JsonResponse({
                 "message": "면접 평가 저장 성공",
@@ -118,9 +136,22 @@ class InterviewResultController(viewsets.ViewSet):
                 .values("question", "answer", "intent", "feedback")
             )
 
+            # ✅ 6각형 점수 불러오기
+            score = getattr(interview_result, "score", None)  # related_name='score' 사용
+
+            hexagon_score = {
+                "productivity": score.productivity if score else 0,
+                "communication": score.communication if score else 0,
+                "development": score.development if score else 0,
+                "documentation": score.documentation if score else 0,
+                "flexibility": score.flexibility if score else 0,
+                "decision_making": score.decision_making if score else 0,
+            }
+
             return JsonResponse({
                "message": "면접 평가 결과 조회 성공",
                 "interviewResultList": result_list,
+                "hexagonScore": hexagon_score,
                 "success": True
             }, status=200)
 

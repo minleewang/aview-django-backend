@@ -14,11 +14,12 @@ def merge_answer_excels(folder_path: str, output_file: str):
             try:
                 df = pd.read_excel(file_path)
 
-                if 'question' not in df.columns or 'answer' not in df.columns:
+                # ✅ 'question_id' + 'answer' 기반으로 병합하도록 수정
+                if 'question_id' not in df.columns or 'answer' not in df.columns:
                     print(f"⚠️ 컬럼 누락: {file}")
                     continue
 
-                combined_df = pd.concat([combined_df, df], ignore_index=True)
+                combined_df = pd.concat([combined_df, df[["question_id", "answer"]]], ignore_index=True)
                 total_files += 1
                 total_rows += len(df)
 

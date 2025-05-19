@@ -4,7 +4,7 @@ from interview_result.entity.interview_result import InterviewResult
 
 class InterviewResultQAS(models.Model):
     id = models.AutoField(primary_key=True)
-    question = models.CharField(max_length=200, unique=False)
+    question = models.CharField(max_length=1000, unique=False)
     answer = models.TextField(unique=False)
     intent = models.CharField(max_length=50, unique=False)
     feedback = models.TextField(unique=False)
