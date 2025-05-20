@@ -39,20 +39,18 @@ class InterviewResultServiceImpl(InterviewResultService):
         print(f"▶ interviewResultList(raw): {interviewResultList}")
         return interviewResultList
 
-    def getFullQAList(self, interviewId: int) -> tuple[list[str], list[str]]:
+    def getFullQAList(self, interviewId: int) -> tuple[list[str], list[str], list[int]]:
         print("들어옴")
-        questions = list(
+        question_objs = list(
             InterviewQuestion.objects.filter(interview_id=interviewId)
             .order_by("id")
-            .values_list("content", flat=True)
         )
-        answers = list(
-            InterviewAnswer.objects.filter(interview_id=interviewId)
-            .order_by("question_id")
-            .values_list("answer_text", flat=True)
-        )
+        questions = [q.content for q in question_objs]
+        answer_objs = InterviewAnswer.objects.filter(interview_id=interviewId).order_by("question_id")
+        answers = [a.answer_text for a in answer_objs]
+        question_id = [a.question_id for a in answer_objs]
         print("나감")
-        return questions, answers
+        return questions, answers, question_id
 
     def saveQAScoreList(self, interview_result, qa_scores):
         return self.__interviewResultRepository.saveQAScoreList(interview_result, qa_scores)

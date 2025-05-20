@@ -66,7 +66,7 @@ class InterviewResultController(viewsets.ViewSet):
                 "interviewTechStack": json.dumps(data.get("interviewTechStack"))
             }
 
-            questions, answers = self.interviewResultService.getFullQAList(interviewId)
+            questions, answers, questionId = self.interviewResultService.getFullQAList(interviewId)
             if not questions or not answers:
                 raise Exception("질문/답변 복원 실패")
 
@@ -74,8 +74,8 @@ class InterviewResultController(viewsets.ViewSet):
             payload = {
                 "userToken": userToken,
                 "interviewId": interviewId,
-                "questionId": -1,
-                "answerText": "",
+                "questionId": questionId, #전체 질문 ID리스트
+                #"answerText": "", 마지막 답변에 대한 중요도가 높은경우 사용
                 "topic": int(data.get("jobCategory")),
                 "experienceLevel": int(data.get("experienceLevel")),
                 "projectExperience": int(data.get("projectExperience")),
