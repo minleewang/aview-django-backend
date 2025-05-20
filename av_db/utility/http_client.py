@@ -24,7 +24,7 @@ class HttpClient:
         if cls._ai_client is None:
             cls._ai_client = httpx.Client(
                 base_url=os.getenv("FASTAPI_URL"),
-                timeout=25
+                timeout=180
             )
         return cls._ai_client
 
