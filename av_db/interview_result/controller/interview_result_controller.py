@@ -91,17 +91,18 @@ class InterviewResultController(viewsets.ViewSet):
             response = HttpClient.postToAI("/interview/question/end_interview", payload)
             summary = response.get("summary", "")
             qa_scores = response.get("qa_scores",[])
-            evaluation_scores = response.get("evaluation_scores", {})  # ✅ 새로 추가된 평가 점수
+            evaluation_scores = response.get("evaluation_result", {})  # ✅ 새로 추가된 평가 점수
+            print(f"{evaluation_scores}")
 
             # summary = "테스트 요약입니다"
             # qa_scores = []  # 테스트용 피드백 비워두기
             # evaluation_scores = {
             #     "productivity": 88,
             #     "communication": 76,
-            #     "development": 93,
-            #     "documentation": 67,
+            #     "technical_skills": 93,
+            #     "documentation_skills": 67,
             #     "flexibility": 74,
-            #     "decision_making": 82
+            #     "problem_solving": 82
             # }
 
             if not qa_scores:
@@ -142,10 +143,10 @@ class InterviewResultController(viewsets.ViewSet):
             hexagon_score = {
                 "productivity": score.productivity if score else 0,
                 "communication": score.communication if score else 0,
-                "development": score.development if score else 0,
-                "documentation": score.documentation if score else 0,
+                "technical_skills": score.technical_skills if score else 0,
+                "documentation_skills": score.documentation_skills if score else 0,
                 "flexibility": score.flexibility if score else 0,
-                "decision_making": score.decision_making if score else 0,
+                "problem_solving": score.problem_solving if score else 0,
             }
 
             return JsonResponse({
