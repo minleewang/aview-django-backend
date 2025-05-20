@@ -88,10 +88,10 @@ class InterviewResultRepositoryImpl(InterviewResultRepository):
                 interview_result=interview_result,
                 productivity=evaluation_scores.get("productivity", 0.0),
                 communication=evaluation_scores.get("communication", 0.0),
-                development=evaluation_scores.get("development", 0.0),
-                documentation=evaluation_scores.get("documentation", 0.0),
+                technical_skills=evaluation_scores.get("technical_skills", 0.0),
+                documentation_skills=evaluation_scores.get("documentation_skills", 0.0),
                 flexibility=evaluation_scores.get("flexibility", 0.0),
-                decision_making=evaluation_scores.get("decision_making", 0.0),
+                problem_solving=evaluation_scores.get("problem_solving", 0.0),
             )
             print("✅ 6각형 점수 저장 완료")
         except Exception as e:
