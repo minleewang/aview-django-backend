@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'excel_basic',
     'github_action_monitor',
     'guest_oauth',
-    'membership_plan',
+    'membership_plan.apps.MembershipConfig',
     'payments',
     'training_sample',
 ]
