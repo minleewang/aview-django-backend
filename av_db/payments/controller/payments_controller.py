@@ -11,6 +11,7 @@ class PaymentsController(viewsets.ViewSet):
     paymentsService = PaymentsServiceImpl.getInstance()
 
     def requestProcessPayments(self, request):
+        print("🔥[1] 전체 요청 body:", request.data)
         postRequest = request.data
         userToken = postRequest.get("userToken")
 
@@ -20,6 +21,7 @@ class PaymentsController(viewsets.ViewSet):
         try:
             # userToken으로 계정 정보 조회
             accountId = self.redisCacheService.getValueByKey(userToken)
+            print(f"🔑[2] userToken: {userToken} → accountId: {accountId}")
             if not accountId:
                 return JsonResponse(
                     {"error": "유효하지 않은 userToken입니다", "success": False},
@@ -31,6 +33,7 @@ class PaymentsController(viewsets.ViewSet):
             orderId = postRequest.get("orderId")
             amount = postRequest.get("amount")
             orderInfoId = postRequest.get("orderInfoId")
+            print(f"📦[3] paymentKey: {paymentKey}, orderId: {orderId}, amount: {amount}, orderInfoId: {orderInfoId}")
 
             if not paymentKey or not orderId or not amount or not orderInfoId:
                 return JsonResponse(
@@ -39,9 +42,12 @@ class PaymentsController(viewsets.ViewSet):
                 )
 
             # 결제 처리
+            print("⚙️[4] 결제 서비스 호출 전")
             paymentResult = self.paymentsService.process(accountId, paymentKey, orderId, amount, orderInfoId)
+            print("✅[5] 결제 서비스 결과:", paymentResult)
 
             if paymentResult is not None and isinstance(paymentResult, dict):
+                print("✅[6] 결제 성공 응답 구성 중")
                 # 결제 성공 시 결제 URL과 ID 반환
                 paymentUrl = paymentResult.get("receipt", {}).get("url", None)  # receipt URL을 받아옴
                 paymentKey = paymentResult.get("paymentKey", None)  # paymentKey를 결제 KEY로 사용
@@ -59,8 +65,8 @@ class PaymentsController(viewsets.ViewSet):
                         {
                             "success": True,
                             "message": "결제가 성공적으로 처리되었습니다.",
-                            # "paymentUrl": paymentUrl,  # 결제 URL
-                            # "paymentKey": paymentKey,  # 결제 KEY
+                            "paymentUrl": paymentUrl,  # 결제 URL
+                            "paymentKey": paymentKey,  # 결제 KEY
                             "approvedAt": approvedAt,  # 결제 시간
                             "orderName": orderName,  # 구매 항목
                             "method": method,  # 결제 방법
