@@ -67,3 +67,18 @@ class HttpClient:
         if cls._ai_client:
             cls._ai_client.close()
             cls._ai_client = None
+
+    @classmethod
+    def getFromAI(cls, endpoint: str) -> dict | bool:
+        """AI 서버로 GET 요청"""
+        client = cls.getAIClient()
+        try:
+            response = client.get(endpoint)
+            if response.status_code in (200, 202, 404):  # 상황별 상태 확인
+                return response.json()
+            else:
+                print(f"❌ AI 서버 GET 응답 오류: {response.status_code}")
+                return False
+        except httpx.RequestError as exc:
+            print(f"⚠️ AI 서버 GET 요청 에러: {str(exc)}")
+            return False

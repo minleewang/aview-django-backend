@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.shortcuts import render
-import json
+import json, time
 
 from django.http import JsonResponse
 from rest_framework import viewsets, status
@@ -86,24 +86,25 @@ class InterviewResultController(viewsets.ViewSet):
                 "answers": answers
             }
 
-            print(f"📡 FastAPI 요청: {payload}")
             # ✅ FastAPI 요청 후 응답 받기
             response = HttpClient.postToAI("/interview/question/end_interview", payload)
+            # polling으로 결과 받기
+            for _ in range(60):
+                time.sleep(1)
+                result = HttpClient.getFromAI(f"/interview/question/check-result/{userToken}")
+                if result and result.get("status") == "DONE":
+                    response = result.get("result", {})
+                    break
+                elif result and result.get("status") == "FAILED":
+                    raise Exception("FastAPI 평가 실패")
+            else:
+                raise Exception("FastAPI 응답 대기 시간 초과")
             summary = response.get("summary", "")
             qa_scores = response.get("qa_scores",[])
             evaluation_scores = response.get("evaluation_result", {})  # ✅ 새로 추가된 평가 점수
             print(f"{evaluation_scores}")
-
-            # summary = "테스트 요약입니다"
-            # qa_scores = []  # 테스트용 피드백 비워두기
-            # evaluation_scores = {
-            #     "productivity": 88,
-            #     "communication": 76,
-            #     "technical_skills": 93,
-            #     "documentation_skills": 67,
-            #     "flexibility": 74,
-            #     "problem_solving": 82
-            # }
+            print(f"📄 요약 내용: {summary}")
+            print(f"📦 전체 응답: {response}")
 
             if not qa_scores:
                 raise Exception("FastAPI 응답dp qa_scores가 없음")
