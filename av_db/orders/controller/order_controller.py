@@ -17,6 +17,7 @@ class OrderController(viewsets.ViewSet):
         total  = postRequest.get("total")
         userToken = postRequest.get("userToken")
         print(f"items: {items}")
+        print(f"[🔥 수신된 request.data]: {request.data}")
 
         if not userToken:
             return JsonResponse({"error": "userToken이 필요합니다", "success": False}, status=status.HTTP_400_BAD_REQUEST)
